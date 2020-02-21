@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="梳理 Crowd Counting(人群密度估计) 常用数据集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Crowd Counting Datasets Intro">
+<meta property="og:url" content="http://yoursite.com/2020/02/21/Crowd_Counting_Datasets_Intro/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Crowd Counting(人群密度估计) 常用数据集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/GCC_dataset_1.png">
+<meta property="og:image" content="http://yoursite.com/images/GCC_dataset_2.png">
+<meta property="og:image" content="http://yoursite.com/images/UCF_QNRF_dataset_1.png">
+<meta property="og:image" content="http://yoursite.com/images/CrowdHuman_dataset_1.png">
+<meta property="article:published_time" content="2020-02-21T13:32:00.000Z">
+<meta property="article:modified_time" content="2020-02-21T13:33:04.729Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="crowd_counting">
+<meta property="article:tag" content="dataset">
+<meta property="article:tag" content="cv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/GCC_dataset_1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/21/Crowd_Counting_Datasets_Intro/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Crowd Counting Datasets Intro | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/21/Crowd_Counting_Datasets_Intro/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Crowd Counting Datasets Intro
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-21 21:32:00 / 修改时间：21:33:04" itemprop="dateCreated datePublished" datetime="2020-02-21T21:32:00+08:00">2020-02-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cv/" itemprop="url" rel="index">
+                    <span itemprop="name">cv</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Crowd Counting(人群密度估计) 常用数据集</p>
+<a id="more"></a>
+<!-- toc -->
+
+<h2 id="ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><a href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B" class="headerlink" title="ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)"></a>ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)</h2><ul>
+<li>A Well Konwn BenchMark</li>
+<li>Shanghaitech which contains 1198 annotated images, with a total of 330,165 people with centers of their heads annotated. As far as we know, this dataset is the largest one in terms of the number of annotated people. This dataset consists of two parts: there are 482 images in Part A which are randomly crawled from the Internet, and 716 images in Part B which are taken from the busy streets of metropolitan areas in Shanghai. The crowd density varies significantly between the two subsets, making accurate estimation of the crowd more challenging than most existing datasets. Both Part A and Part B are divided into training and testing: 300 images of Part A are used for training and the remaining 182 images for testing;, and 400 images of Part B are for training and 316 for testing</li>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf</a></li>
+<li>git <a href="https://github.com/desenzhou/ShanghaiTechDataset" target="_blank" rel="noopener">https://github.com/desenzhou/ShanghaiTechDataset</a></li>
+<li>Download url<ul>
+<li>Dropbox: <a href="https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0</a></li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1nuAYslz" target="_blank" rel="noopener">http://pan.baidu.com/s/1nuAYslz</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="GCC-Dataset"><a href="#GCC-Dataset" class="headerlink" title="GCC Dataset"></a>GCC Dataset</h2><ul>
+<li>A Generated Dataset For Getting Pretrained Model</li>
+<li>home <a href="https://gjy3035.github.io/GCC-CL/" target="_blank" rel="noopener">https://gjy3035.github.io/GCC-CL/</a></li>
+<li>Download url <ul>
+<li><a href="https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093" target="_blank" rel="noopener">https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093</a></li>
+<li><a href="https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset" target="_blank" rel="noopener">https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset</a></li>
+</ul>
+</li>
+<li>The data is collected from an electronic game Grand Theft Auto V (GTA5), thus it is named as “GTA5 Crowd Counting” (“GCC” for short) dataset. GCC dataset consists of 15,212 images, with resolution of 1080×1920, containing 7,625,843 persons. Compared with the existing datasets, GCC is a more large-scale crowd counting dataset in both the number of images and the number of persons.</li>
+<li><img src="/images/GCC_dataset_1.png" alt="GCC_dataset_1"></li>
+<li><img src="/images/GCC_dataset_2.png" alt="GCC_dataset_2"></li>
+</ul>
+<h2 id="Fudan-ShanghaiTech-Dataset"><a href="#Fudan-ShanghaiTech-Dataset" class="headerlink" title="Fudan-ShanghaiTech Dataset"></a>Fudan-ShanghaiTech Dataset</h2><ul>
+<li>We collected 100 videos captured from 13 different scenes, and FDST dataset contains 150,000 frames, with a total of 394,081 annotated heads, in particular,the training set of FDST dataset consists of 60 videos, 9000 frames and the testing set contains the remaining 40 videos, 6000 frames.</li>
+<li>git <a href="https://github.com/sweetyy83/Lstn_fdst_dataset" target="_blank" rel="noopener">https://github.com/sweetyy83/Lstn_fdst_dataset</a></li>
+<li>download url<ul>
+<li><a href="https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F</a></li>
+<li><a href="https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Venice-Dataset"><a href="#Venice-Dataset" class="headerlink" title="Venice Dataset"></a>Venice Dataset</h2><ul>
+<li>Venice. The four datasets discussed above have the advantage of being publicly available but do not contain precise calibration information. In practice, however, it can be readily obtained using either standard photogrammetry techniques or onboard sensors, for example when using a drone to acquire the images. To test this kind of scenario, we used a cellphone to film additional sequences of the Piazza San Marco in Venice, as seen from various viewpoints on the second floor of the basilica, as shown in the top two rows of Fig. 5. We then used the white lines on the ground to compute camera models. As shown in the bottom two rows of Fig. 5, this yields a more accurate calibration than in WorldExpo’10. The resulting dataset contains 4 different sequences and in total 167 annotated frames with fixed 1,280 × 720 resolution. 80 images from a single long sequence are taken as training data, and we use the images from the remaining 3 sequences for testing purposes. The ground-truth density maps were generated using fixed Gaussian kernels as in part B of the ShanghaiTech dataset.</li>
+<li>paper <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf</a></li>
+<li>git <a href="https://github.com/weizheliu/Context-Aware-Crowd-Counting" target="_blank" rel="noopener">https://github.com/weizheliu/Context-Aware-Crowd-Counting</a></li>
+<li>download url <a href="https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view" target="_blank" rel="noopener">https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view</a></li>
+</ul>
+<h2 id="UCF-QNRF"><a href="#UCF-QNRF" class="headerlink" title="UCF-QNRF"></a>UCF-QNRF</h2><ul>
+<li>We introduce the largest dataset to-date (in terms of number of annotations) for training and evaluating crowd counting and localization methods. It contains 1535 images which are divided into train and test sets of 1201 and 334 images respectively. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-qnrf/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip</a></li>
+<li><a href="https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view" target="_blank" rel="noopener">https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view</a></li>
+</ul>
+</li>
+<li><img src="/images/UCF_QNRF_dataset_1.png" alt="UCF_QNRF_dataset_1"></li>
+</ul>
+<h2 id="UCF-CC-50"><a href="#UCF-CC-50" class="headerlink" title="UCF-CC-50"></a>UCF-CC-50</h2><ul>
+<li>Only 50 images. This data set contains images of extremely dense crowds. The images are collected mainly from the FLICKR. They are shared only for the research purposes. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-cc-50/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="WorldExpo’10-Dataset"><a href="#WorldExpo’10-Dataset" class="headerlink" title="WorldExpo’10 Dataset"></a>WorldExpo’10 Dataset</h2><ul>
+<li>We introduce a new large-scale cross-scene crowd counting dataset. To the best of our knowledge, this is the largest dataset focusing on cross-scene counting. It includes 1132 annotated video sequences captured by 108 surveillance cameras, all from Shanghai 2010 WorldExpo2. Since most of the cameras have disjoint bird views, they cover a large variety of scenes. We labeled a total of 199,923 pedestrians at the centers of their heads in 3,980 frames. These frames are uniformly sampled from all the video sequences.</li>
+<li>home <a href="http://www.ee.cuhk.edu.hk/~xgwang/expo.html" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/expo.html</a></li>
+<li>paper <a href="http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf</a></li>
+<li>download url <ul>
+<li>This paper is in cooperation with Shanghai Jiao Tong University. SJTU has the copyright of the dataset. So please email Prof. Xie (<a href="mailto:xierong@sjtu.edu.cn">xierong@sjtu.edu.cn</a>) with your name and affiliation to get the download link. It’s better to use your official email address. Thank you for your understanding.</li>
+<li><a href="https://pan.baidu.com/s/1mgh7W4w#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1mgh7W4w#list/path=%2F</a>   password：765k</li>
+<li>Thank you for your attention to download our dataset. The dataset can be downloaded from Baidu disk or Dropbox:</li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1mgh7W4w" target="_blank" rel="noopener">http://pan.baidu.com/s/1mgh7W4w</a> password：765k</li>
+<li>Dropbox: <a href="https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0</a> </li>
+<li>This dataset is ONLY released for academic use. Please do not further distribute the dataset (including the download link), or put any of the videos and images on the public website. The copyrights belongs to Shanghai Jiao Tong University.</li>
+<li>Please kindly cite these two papers if you use our data in your research. Thanks and hope you will benefit from our dataset.Cong Zhang, Kai Zhang, Hongsheng Li, Xiaogang Wang, Rong Xie　and Xiaokang Yang: Data-driven Crowd Understanding: a Baseline for a Large-scale Crowd Dataset. IEEE Transactions on Multimedia,  Vol. 18, No.6, pp1048 - 1061, 2016.Cong Zhang, Hongsheng Li, Xiaogang Wang, and Xiaokang Yang. “Cross-scene Crowd Counting via Deep Convolutional Neural Networks”. in Proceedings of IEEE Conference on Computer Vision and Pattern Recognition 2015.If you have any detail questions about the dataset, please feel free to contact us (<a href="mailto:xierong@sjtu.edu.cnand">xierong@sjtu.edu.cnand</a> <a href="mailto:xierong@sjtu.edu.cnand">mailto:xierong@sjtu.edu.cnand</a><a href="mailto:zhangcong0929@gmail.com">zhangcong0929@gmail.com</a> <a href="mailto:zhangcong0929@gmail.com">mailto:zhangcong0929@gmail.com</a>).Copyright (c) 2015, Shanghai Jiao Tong University All rights reserved. Best Regards, Rong </li>
+</ul>
+</li>
+</ul>
+<h2 id="Mall-Dataset"><a href="#Mall-Dataset" class="headerlink" title="Mall Dataset"></a>Mall Dataset</h2><ul>
+<li>The mall dataset was collected from a publicly accessible webcam for crowd counting and profiling research. Ground truth: Over 60,000 pedestrians were labelled in 2000 video frames. We annotated the data exhaustively by labelling the head position of every pedestrian in all frames. Video length: 2000 frames; Frame size: 640x480; Frame rate: &lt; 2 Hz </li>
+<li>home <a href="http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html</a></li>
+<li>download url<ul>
+<li><a href="http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="UCSD-Pedestrian-Database"><a href="#UCSD-Pedestrian-Database" class="headerlink" title="UCSD Pedestrian Database"></a>UCSD Pedestrian Database</h2><ul>
+<li>The database contains video of pedestrians on UCSD walkways, taken from a stationary camera. All videos are 8-bit grayscale, with dimensions 238 × 158 at 10 fps. The database is split into scenes, taken from different viewpoints (currently, only one scene is available…more are coming). Each scene is in its own directory vidX where X is a letter (e.g. vidf), and is split into video clips of length 200 named vidfXY 33 ZZZ.y, where Y and ZZZ are numbers. Finally, each video clip is saved as a set of .png files.</li>
+<li>home <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/</a></li>
+<li>pdf <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf</a></li>
+<li>download url <ul>
+<li><a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip</a> &amp;&amp; <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="SmartCity-Dataset"><a href="#SmartCity-Dataset" class="headerlink" title="SmartCity Dataset"></a>SmartCity Dataset</h2><ul>
+<li>We have collected a new dataset SmartCity in the paper. It consists of 50 images in total collected from ten city scenes including office entrance, sidewalk, atrium, shopping mall etc.. Some examples are shown in Fig. 4 in our arxiv paper. Unlike the existing crowd counting datasets with images of hundreds/thousands of pedestrians and nearly all the images being taken outdoors, SmartCity has few pedestrians in images and consists of both outdoor and indoor scenes: the average number of pedestrians is only 7.4 with minimum being 1 and maximum being 14. We use this set to test the generalization ability of the proposed framework on very sparse crowd scenes.</li>
+<li>git <a href="https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu" target="_blank" rel="noopener">https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1711.04433.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1711.04433.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://pan.baidu.com/s/1pMuGyNp" target="_blank" rel="noopener">https://pan.baidu.com/s/1pMuGyNp</a></li>
+<li><a href="https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI" target="_blank" rel="noopener">https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="AHU-Crowd-Dataset"><a href="#AHU-Crowd-Dataset" class="headerlink" title="AHU-Crowd Dataset"></a>AHU-Crowd Dataset</h2><ul>
+<li>The crowd datasets are obtained a variety of sources, such as UCF and Data-driven crowd datasets to evaluate the proposed framework. The sequences are diverse, representing dense crowd in the public spaces in various scenarios such as pilgrimage, station, marathon, rallies and stadium. In addition, the sequences have different field of views, resolutions, and exhibit a multitude of motion behaviors that cover both the obvious and subtle instabilities. </li>
+<li>extreme crowd</li>
+<li>home <a href="http://cs-chan.com/downloads_crowd_dataset.html" target="_blank" rel="noopener">http://cs-chan.com/downloads_crowd_dataset.html</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="CityStreet-Multi-View-Crowd-Counting-Dataset"><a href="#CityStreet-Multi-View-Crowd-Counting-Dataset" class="headerlink" title="CityStreet: Multi-View Crowd Counting Dataset"></a>CityStreet: Multi-View Crowd Counting Dataset</h2><ul>
+<li>The multi-view crowd counting datasets, used in our “wide-area crowd counting” paper, include our proposed dataset CityStreet, as well as two existing datasets PETS2009 and DukeMTMC repurposed for multi-view crowd counting.</li>
+<li>City Street: We collected a multi-view video dataset of a busy city street using 5 synchronized cameras. The videos are about 1 hour long with 2.7k (2704×1520) resolution at 30 fps. We select Cameras 1, 3 and 4 for the experiment (see Fig. 6 bottom). The cameras’ intrinsic and extrinsic parameters are estimated using the calibration algorithm from [52]. 500 multi-view images are uniformly sampled from the videos, and the first 300 are used for training and remaining 200 for testing. The ground-truth 2D and 3D annotations are obtained as follows. The head positions of the first camera-view are annotated manually, and then projected to other views and adjusted manually. Next, for the second camera view, new people (not seen in the first view), are also annotated and then projected to the other views. This process is repeated until all people in the scene are annotated and associated across all camera views. Our dataset has larger crowd numbers (70-150), compared with PETS (20-40) and DukeMTMC (10-30). Our new dataset also contains more crowd scale variations and occlusions due to vehicles and fixed structures.</li>
+<li>home <a href="http://visal.cs.cityu.edu.hk/research/citystreet/" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/research/citystreet/</a></li>
+<li>paper <a href="http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ" target="_blank" rel="noopener">https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ</a></li>
+<li><a href="https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg" target="_blank" rel="noopener">https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg</a>  (提取码5wca)</li>
+</ul>
+</li>
+</ul>
+<h2 id="CrowdHuman"><a href="#CrowdHuman" class="headerlink" title="CrowdHuman"></a>CrowdHuman</h2><ul>
+<li>MEGVII</li>
+<li>CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The CrowdHuman dataset is large, rich-annotated and contains high diversity. CrowdHuman contains 15000, 4370 and 5000 images for training, validation, and testing, respectively. There are a total of 470K human instances from train and validation subsets and 23 persons per image, with various kinds of occlusions in the dataset. Each human instance is annotated with a head bounding-box, human visible-region bounding-box and human full-body bounding-box. We hope our dataset will serve as a solid baseline and help promote future research in human detection tasks.</li>
+<li>home <a href="http://www.crowdhuman.org/" target="_blank" rel="noopener">http://www.crowdhuman.org/</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1805.00123.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1805.00123.pdf</a></li>
+<li>download <a href="http://www.crowdhuman.org/download.html" target="_blank" rel="noopener">http://www.crowdhuman.org/download.html</a></li>
+<li><img src="/images/CrowdHuman_dataset_1.png" alt="CrowdHuman_dataset_1"></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crowd-counting/" rel="tag"># crowd_counting</a>
+              <a href="/tags/dataset/" rel="tag"># dataset</a>
+              <a href="/tags/cv/" rel="tag"># cv</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/21/begin_with_hexo&next/" rel="prev" title="使用 hexo + next 快速搭建github个人主页">
+      <i class="fa fa-chevron-left"></i> 使用 hexo + next 快速搭建github个人主页
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><span class="nav-number">1.</span> <span class="nav-text">ShanghaiTechDataset (ShanghaiTech&#x2F;SHT A &amp; B)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCC-Dataset"><span class="nav-number">2.</span> <span class="nav-text">GCC Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fudan-ShanghaiTech-Dataset"><span class="nav-number">3.</span> <span class="nav-text">Fudan-ShanghaiTech Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Venice-Dataset"><span class="nav-number">4.</span> <span class="nav-text">Venice Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCF-QNRF"><span class="nav-number">5.</span> <span class="nav-text">UCF-QNRF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCF-CC-50"><span class="nav-number">6.</span> <span class="nav-text">UCF-CC-50</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WorldExpo’10-Dataset"><span class="nav-number">7.</span> <span class="nav-text">WorldExpo’10 Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mall-Dataset"><span class="nav-number">8.</span> <span class="nav-text">Mall Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCSD-Pedestrian-Database"><span class="nav-number">9.</span> <span class="nav-text">UCSD Pedestrian Database</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SmartCity-Dataset"><span class="nav-number">10.</span> <span class="nav-text">SmartCity Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AHU-Crowd-Dataset"><span class="nav-number">11.</span> <span class="nav-text">AHU-Crowd Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CityStreet-Multi-View-Crowd-Counting-Dataset"><span class="nav-number">12.</span> <span class="nav-text">CityStreet: Multi-View Crowd Counting Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CrowdHuman"><span class="nav-number">13.</span> <span class="nav-text">CrowdHuman</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
