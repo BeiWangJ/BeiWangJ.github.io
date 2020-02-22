@@ -2,6 +2,237 @@
 <search>
   <entry>
     <title>Pedestrian Attribute Recognition Survey</title>
+    <url>/2020/02/22/Pedestrian_Detection_Survey/</url>
+    <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<hr>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
+<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>和通用检测不同，行人检测顾名思义，是只有行人一类的，特殊的前景类检测，其难点在于：<ul>
+<li>occlusion<ul>
+<li>行人检测往往是安防视角或者自动驾驶视角，行人的完整度往往难以保证，容易被遮挡</li>
+</ul>
+</li>
+<li>crowd<ul>
+<li>现有方法的detection往往伴随着nms，在过于密集的场景下，紧挨着的行人往往容易被过滤掉</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>本文档着重于介绍行人检测专用数据集，算法，及与常规检测方法的对比实验</li>
+</ul>
+<hr>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
+<p>此处的讨论仅限于在 caltech or cityperson 上做过实验的文章</p>
+<h2 id="MS-CNN"><a href="#MS-CNN" class="headerlink" title="MS-CNN"></a>MS-CNN</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1607.07155.pdf" target="_blank" rel="noopener">A Unified Multi-scale Deep Convolutional Neural Network for Fast Object Detection</a></li>
+<li><img src="/images/pedestrian_detection/mscnn1.png" alt="mscnn1.png"></li>
+<li>全文只要思想就是解决目标scale变化的问题，在16年时这样的想法还比较先进，初始化了cityperson baseline 13.32%</li>
+</ul>
+<h2 id="Repultion-Loss"><a href="#Repultion-Loss" class="headerlink" title="Repultion Loss"></a>Repultion Loss</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1910.06160.pdf" target="_blank" rel="noopener">Mask-Guided Attention Network for Occluded Pedestrian Detection</a></li>
+<li><img src="/images/pedestrian_detection/RepultionLoss1.png" alt="RepultionLoss1.png"></li>
+<li>主要思想就是解决一个预测框在两个框中间重叠的情况，也就是所谓的crowd的情况</li>
+</ul>
+<h2 id="OR-CNN"><a href="#OR-CNN" class="headerlink" title="OR-CNN"></a>OR-CNN</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1807.08407.pdf" target="_blank" rel="noopener">Occlusion-aware R-CNN: Detecting Pedestrians in a Crowd</a></li>
+<li>main contribution</li>
+<li>We propose a new occlusion-aware R-CNN method, which uses a new designed AggLoss to enforce proposals to be close to the corresponding objects, as well as minimize the internal region distances of proposals associated with the same objects.</li>
+<li>我们提出了一种新的关注遮挡的RCNN，使用了全新的AggLoss</li>
+<li>We design a new PORoI pooling unit to replace the RoI pooling layer in the second Fast R-CNN module to integrate the prior structure information of human body with visibility prediction into the network.</li>
+<li>我们设计了一种新的POROI pooling取代了原先的ROI pooling</li>
+<li><img src="/images/pedestrian_detection/ORCNN1.png" alt="ORCNN1.png"><ol>
+<li>agg loss加在rpn上，是由 smooth-L1 和 compactness loss 组成</li>
+<li><img src="/images/pedestrian_detection/ORCNN1.1.png" alt="ORCNN1.1.png"></li>
+</ol>
+</li>
+<li>com loss 主要用来约束能匹配gt的anchor refine后能尽可能紧致（框的均值离真值小）</li>
+<li><img src="/images/pedestrian_detection/ORCNN2.png" alt="ORCNN2.png"><ol>
+<li>OROI pooling</li>
+<li>对一个proposal Q，我们将其分为5部分，使用roi pooling得到这五个部分的特征，然后将其喂入OP unit</li>
+<li>op unit主要就是一个前后景的attention</li>
+<li>最后elewise sum</li>
+</ol>
+</li>
+<li><img src="/images/pedestrian_detection/ORCNN3.png" alt="ORCNN3.png"></li>
+<li>cityperson 有可见区域的标签，将5个部分于课件区域IOU进行计算，得到 occlusion loss</li>
+<li><img src="/images/pedestrian_detection/ORCNN4.png" alt="ORCNN4.png"></li>
+<li>1.3X的VGG16对应val集的 R 11 H 51.3 是非常强的结果了，也是之后工作经常拿ORCNN作为baseline的原因之一</li>
+<li><img src="/images/pedestrian_detection/ORCNN5.png" alt="ORCNN5.png"></li>
+<li>POROI pooling结果示意图，理想状态下，被遮挡的部位分值低，但不影响其他部分分值</li>
+<li><img src="/images/pedestrian_detection/ORCNN6.png" alt="ORCNN6.png"></li>
+<li>在test集上表现为 R 11.32，非常不错的成绩</li>
+</ul>
+<h2 id="CSP"><a href="#CSP" class="headerlink" title="CSP"></a>CSP</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1904.02948.pdf" target="_blank" rel="noopener">Center and Scale Prediction: A Box-free Approach for Object Detection</a></li>
+<li>git <a href="https://github.com/liuwei16/CSP" target="_blank" rel="noopener">https://github.com/liuwei16/CSP</a></li>
+<li><img src="/images/pedestrian_detection/CSP1.png" alt="CSP1.png"></li>
+<li>convNet的整体框架图，和anchor free的算法们惊人相似，出的时间也相似，都是受CornerNet启发</li>
+<li><img src="/images/pedestrian_detection/CSP2.png" alt="CSP2.png"></li>
+<li>具体框架图，concat mul-level feature，整体conv出heatmap和scale map，和centernet如出一辙</li>
+<li><img src="/images/pedestrian_detection/CSP3.png" alt="CSP3.png"></li>
+<li>ussion mask 来做heatmap，也是关键点任务中常见的转换</li>
+<li>Scale can be defined as the height and/or width of objects. Towards high-quality ground truth for pedestrian detection, line annotation is first proposed in [54, 55], where tight bounding boxes are automatically generated with a uniform aspect ratio of 0.41. </li>
+<li>相当于是固定了anchor ratio去预测scale。由于pedestrian往往是站立的人，长宽比被预设为0.41</li>
+<li><img src="/images/pedestrian_detection/CSP4.png" alt="CSP4.png"></li>
+<li>在1x上跑出了OC RCNN 1.3x的结果，非常的不错</li>
+<li>作者顺路还在widerface上测试了下，效果还不错</li>
+<li>CSP其实和常规的检测算法没有太大区别了 </li>
+</ul>
+<h2 id="MGAN"><a href="#MGAN" class="headerlink" title="MGAN"></a>MGAN</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1910.06160.pdf" target="_blank" rel="noopener">Mask-Guided Attention Network for Occluded Pedestrian Detection</a></li>
+<li>git <a href="https://github.com/Leotju/MGAN" target="_blank" rel="noopener">https://github.com/Leotju/MGAN</a></li>
+<li><img src="/images/pedestrian_detection/MGAN1.png" alt="MGAN1.png"></li>
+<li>相较于baseline，MGAN能检测出更多的pedestrian</li>
+<li><img src="/images/pedestrian_detection/MGAN2.png" alt="MGAN2.png"></li>
+<li>相较于FRRCNN，仅新增了MGA模块</li>
+<li><img src="/images/pedestrian_detection/MGAN3.png" alt="MGAN3.png"></li>
+<li>MGA模块详解，主要作用是生成attention mask重权重feature map</li>
+<li>We therefore adapt visible-region bounding box annotation as an approximate alternative.<ul>
+<li>使用visible region生成粗粒度的mask用于监督attention</li>
+</ul>
+</li>
+<li><img src="/images/pedestrian_detection/MGAN4.png" alt="MGAN4.png"></li>
+<li><img src="/images/pedestrian_detection/MGAN5.png" alt="MGAN5.png"></li>
+<li>相较于其他算法，MGAN的干净简单的做法赢得了更好的R与HO</li>
+<li><img src="/images/pedestrian_detection/MGAN6.png" alt="MGAN6.png"></li>
+<li>在caltech上效果也非常好<ul>
+<li>这里不得不提这个Bi-Box</li>
+<li><img src="/images/pedestrian_detection/MGAN7.png" alt="MGAN7.png"></li>
+<li>也是希望通过利用visible part的信息，改善recall，但是bi-box是两个分支，没有相互间的特征融合，而且对于行人对象，将可视部分视为全身的一部分（前置）而非另一个类，是一个更好的选择</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="dataset"><a href="#dataset" class="headerlink" title="dataset"></a>dataset</h1><hr>
+<p>一般来说，CityPersons数据集较小也有代表性，适合实验</p>
+<h2 id="CityPersons"><a href="#CityPersons" class="headerlink" title="CityPersons"></a>CityPersons</h2><ul>
+<li>a benchmark for CityPersons, which is a subset of the Cityscapes dataset.</li>
+<li>项目库 <a href="https://bitbucket.org/shanshanzhang/citypersons/src/default/" target="_blank" rel="noopener">https://bitbucket.org/shanshanzhang/citypersons/src/default/</a></li>
+<li>Benchmark</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">Method</th>
+<th align="center">MR (Reasonable)</th>
+<th align="center">MR (Reasonable_small)</th>
+<th align="center">MR (Reasonable_occ=heavy)</th>
+<th align="center">MR (All)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a href="https://arxiv.org/abs/1910.09188" target="_blank" rel="noopener">APD</a>*</td>
+<td align="center">8.27%</td>
+<td align="center">11.03%</td>
+<td align="center">35.45%</td>
+<td align="center">35.65%</td>
+</tr>
+<tr>
+<td align="center">YT-PedDet*</td>
+<td align="center">8.41%</td>
+<td align="center">10.60%</td>
+<td align="center">37.88%</td>
+<td align="center">37.22%</td>
+</tr>
+<tr>
+<td align="center">STNet*</td>
+<td align="center">8.92%</td>
+<td align="center">11.13%</td>
+<td align="center">34.31%</td>
+<td align="center">29.54%</td>
+</tr>
+<tr>
+<td align="center"><a href="https://arxiv.org/abs/1910.06160" target="_blank" rel="noopener">MGAN</a></td>
+<td align="center">9.29%</td>
+<td align="center">11.38%</td>
+<td align="center">40.97%</td>
+<td align="center">38.86%</td>
+</tr>
+<tr>
+<td align="center">DVRNet*</td>
+<td align="center">10.99%</td>
+<td align="center">15.68%</td>
+<td align="center">43.77%</td>
+<td align="center">41.48%</td>
+</tr>
+<tr>
+<td align="center"><a href="https://arxiv.org/abs/1911.11985" target="_blank" rel="noopener">HBA-RCNN</a>*</td>
+<td align="center">11.26%</td>
+<td align="center">15.68%</td>
+<td align="center">39.54%</td>
+<td align="center">38.77%</td>
+</tr>
+<tr>
+<td align="center"><a href="https://arxiv.org/abs/1807.08407" target="_blank" rel="noopener">OR-CNN</a></td>
+<td align="center">11.32%</td>
+<td align="center">14.19%</td>
+<td align="center">51.43%</td>
+<td align="center">40.19%</td>
+</tr>
+<tr>
+<td align="center"><a href="http://arxiv.org/abs/1711.07752" target="_blank" rel="noopener">Repultion Loss</a></td>
+<td align="center">11.48%</td>
+<td align="center">15.67%</td>
+<td align="center">52.59%</td>
+<td align="center">39.17%</td>
+</tr>
+<tr>
+<td align="center"><a href="https://arxiv.org/abs/1906.09756" target="_blank" rel="noopener">Cascade MS-CNN</a></td>
+<td align="center">11.62%</td>
+<td align="center">13.64%</td>
+<td align="center">47.14%</td>
+<td align="center">37.63%</td>
+</tr>
+<tr>
+<td align="center"><a href="http://202.119.95.70/cache/12/03/openaccess.thecvf.com/f36bf52f1783160552c75ae3cd300e84/Zhang_CityPersons_A_Diverse_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Adapted FasterRCNN</a></td>
+<td align="center">12.97%</td>
+<td align="center">37.24%</td>
+<td align="center">50.47%</td>
+<td align="center">43.86%</td>
+</tr>
+<tr>
+<td align="center"><a href="https://arxiv.org/abs/1607.07155" target="_blank" rel="noopener">MS-CNN</a></td>
+<td align="center">13.32%</td>
+<td align="center">15.86%</td>
+<td align="center">51.88%</td>
+<td align="center">39.94%</td>
+</tr>
+</tbody></table>
+<h2 id="Caltech"><a href="#Caltech" class="headerlink" title="Caltech"></a>Caltech</h2><ul>
+<li>home <a href="http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/" target="_blank" rel="noopener">http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/</a></li>
+<li>The Caltech Pedestrian Dataset consists of approximately 10 hours of 640x480 30Hz video taken from a vehicle driving through regular traffic in an urban environment. About 250,000 frames (in 137 approximately minute long segments) with a total of 350,000 bounding boxes and 2300 unique pedestrians were annotated. The annotation includes temporal correspondence between bounding boxes and detailed occlusion labels. More information can be found in our PAMI 2012 and CVPR 2009 benchmarking papers.</li>
+<li><img src="/images/pedestrian_detection/Caltech.png" alt="Caltech.png"><ul>
+<li>没错，就是fb三剑(ji)客(lao)之一的 Piotr Dollár 主导的项目。coco他也是主导者之一</li>
+</ul>
+</li>
+</ul>
+<h2 id="crowd-human"><a href="#crowd-human" class="headerlink" title="crowd human"></a>crowd human</h2><ul>
+<li>home <a href="http://www.crowdhuman.org/" target="_blank" rel="noopener">http://www.crowdhuman.org/</a></li>
+<li>face ++ 出品</li>
+<li><img src="/images/pedestrian_detection/crowd_human1.png" alt="crowd_human1.png"></li>
+<li>这是一个新的数据集，相较之前的数据集，单图人数更多，不同的person更多，也更加密集</li>
+<li><img src="/images/pedestrian_detection/crowd_human2.png" alt="crowd_human2.png"></li>
+<li>在标注上，crowd human也是独具特色<ul>
+<li>有人头和全身的标注</li>
+<li>有实框（明显的未被遮挡的对象）和虚框（有明显遮挡的对象）的区别</li>
+<li>X 代表ignore</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>cv</category>
+      </categories>
+      <tags>
+        <tag>cv</tag>
+        <tag>PAR</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Pedestrian Attribute Recognition Survey</title>
     <url>/2020/02/22/Pedestrian_Attribute_Recognition_Survey/</url>
     <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
 <a id="more"></a>
@@ -610,8 +841,8 @@
         <category>cv</category>
       </categories>
       <tags>
-        <tag>PAR</tag>
         <tag>cv</tag>
+        <tag>PAR</tag>
       </tags>
   </entry>
   <entry>
@@ -957,8 +1188,8 @@
         <category>cv</category>
       </categories>
       <tags>
-        <tag>cv</tag>
         <tag>human_parsing</tag>
+        <tag>cv</tag>
       </tags>
   </entry>
   <entry>
@@ -1456,10 +1687,10 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+        <tag>help</tag>
         <tag>next</tag>
         <tag>github</tag>
         <tag>blog</tag>
-        <tag>help</tag>
       </tags>
   </entry>
   <entry>
