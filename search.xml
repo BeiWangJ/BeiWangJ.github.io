@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Pedestrian Attribute Recognition Survey</title>
+    <title>Pedestrian Detection Survey</title>
     <url>/2020/02/22/Pedestrian_Detection_Survey/</url>
-    <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
+    <content><![CDATA[<p>梳理 Pedestrian Detection(行人检测) 相关介绍，数据集，算法</p>
 <a id="more"></a>
 <!-- toc -->
 
@@ -227,14 +227,14 @@
         <category>cv</category>
       </categories>
       <tags>
+        <tag>pedestrian_detection</tag>
         <tag>cv</tag>
-        <tag>PAR</tag>
       </tags>
   </entry>
   <entry>
     <title>Pedestrian Attribute Recognition Survey</title>
     <url>/2020/02/22/Pedestrian_Attribute_Recognition_Survey/</url>
-    <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
+    <content><![CDATA[<p>梳理 Pedestrian Attribute Recognition(行人属性识别) 相关介绍，数据集，算法</p>
 <a id="more"></a>
 <!-- toc -->
 
@@ -1188,8 +1188,8 @@
         <category>cv</category>
       </categories>
       <tags>
-        <tag>human_parsing</tag>
         <tag>cv</tag>
+        <tag>human_parsing</tag>
       </tags>
   </entry>
   <entry>
@@ -1687,10 +1687,10 @@
       </categories>
       <tags>
         <tag>hexo</tag>
-        <tag>help</tag>
         <tag>next</tag>
         <tag>github</tag>
         <tag>blog</tag>
+        <tag>help</tag>
       </tags>
   </entry>
   <entry>
