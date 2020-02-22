@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Pedestrian Attribute Recognition Survey</title>
+    <url>/2020/02/22/Pedestrian_Attribute_Recognition_Survey/</url>
+    <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<hr>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1>]]></content>
+      <categories>
+        <category>cv</category>
+      </categories>
+      <tags>
+        <tag>cv</tag>
+        <tag>PAR</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Human Parsing Survey</title>
+    <url>/2020/02/22/Human_Parsing_Survey/</url>
+    <content><![CDATA[<p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<hr>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
+<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>人体解析(Human Parsing)是细粒度的语义分割任务，旨在识别像素级别的人类图像的组成部分（例如，身体部位和服装）。</li>
+</ul>
+<h2 id="What-is-Human-Parsing"><a href="#What-is-Human-Parsing" class="headerlink" title="What is Human Parsing"></a>What is Human Parsing</h2><ul>
+<li>different from pedestrian segmentation<ul>
+<li>行人分割任务关注从图中抠出像素级的行人，目标可以是单人或者多人，往往是多人</li>
+<li>人体解析关注将身体各部分像素级抠出，目标往往是单人</li>
+</ul>
+</li>
+<li>semantic understanding of person<ul>
+<li>像素级理解人体</li>
+</ul>
+</li>
+<li>mul-label segmentation track<ul>
+<li>是多类别分割任务</li>
+</ul>
+</li>
+</ul>
+<h2 id="Usage-of-Human-Parsing"><a href="#Usage-of-Human-Parsing" class="headerlink" title="Usage of Human Parsing"></a>Usage of Human Parsing</h2><ul>
+<li>pedestrian attribution <ul>
+<li>more precising than label learning when using as a front method of pedestrian attribute learning</li>
+<li>现在行人属性学习有两种主思路<ul>
+<li>mul-label learning<ul>
+<li>使用标签对全图直接进行分类，使用attention进行unsupervised learning</li>
+<li>优点：打标成本低，方便大规模使用</li>
+<li>缺点：可靠性有待商榷</li>
+</ul>
+</li>
+<li>mul-task learning <ul>
+<li>使用人体解析作为前置，扣出后进行分析</li>
+<li>优点：可靠，后续操作灵活，且自带粗略属性</li>
+<li>缺点：打标成本极高</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Clothing Recommend<ul>
+<li>Human Parsing 能够扣出<br>  -Hat<br>  -Hair<br>  -Glove<br>  -Sunglasses<br>  -Upper-clothes<br>  -Dress<br>  -Coat<br>  -Socks<br>  -Pants<br>  -Jumpsuits<br>  -Scarf<br>  -Skirt</li>
+<li>在这个任务的基础上服饰的进一步解析推荐都是可期的</li>
+</ul>
+</li>
+<li>pose estimation <ul>
+<li>human parsing 能够扣出<ul>
+<li>Face</li>
+<li>Left-arm</li>
+<li>Right-arm</li>
+<li>Left-leg</li>
+<li>Right-leg</li>
+<li>Left-shoe</li>
+<li>Right-shoe</li>
+</ul>
+</li>
+<li>理论上是可以拿来做pose estimation和single frame的action recognition</li>
+<li>有些数据集例如 LIP 同时拥有 人体关键点 和 人体解析 的标注，联合优化目前做的人不多，理论上可行，有待研究</li>
+</ul>
+</li>
+<li>Re-ID<ul>
+<li>使用 human parsing 做对其然后进行re-id</li>
+<li>有人这么玩过效果不错但是消耗资源大，成本也高</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
+<h2 id="JPPNet"><a href="#JPPNet" class="headerlink" title="JPPNet"></a>JPPNet</h2><ul>
+<li><p>paper <a href="https://arxiv.org/pdf/1804.01984.pdf" target="_blank" rel="noopener">Look into Person: Joint Body Parsing &amp; Pose Estimation Network and A New Benchmark</a></p>
+</li>
+<li><p>github <a href="https://github.com/Engineering-Course/LIP_JPPNet" target="_blank" rel="noopener">https://github.com/Engineering-Course/LIP_JPPNet</a> </p>
+</li>
+<li><p><img src="/images/human_parsing/JPPNET1.png" alt="JPPNET1.png"></p>
+</li>
+<li><p><img src="/images/human_parsing/JPPNET2.png" alt="JPPNET2.png"></p>
+</li>
+<li><p>本文提出了 重量级的 human parsing benchmark – LIP</p>
+</li>
+<li><p>从数据集内容丰富度上看，之前的数据集中，MPII 和 LSP 就只有线，ATR就站着的，Pascaljiu 6种标，而LIP啥都有</p>
+</li>
+<li><p>从数据集本身数量上看， LIP也领先其他数据集许多</p>
+</li>
+<li><p>文章中提出了两种结构 JPPNet 以及 没有pose帮助的 SS-JPPNet，来看主结构</p>
+</li>
+<li><p><img src="/images/human_parsing/JPPNET3.png" alt="JPPNET3.png"></p>
+</li>
+<li><p>主要思想就是，共享backbone，fuse结果进行refine，具体是如何做的呢</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#backbone中提取对应特征 </span></span><br><span class="line">resnet_fea_100 = net_100.layers[<span class="string">'res4b22_relu'</span>]</span><br><span class="line">parsing_fea1_100 = net_100.layers[<span class="string">'res5d_branch2b_parsing'</span>]</span><br><span class="line">parsing_out1_100 = net_100.layers[<span class="string">'fc1_human'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#backbone中提取对应特征 </span></span><br><span class="line">resnet_fea_100 = net_100.layers[<span class="string">'res4b22_relu'</span>]</span><br><span class="line">parsing_fea1_100 = net_100.layers[<span class="string">'res5d_branch2b_parsing'</span>]</span><br><span class="line">parsing_out1_100 = net_100.layers[<span class="string">'fc1_human'</span>]</span><br><span class="line">    </span><br><span class="line"><span class="comment">#fc1_human是ASPP的output，出未refine的parsing结果。下面是源代码，是tf1.*的写法</span></span><br><span class="line">(self.feed(<span class="string">'res5b_relu'</span>,<span class="string">'bn5c_branch2c'</span>)</span><br><span class="line">.add(name=<span class="string">'res5c'</span>)</span><br><span class="line">.relu(name=<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">6</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c0'</span>))</span><br><span class="line">    </span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">12</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c1'</span>))</span><br><span class="line"></span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">18</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c2'</span>))</span><br><span class="line"></span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">24</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c3'</span>))</span><br><span class="line"> </span><br><span class="line">(self.feed(<span class="string">'fc1_human_c0'</span>,</span><br><span class="line"><span class="string">'fc1_human_c1'</span>,</span><br><span class="line"><span class="string">'fc1_human_c2'</span>,</span><br><span class="line"><span class="string">'fc1_human_c3'</span>)</span><br><span class="line">.add(name=<span class="string">'fc1_human'</span>))</span><br><span class="line"> </span><br><span class="line"><span class="comment">#再结合posenet进行refine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pose_net</span><span class="params">(image, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        pose_conv1 = conv2d(image, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv1'</span>)</span><br><span class="line">        pose_conv2 = conv2d(pose_conv1, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv2'</span>)</span><br><span class="line">        pose_conv3 = conv2d(pose_conv2, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv3'</span>)</span><br><span class="line">        pose_conv4 = conv2d(pose_conv3, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv4'</span>)</span><br><span class="line">        pose_conv5 = conv2d(pose_conv4, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv5'</span>)</span><br><span class="line">        pose_conv6 = conv2d(pose_conv5, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv6'</span>)</span><br><span class="line">    </span><br><span class="line">        pose_conv7 = conv2d(pose_conv6, <span class="number">512</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv7'</span>)</span><br><span class="line">        pose_conv8 = conv2d(pose_conv7, <span class="number">16</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>, bn=is_BN, name=<span class="string">'pose_conv8'</span>)</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">return</span> pose_conv8, pose_conv6   <span class="comment">#FCN结果，context</span></span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pose_refine</span><span class="params">(pose, parsing, pose_fea, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        <span class="comment"># 1*1 convolution remaps the heatmaps to match the number of channels of the intermediate features.</span></span><br><span class="line">        pose = conv2d(pose, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_remap'</span>)</span><br><span class="line">        parsing = conv2d(parsing, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_remap'</span>)</span><br><span class="line">        <span class="comment"># concat </span></span><br><span class="line">        pos_par = tf.concat([pose, parsing, pose_fea], <span class="number">3</span>)</span><br><span class="line">        conv1 = conv2d(pos_par, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv1'</span>)</span><br><span class="line">        conv2 = conv2d(conv1, <span class="number">256</span>, <span class="number">5</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv2'</span>)</span><br><span class="line">        conv3 = conv2d(conv2, <span class="number">256</span>, <span class="number">7</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv3'</span>)</span><br><span class="line">        conv4 = conv2d(conv3, <span class="number">256</span>, <span class="number">9</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv4'</span>)</span><br><span class="line">        conv5 = conv2d(conv4, <span class="number">256</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv5'</span>)</span><br><span class="line">        conv6 = conv2d(conv5, <span class="number">16</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>, bn=is_BN, name=<span class="string">'conv6'</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> conv6, conv4 <span class="comment">#FCN结果，context</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parsing_refine</span><span class="params">(parsing, pose, parsing_fea, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        pose = conv2d(pose, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_remap'</span>)</span><br><span class="line">        parsing = conv2d(parsing, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_remap'</span>)</span><br><span class="line">      </span><br><span class="line">        par_pos = tf.concat([parsing, pose, parsing_fea], <span class="number">3</span>)</span><br><span class="line">        parsing_conv1 = conv2d(par_pos, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv1'</span>)</span><br><span class="line">        parsing_conv2 = conv2d(parsing_conv1, <span class="number">256</span>, <span class="number">5</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv2'</span>)</span><br><span class="line">        parsing_conv3 = conv2d(parsing_conv2, <span class="number">256</span>, <span class="number">7</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv3'</span>)</span><br><span class="line">        parsing_conv4 = conv2d(parsing_conv3, <span class="number">256</span>, <span class="number">9</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv4'</span>)</span><br><span class="line">      </span><br><span class="line">        parsing_conv5 = conv2d(parsing_conv4, <span class="number">256</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv5'</span>)</span><br><span class="line">        parsing_human1 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">6</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human1'</span>)</span><br><span class="line">        parsing_human2 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">12</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human2'</span>)</span><br><span class="line">        parsing_human3 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">18</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human3'</span>)</span><br><span class="line">        parsing_human4 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">24</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human4'</span>)</span><br><span class="line">        parsing_human = tf.add_n([parsing_human1, parsing_human2, parsing_human3, parsing_human4], name=<span class="string">'parsing_human'</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> parsing_human, parsing_conv4 <span class="comment">#FCN结果，context</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>总体来说分以下几个步骤</p>
+<ol>
+<li>pose_out1_100, pose_fea1_100 = pose_net(resnet_fea_100, ‘fc1_pose’)  #先出一次pose结果</li>
+<li>pose_out2_100, pose_fea2_100 = pose_refine(pose_out1_100, parsing_out1_100, pose_fea1_100, name=’fc2_pose’)  # 结合第一次parsing结果出第二次pose结果</li>
+<li>parsing_out2_100, parsing_fea2_100 = parsing_refine( parsing_out1_100, pose_out1_100, parsing_fea1_100, name=’fc2_parsing’) # 结合第一次pose结果出第二次parsing结果</li>
+<li>parsing_out3_100, parsing_fea3_100 = parsing_refine(parsing_out2_100, pose_out2_100, parsing_fea2_100, name=’fc3_parsing’) # 结合第二次pose结果出第三次parsing结果</li>
+<li>pose_out3_100, pose_fea3_100 = pose_refine(pose_out2_100, parsing_out2_100, pose_fea2_100, name=’fc3_pose’) # 结合第二次parsing结果出第三次pose结果</li>
+</ol>
+</li>
+<li><p>从代码上看，和论文里的图略有不同</p>
+</li>
+<li><p>loss</p>
+<ul>
+<li><img src="/images/human_parsing/JPPNET4.png" alt="JPPNET4.png"></li>
+</ul>
+</li>
+<li><p>experiment</p>
+<ul>
+<li><img src="/images/human_parsing/JPPNET5.png" alt="JPPNET5.png"></li>
+<li>从实验结果上看效果提升很明显，值得一赞</li>
+</ul>
+</li>
+<li><p>more</p>
+<ul>
+<li>值得一提的是，SS-JPPNet 咋就和DeepLab差不多呢？上图</li>
+<li><img src="/images/human_parsing/JPPNET6.png" alt="JPPNET6.png"></li>
+<li>通过human parsing的9个部位，取其中心作为关键点进行训练，结果也是意料之中的没什么卵用。猜测是关键点结果还是来自于human parsing的结果，监督信息耦合。结果也是和deeplab相近</li>
+</ul>
+</li>
+</ul>
+<h2 id="CE2P"><a href="#CE2P" class="headerlink" title="CE2P"></a>CE2P</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1809.05996.pdf" target="_blank" rel="noopener">Devil in the Details: Towards Accurate Single and Multiple Human Parsing</a></li>
+<li>github <a href="https://github.com/liutinglt/CE2P" target="_blank" rel="noopener">https://github.com/liutinglt/CE2P</a></li>
+<li>参考链接 <a href="https://blog.csdn.net/siyue0211/article/details/90927712" target="_blank" rel="noopener">https://blog.csdn.net/siyue0211/article/details/90927712</a></li>
+<li>标题很风骚，内容还是很硬核的</li>
+<li>人体解析现在主要有两大类解决方案：<ol>
+<li>High-resolution Maintenance，这种方法通过获得高分辨率的特征来恢复细节信息。它存在的问题是，由于卷积中的池化操作和卷积中的步长，会让最终生成的特征较小。解决方法是，删除一些下采样操作（max pooling etc.）或从一些低层特征中获取信息。</li>
+<li>Context Information Embedding. 这种方法通过捕获丰富的上下文信息来处理多尺度的对象。ASPP和PSP是使用这一方式解决问题的主要结构。</li>
+</ol>
+</li>
+<li>CE2P主要包括三大模块：<ol>
+<li>一个高分辨率的embedding 模块，作用是放大特征图以恢复细节</li>
+<li>一个全局上下文embedding 模块，作用是编码多尺度的上下文信息</li>
+<li>一个边缘感知模块，用于整合对象轮廓的特征，以细化解析预测的边界</li>
+</ol>
+</li>
+<li>Contribution<ol>
+<li>作者分析了一些人脸解析方法，验证其有效性。并说明如何使用这些方法来达到更好的效果</li>
+<li>作者利用了人脸解析中一些有效的方法，构建了CE2P框架</li>
+<li>CE2P框架达到了公开数据集state-of-art的效果</li>
+<li>代码开源，可以作为baseline使用</li>
+</ol>
+</li>
+<li>下面来看看结构<ul>
+<li><img src="/images/human_parsing/CE2P1.png" alt="CE2P1.png"></li>
+<li>图中红色部分是PSPModule   <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PSPModule</span><span class="params">(nn.Module)</span>:</span>  <span class="comment"># Pyramid scene parsing network</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Reference: </span></span><br><span class="line"><span class="string">    Zhao, Hengshuang, et al. *"Pyramid scene parsing network."*</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, out_features=<span class="number">512</span>, sizes=<span class="params">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span>)</span>:</span></span><br><span class="line">        super(PSPModule, self).__init__()</span><br><span class="line">        self.stages = []</span><br><span class="line">        self.stages = nn.ModuleList([self._make_stage(features, out_features, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])</span><br><span class="line">        self.bottleneck = nn.Sequential(</span><br><span class="line">            nn.Conv2d(features+len(sizes)*out_features, out_features, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(out_features),</span><br><span class="line">            )</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_stage</span><span class="params">(self, features, out_features, size)</span>:</span></span><br><span class="line">        prior = nn.AdaptiveAvgPool2d(output_size=(size, size))</span><br><span class="line">        conv = nn.Conv2d(features, out_features, kernel_size=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        bn = InPlaceABNSync(out_features)</span><br><span class="line">        <span class="keyword">return</span> nn.Sequential(prior, conv, bn)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span></span><br><span class="line">        h, w = feats.size(<span class="number">2</span>), feats.size(<span class="number">3</span>)</span><br><span class="line">        priors = [ F.interpolate(input=stage(feats), size=(h, w), mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>) <span class="keyword">for</span> stage <span class="keyword">in</span> self.stages] + [feats]</span><br><span class="line">        bottle = self.bottleneck(torch.cat(priors, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> bottle</span><br></pre></td></tr></table></figure></li>
+<li>黄色部分是 high-res 的module，常规的conv cat操作  <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Decoder_Module</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, num_classes)</span>:</span></span><br><span class="line">        super(Decoder_Module, self).__init__()</span><br><span class="line">        self.conv1 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">512</span>, <span class="number">256</span>, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(<span class="number">256</span>)</span><br><span class="line">            )</span><br><span class="line">        self.conv2 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">48</span>, kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(<span class="number">48</span>)</span><br><span class="line">            )</span><br><span class="line">        self.conv3 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">304</span>, <span class="number">256</span>, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(<span class="number">256</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">256</span>, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(<span class="number">256</span>)</span><br><span class="line">            )</span><br><span class="line">        self.conv4 = nn.Conv2d(<span class="number">256</span>, num_classes, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, xt, xl)</span>:</span></span><br><span class="line">        _, _, h, w = xl.size()</span><br><span class="line"></span><br><span class="line">        xt = F.interpolate(self.conv1(xt), size=(h, w), mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">        xl = self.conv2(xl)</span><br><span class="line">        x = torch.cat([xt, xl], dim=<span class="number">1</span>)</span><br><span class="line">        x = self.conv3(x)</span><br><span class="line">        seg = self.conv4(x)</span><br><span class="line">        <span class="keyword">return</span> seg, x</span><br></pre></td></tr></table></figure></li>
+<li>绿色部分是本文的亮点 Edge_Module，一方面提取了边缘特征信息，另一方面得到了edge图用于计算loss，从代码上看也是非常普通的做法  <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Edge_Module</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,in_fea=[<span class="number">256</span>,<span class="number">512</span>,<span class="number">1024</span>], mid_fea=<span class="number">256</span>, out_fea=<span class="number">2</span>)</span>:</span></span><br><span class="line">        super(Edge_Module, self).__init__()</span><br><span class="line">        </span><br><span class="line">        self.conv1 =  nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_fea[<span class="number">0</span>], mid_fea, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(mid_fea)</span><br><span class="line">            ) </span><br><span class="line">        self.conv2 =  nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_fea[<span class="number">1</span>], mid_fea, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(mid_fea)</span><br><span class="line">            )  </span><br><span class="line">        self.conv3 =  nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_fea[<span class="number">2</span>], mid_fea, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">            InPlaceABNSync(mid_fea)</span><br><span class="line">        )</span><br><span class="line">        self.conv4 = nn.Conv2d(mid_fea,out_fea, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, dilation=<span class="number">1</span>, bias=<span class="literal">True</span>)</span><br><span class="line">        self.conv5 = nn.Conv2d(out_fea*<span class="number">3</span>,out_fea, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>, dilation=<span class="number">1</span>, bias=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x1, x2, x3)</span>:</span></span><br><span class="line">        _, _, h, w = x1.size()</span><br><span class="line">        </span><br><span class="line">        edge1_fea = self.conv1(x1)</span><br><span class="line">        edge1 = self.conv4(edge1_fea)</span><br><span class="line">        edge2_fea = self.conv2(x2)</span><br><span class="line">        edge2 = self.conv4(edge2_fea)</span><br><span class="line">        edge3_fea = self.conv3(x3)</span><br><span class="line">        edge3 = self.conv4(edge3_fea)        </span><br><span class="line">        </span><br><span class="line">        edge2_fea =  F.interpolate(edge2_fea, size=(h, w), mode=<span class="string">'bilinear'</span>,align_corners=<span class="literal">True</span>) </span><br><span class="line">        edge3_fea =  F.interpolate(edge3_fea, size=(h, w), mode=<span class="string">'bilinear'</span>,align_corners=<span class="literal">True</span>) </span><br><span class="line">        edge2 =  F.interpolate(edge2, size=(h, w), mode=<span class="string">'bilinear'</span>,align_corners=<span class="literal">True</span>)</span><br><span class="line">        edge3 =  F.interpolate(edge3, size=(h, w), mode=<span class="string">'bilinear'</span>,align_corners=<span class="literal">True</span>) </span><br><span class="line"> </span><br><span class="line">        edge = torch.cat([edge1, edge2, edge3], dim=<span class="number">1</span>)</span><br><span class="line">        edge = self.conv5(edge)</span><br><span class="line"></span><br><span class="line">        edge_fea = torch.cat([edge1_fea, edge2_fea, edge3_fea], dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> edge, edge_fea</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Note that the edge annotation used in the edge perceiving module is directly generated from the parsing annotation by extracting border between different semantics.<ul>
+<li>仅是使用parsing的annotation，就生成了edge的annotation<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_edge</span><span class="params">(label, edge_width=<span class="number">3</span>)</span>:</span></span><br><span class="line">    h, w = label.shape</span><br><span class="line">    edge = np.zeros(label.shape)    </span><br><span class="line">    <span class="comment"># right</span></span><br><span class="line">    edge_right = edge[<span class="number">1</span>:h, :]</span><br><span class="line">        edge_right[(label[<span class="number">1</span>:h, :] != label[:h - <span class="number">1</span>, :]) &amp; (label[<span class="number">1</span>:h, :] != <span class="number">255</span>)</span><br><span class="line">                  &amp; (label[:h - <span class="number">1</span>, :] != <span class="number">255</span>)] = <span class="number">1</span>  </span><br><span class="line">    <span class="comment"># up</span></span><br><span class="line">    edge_up = edge[:, :w - <span class="number">1</span>]</span><br><span class="line">        edge_up[(label[:, :w - <span class="number">1</span>] != label[:, <span class="number">1</span>:w])</span><br><span class="line">               &amp; (label[:, :w - <span class="number">1</span>] != <span class="number">255</span>)</span><br><span class="line">               &amp; (label[:, <span class="number">1</span>:w] != <span class="number">255</span>)] = <span class="number">1</span>    </span><br><span class="line">    <span class="comment"># upright</span></span><br><span class="line">    edge_upright = edge[:h - <span class="number">1</span>, :w - <span class="number">1</span>]</span><br><span class="line">        edge_upright[(label[:h - <span class="number">1</span>, :w - <span class="number">1</span>] != label[<span class="number">1</span>:h, <span class="number">1</span>:w])</span><br><span class="line">                    &amp; (label[:h - <span class="number">1</span>, :w - <span class="number">1</span>] != <span class="number">255</span>)</span><br><span class="line">                    &amp; (label[<span class="number">1</span>:h, <span class="number">1</span>:w] != <span class="number">255</span>)] = <span class="number">1</span> </span><br><span class="line">    <span class="comment"># bottomright</span></span><br><span class="line">    edge_bottomright = edge[:h - <span class="number">1</span>, <span class="number">1</span>:w]</span><br><span class="line">        edge_bottomright[(label[:h - <span class="number">1</span>, <span class="number">1</span>:w] != label[<span class="number">1</span>:h, :w - <span class="number">1</span>])</span><br><span class="line">                        &amp; (label[:h - <span class="number">1</span>, <span class="number">1</span>:w] != <span class="number">255</span>)</span><br><span class="line">                        &amp; (label[<span class="number">1</span>:h, :w - <span class="number">1</span>] != <span class="number">255</span>)] = <span class="number">1</span>  </span><br><span class="line">    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (edge_width, edge_width))</span><br><span class="line">    edge = cv2.dilate(edge, kernel)</span><br><span class="line">    <span class="keyword">return</span> edge</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>LOSS<ul>
+<li><img src="/images/human_parsing/CE2P2.png" alt="CE2P2.png"></li>
+<li>CE三连</li>
+</ul>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/human_parsing/CE2P3.png" alt="CE2P3.png"></li>
+<li>在不适用point的监督信息的情况下mIOU还提升了不少，比deeplab提升近9个点(20%)，在test集上，结果非常惊艳，远超JPP</li>
+<li><img src="/images/human_parsing/CE2P4.png" alt="CE2P4.png"></li>
+</ul>
+</li>
+<li>非常强大的结构，非常值得作为baseline使用</li>
+</ul>
+<h2 id="ACE2P-pp"><a href="#ACE2P-pp" class="headerlink" title="ACE2P-pp"></a>ACE2P-pp</h2><ul>
+<li>git <a href="https://github.com/PaddlePaddle/PaddleSeg/tree/release/v0.1.0/contrib/ACE2P" target="_blank" rel="noopener">https://github.com/PaddlePaddle/PaddleSeg/tree/release/v0.1.0/contrib/ACE2P</a></li>
+<li>目前的总统山榜首是 paddleseg 的 Augmented Context Embedding with Edge Perceiving(ACE2P)</li>
+<li>ACE2P有两个版本，此处版本为rank 1的paddleseg版本，只有inference版本，paddlepaddle是静态图，具体信息的放出也比较有限</li>
+<li>改编自 Devil in the Details: Towards Accurate Single and Multiple Human Parsing <a href="https://arxiv.org/abs/1809.05996" target="_blank" rel="noopener">https://arxiv.org/abs/1809.05996</a></li>
+<li>结构图 </li>
+<li><img src="/images/human_parsing/ACE2P-pp1.jpg" alt="ACE2P1.jpg"></li>
+<li>ACE2P模型包含三个分支:<ol>
+<li>语义分割分支</li>
+<li>边缘检测分支</li>
+<li>融合分支</li>
+</ol>
+</li>
+<li>语义分割分支采用resnet101作为backbone,通过Pyramid Scene Parsing Network融合上下文信息以获得更加精确的特征表征</li>
+<li>边缘检测分支采用backbone的中间层特征作为输入，预测二值边缘信息</li>
+<li>融合分支将语义分割分支以及边缘检测分支的特征进行融合，以获得边缘细节更加准确的分割图像。</li>
+<li>分割问题一般采用mIoU作为评价指标，特别引入了IoU loss结合cross-entropy loss以针对性优化这一指标</li>
+<li>测试阶段，采用多尺度以及水平翻转的结果进行融合生成最终预测结果</li>
+<li>训练阶段，采用余弦退火的学习率策略， 并且在学习初始阶段采用线性warm up</li>
+<li>数据预处理方面，保持图片比例并进行随机缩放，随机旋转，水平翻转作为数据增强策略</li>
+<li>LIP指标<ul>
+<li>该模型在测试尺度为’377,377,473,473,567,567’且水平翻转的情况下，meanIoU为62.63</li>
+<li>多模型ensemble后meanIoU为65.18, 居LIP Single-Person Human Parsing Track榜单第一</li>
+</ul>
+</li>
+<li><img src="/images/human_parsing/ACE2P-pp2.jpg" alt="ACE2P2.jpg"></li>
+<li>主要思想来自于 CE2P</li>
+<li>和CE2P相比，几乎没有太多的变化，仅仅多了从 edge 分支 到fuse分支一条线路</li>
+<li>目前的LIP第一，使用paddlepaddle架构，放出了模型和推论脚本，没有训练脚本</li>
+</ul>
+<h2 id="ACE2P"><a href="#ACE2P" class="headerlink" title="ACE2P"></a>ACE2P</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1910.09777.pdf" target="_blank" rel="noopener">Self-Correction for Human Parsing</a></li>
+<li>该篇文章为ACE2P rank3版本，学术版本，10月22日首次挂在arxiv</li>
+<li>git <a href="https://github.com/PeikeLi/Self-Correction-Human-Parsing" target="_blank" rel="noopener">https://github.com/PeikeLi/Self-Correction-Human-Parsing</a></li>
+<li>git版本只有inference，不过值得一提的是，由于使用的是pytorch，model是开放的可见的，对比ce2p后发现基本结构基本没有不同，区别在于loss和schp方法</li>
+<li><img src="/images/human_parsing/ACE2P1.png" alt="ACE2P1.png"></li>
+<li>展示了schp随cycle改进pred的效果</li>
+<li><img src="/images/human_parsing/ACE2P2.png" alt="ACE2P2.png"></li>
+<li>framework和paddleseg的基本一直，只是将loss function展开了，其中consistency constraint是一个新玩意。其中还有一点没有确定的是，ce2p是明显有三个输出的framework，这里的这个看样子仅有两个输出，有待实验确定</li>
+<li><img src="/images/human_parsing/ACE2P3.png" alt="ACE2P3.png"></li>
+<li>loss的第一部分是objective loss，是cls loss（bce） + miou loss。文中的[1] The Lovasz-Softmax loss: A tractable surrogate for the optimization of the ´ intersection-over-union measure in neural networks 是针对miou进行优化的loss，git <a href="https://github.com/bermanmaxim/LovaszSoftmax，有兴趣的同学可以点进去看看" target="_blank" rel="noopener">https://github.com/bermanmaxim/LovaszSoftmax，有兴趣的同学可以点进去看看</a></li>
+<li><img src="/images/human_parsing/ACE2P4.png" alt="ACE2P4.png"></li>
+<li>一致性约束。主要是为了回应他前文所说的<ul>
+<li>Second, CE2P only implicitly facilitates the parsing results with the edge predictions by feature-level fusion. There is no explicit constraint to ensure the parsing results maintaining the same geometry shape of the boundary predictions.</li>
+</ul>
+</li>
+<li>这个edge module是否真的是帮助了pred，这里比对了pred中的edge和pred中fuse后gen出的edge，以保证这个fuse是靠谱的</li>
+<li><img src="/images/human_parsing/ACE2P5.png" alt="ACE2P5.png"></li>
+<li>loss<ul>
+<li>We choose the ResNet-set. 101 [12] as the backbone of the feature extractor and use an ImageNet [8] pre-trained weights. Specifically, we fix the first three residual layers and set the stride size of last residual layer to 1 with a dilation rate of 2. In this way, the final output is enlarged to 1/16 resolution size w.r.t the original image. We adopt pyramid scene parsing network [33] as the context encoding module. We use 473 × 473 as the input resolution. Training is done with a total batch size of 36. For our joint loss function, we set the weight of each term as λ1 = 1, λ2 = 1, λ3 = 0.1. The initial learning rate is set as 7e-3 with a linear increasing warm-up strategy for 10 epochs. We train our network for 150 epochs in total for a fair comparison, the first 100 epochs as initialization following 5 cycles each contains 10 epochs of the self-correction process.</li>
+</ul>
+</li>
+<li>训练细节<ul>
+<li><img src="/images/human_parsing/ACE2P6.png" alt="ACE2P6.png"></li>
+<li>展示了schp的策略，先训练了100个epoch作为Cycle 0 base，然后使用 anneal cosine decay lr策略restart4次，将权重结合，模型效果就会像是ensemble了一样，越来越好</li>
+<li><img src="/images/human_parsing/ACE2P7.png" alt="ACE2P7.png"></li>
+<li>这个weight aggregation也是很直白的，w0是init的，m=1 w1 = m/(m+1) * w0 + 1/(m+1)w = 1/2<em>w0 + 1/2</em>w，就是一个移动平均</li>
+<li>After updating the current model weight with the former optimal one from the last cycle, we forward all the training data for one epoch to re-estimate the statistics of the parameters (i.e. moving average and standard deviation) in all batch normalization [14] layers. During these successive cycles of model aggregation, the network leads to wider model optima as well as improved model’s generalization ability.</li>
+<li>作者也提到说模型融合的时候需要一个epoch来使BN层适应</li>
+<li><img src="/images/human_parsing/ACE2P8.png" alt="ACE2P8.png"></li>
+<li>这个是说，怕这个label坑爹，使用原始的label init y0，使用pred结果更新label，机制和weight一样</li>
+<li><img src="/images/human_parsing/ACE2P9.png" alt="ACE2P9.png"></li>
+<li>schp的核心算法，每经过一次cycle，更新w，BN的parameter（mean var）不算w，额外更新下，使用新的w计算pred的y，更新y</li>
+</ul>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/human_parsing/ACE2P10.png" alt="ACE2P10.png"></li>
+<li>ACE2P效果就很棒，加上SCHP，效果超CE2P一大截</li>
+<li><img src="/images/human_parsing/ACE2P11.png" alt="ACE2P11.png"></li>
+<li>在 Pascal-Person-Part val上表现也同样不俗，使用简单的test技巧后达到了sota</li>
+<li><img src="/images/human_parsing/ACE2P12.png" alt="ACE2P12.png"></li>
+<li>作者还在LIP上做了不同backbone的SCHP实验，使用SCHP能普涨一个点以上；当使用不同context encoding模块，使用了SCHP后，PSP ，ASPP，OCNet都得到了一个点以上的提升，差距缩小</li>
+<li><img src="/images/human_parsing/ACE2P13.png" alt="ACE2P13.png"></li>
+<li>说明了3个额外loss的可靠性；说明了schp中模型融合和label的refine都是有效果的</li>
+</ul>
+</li>
+<li>CE2P是正式在semantic segmentation中开启了human parsing分支，ACE2P是大幅改进了性能，都是非常推荐精读细读的文章</li>
+</ul>
+<hr>
+<h1 id="Dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h1><hr>
+<h2 id="LIP"><a href="#LIP" class="headerlink" title="LIP"></a>LIP</h2><ul>
+<li>look into person</li>
+<li>home <a href="http://sysu-hcp.net/lip/overview.php" target="_blank" rel="noopener">http://sysu-hcp.net/lip/overview.php</a></li>
+<li>Human-Cyber-Physical Intelligence Integration Lab of Sun Yat-sen University （中山大学人机物智能融合实验室出品）</li>
+<li>Overview<ul>
+<li>Look into Person (LIP) is a new large-scale dataset, focus on semantic understanding of person. Following are the detailed descriptions.<ul>
+<li>Volume<ul>
+<li>The dataset contains 50,000 images with elaborated pixel-wise annotations with 19 semantic human part labels and 2D human poses with 16 key points.</li>
+</ul>
+</li>
+<li>Diversity<ul>
+<li>The annotated 50,000 images are cropped person instances from COCO dataset with size larger than 50 * 50.The images collected from the real-world scenarios contain human appearing with challenging poses and views, heavily occlusions, various appearances and low-resolutions. We are working on collecting and annotating more images to increase diversity.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Four Track<ol>
+<li>Single Person （Main）<ul>
+<li>We have divided images into three sets. 30462 images for training set, 10000 images for validation set and 10000 for testing set.The dataset is available at <a href="https://drive.google.com/drive/folders/0BzvH3bSnp3E9ZW9paE9kdkJtM3M?usp=sharing" target="_blank" rel="noopener">Google Drive</a> and <a href="http://pan.baidu.com/s/1nvqmZBN" target="_blank" rel="noopener">Baidu Drive</a>.</li>
+<li>Besides we have another large dataset mentioned in “<a href="http://www.cv-foundation.org/openaccess/content_iccv_2015/html/Liang_Human_Parsing_With_ICCV_2015_paper.html" target="_blank" rel="noopener">Human parsing with contextualized convolutional neural network.” ICCV’15</a>, which focuses on fashion images. You can download the dataset including 17000 images as extra training data.</li>
+</ul>
+</li>
+<li>Multi-Person  (CHIP)<ul>
+<li>To stimulate the multiple-human parsing research, we collect the images with multiple person instances to establish the first standard and comprehensive benchmark for instance-level human parsing. Our Crowd Instance-level Human Parsing Dataset (CIHP) contains 28280 training, 5000 validation and 5000 test images, in which there are 38280 multiple-person images in total.</li>
+<li>You can also downlod this dataset at <a href="https://drive.google.com/drive/folders/0BzvH3bSnp3E9ZW9paE9kdkJtM3M?usp=sharing" target="_blank" rel="noopener">Google Drive</a> and <a href="http://pan.baidu.com/s/1nvqmZBN" target="_blank" rel="noopener">Baidu Drive</a>.</li>
+</ul>
+</li>
+<li>Video Multi-Person Human Parsing<ul>
+<li>VIP(Video instance-level Parsing) dataset, the first video multi-person human parsing benchmark, consists of 404 videos covering various scenarios. For every 25 consecutive frames in each video, one frame is annotated densely with pixel-wise semantic part categories and instance-level identification. There are 21247 densely annotated images in total. We divide these 404 sequences into 304 train sequences, 50 validation sequences and 50 test sequences.</li>
+<li>You can also downlod this dataset at <a href="https://1drv.ms/f/s!ArFSFaZzVErwgSHRpiJNJTzgMR8j" target="_blank" rel="noopener">OneDrive</a> and <a href="https://pan.baidu.com/s/18_PVNy7FCh4T74nVzRXbtA" target="_blank" rel="noopener">Baidu Drive</a>.<ul>
+<li>VIP_Fine: All annotated images and fine annotations for train and val sets.</li>
+<li>VIP_Sequence: 20-frame surrounding each VIP_Fine image (-10 | +10).</li>
+<li>VIP_Videos: 404 video sequences of VIP dataset.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Image-based Multi-pose Virtual Try On<ul>
+<li>MPV (Multi-Pose Virtual try on) dataset, which consists of 35,687/13,524 person/clothes images, with the resolution of 256x192. Each person has different poses. We split them into the train/test set 52,236/10,544 three-tuples, respectively.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="MHP"><a href="#MHP" class="headerlink" title="MHP"></a>MHP</h2><ul>
+<li>Multi-Human Parsing</li>
+<li>home <a href="https://lv-mhp.github.io/" target="_blank" rel="noopener">https://lv-mhp.github.io/</a></li>
+<li>Learning and Vision (LV) Group, National University of Singapore (NUS) (新加坡国立大学机器学习与视觉小组)</li>
+<li>Statistics<ul>
+<li>MHP v1.0<ul>
+<li>The MHP v1.0 dataset contains 4,980 images, each with at least two persons (average is 3). We randomly choose 980 images and their corresponding annotations as the testing set. The rest form a training set of 3,000 images and a validation set of 1,000 images. For each instance, 18 semantic categories are defined and annotated except for the “background” category, i.e. “hat”, “hair”, “sunglasses”, “upper clothes”, “skirt”, “pants”, “dress”, “belt”, “left shoe”, “right shoe”, “face”, “left leg”, “right leg”, “left arm”, “right arm”, “bag”, “scarf” and “torso skin”. Each instance has a complete set of annotations whenever the corresponding category appears in the current image.</li>
+</ul>
+</li>
+<li>MHP v2.0<ul>
+<li>The MHP v2.0 dataset contains 25,403 images, each with at least two persons (average is 3). We randomly choose 5,000 images and their corresponding annotations as the testing set. The rest form a training set of 15,403 images and a validation set of 5,000 images. For each instance, 58 semantic categories are defined and annotated except for the “background” category, i.e. “cap/hat”, “helmet”, “face”, “hair”, “left- arm”, “right-arm”, “left-hand”, “right-hand”, “protector”, “bikini/bra”, “jacket/windbreaker/hoodie”, “t-shirt”, “polo-shirt”, “sweater”, “sin- glet”, “torso-skin”, “pants”, “shorts/swim-shorts”, “skirt”, “stock- ings”, “socks”, “left-boot”, “right-boot”, “left-shoe”, “right-shoe”, “left- highheel”, “right-highheel”, “left-sandal”, “right-sandal”, “left-leg”, “right-leg”, “left-foot”, “right-foot”, “coat”, “dress”, “robe”, “jumpsuits”, “other-full-body-clothes”, “headwear”, “backpack”, “ball”, “bats”, “belt”, “bottle”, “carrybag”, “cases”, “sunglasses”, “eyewear”, “gloves”, “scarf”, “umbrella”, “wallet/purse”, “watch”, “wristband”, “tie”, “other-accessaries”, “other-upper-body-clothes”, and “other-lower-body-clothes”. Each instance has a complete set of annotations whenever the corresponding category appears in the current image.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Pascal-Person-Part-Dataset"><a href="#Pascal-Person-Part-Dataset" class="headerlink" title="Pascal-Person-Part Dataset"></a>Pascal-Person-Part Dataset</h2><ul>
+<li>1,716 images for training and 1,817 for testing</li>
+<li>first mentioned paper <a href="https://arxiv.org/pdf/1406.2031.pdf" target="_blank" rel="noopener">Detect What You Can: Detecting and Representing Objects using Holistic Models and Body Parts</a><ul>
+<li>没找到下载的地方= =。。标注了part</li>
+</ul>
+</li>
+<li>second paper <a href="https://arxiv.org/pdf/1708.03383.pdf" target="_blank" rel="noopener">Joint Multi-Person Pose Estimation and Semantic Part Segmentation</a><ul>
+<li><a href="https://sukixia.github.io/materials/pascal_data.zip" target="_blank" rel="noopener">download link</a></li>
+<li>附加标注了key-point</li>
+<li>提出了联合学习方法<ul>
+<li><img src="/images/human_parsing/Pascal-Person-Part-Dataset.png" alt="Pascal-Person-Part-Dataset.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="ATR"><a href="#ATR" class="headerlink" title="ATR"></a>ATR</h2><ul>
+<li>project url <a href="http://www.sysu-hcp.net/deep-human-parsing/" target="_blank" rel="noopener">link</a></li>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Liang_Human_Parsing_With_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Human Parsing with Contextualized Convolutional Neural Network</a></li>
+<li>Human parsing is to predict every pixel with 18 labels: face, sunglass, hat, scarf, hair, upperclothes, left-arm, right-arm, belt, pants, left-leg, right-leg, skirt, left-shoe, right-shoe, bag, dress and null. Totally, 7,700 images are included in the ATR dataset [15], 6,000 for training, 1,000 for testing and 700 for validation1 . T</li>
+<li>download link <a href="https://github.com/lemondan/HumanParsing-Dataset" target="_blank" rel="noopener">link</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>cv</category>
+      </categories>
+      <tags>
+        <tag>cv</tag>
+        <tag>human_parsing</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Crowd Counting Survey </title>
+    <url>/2020/02/22/Crowd_Counting_Survey/</url>
+    <content><![CDATA[<p>梳理 Crowd Counting(人群密度估计) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<hr>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
+<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>(mainly forked from <a href="https://github.com/CommissarMa/Crowd_counting_from_scratch" target="_blank" rel="noopener">https://github.com/CommissarMa/Crowd_counting_from_scratch</a>)</li>
+<li>Crowd counting has a long research history. About twenty years ago or even earlier, researchers have been interested in developing the method to count the number of pedestrians in the image automatically.</li>
+<li>There are mainly three categories of methods to count pedestrians in crowd.<ul>
+<li>Pedestrian detector. You can use traditional HOG-based detector or deeplearning-based detector like YOLOs or RCNNs. But effect of this category of methods are seriously affected by occlusion in crowd scenes. （检测器作为拥挤场景下人数估计受遮挡影响巨大）</li>
+<li>Number regression. This category of methods just capture some features from original images and use machine-learning models to map the relation between features and numbers. An improved version via deep-learning directly map the relation between original image and its numbers. Before deep-learning, regression-based methods were SOTA and researchers are focus on finding more effective features to estimate more accuracy results. But when deep-learning get popular and achieve better results, regression-based methods get less attention because it is hard to capture effective hand-crafted features. （使用手工特征 + ml方法进行人数统计，在deep learning之前是最work的方法）</li>
+<li>Density-map. This category of methods are the mainstream methods in crowd counting nowadays. Compared with detector-based methods and regression-based methods, density-map can not only give the information of pedestrian numbers, but also can reflect the distribution of pedestrians, which can make the models to fit original images with opposite density better.（将人群估计转化为 密度图|热力图 的逐像素回归问题是当下最常见的方案）</li>
+</ul>
+</li>
+</ul>
+<h2 id="What-is-density-map"><a href="#What-is-density-map" class="headerlink" title="What is density-map?"></a>What is density-map?</h2><ul>
+<li>Simply speaking, we use a gaussian kernel to simulate a head in corresponding position of the original image. After do this action for all heads in the image, we then perform normalization in matrix which is composed by all these gaussian kernels. The sample picture is as follows:（密集人群统计的标注都是json化的点，通过映射回原图进行高斯滤波得到gt的热力图）<ul>
+<li><img src="/images/crowd_counting/crowd_counting_density_map_sample.png" alt="crowd_counting_density_map_sample.png"></li>
+</ul>
+</li>
+<li>Further, there are three strategies to generate density-map.<ol>
+<li>use the same gaussian kernel to simulate all heads. This method applies to scene without severe perspective distortion. [fixed_kernel_code]</li>
+<li>use the perspective map(which is generated by linear regression of pedestrians’ height) to generate gaussian kernels with different sizes to different heads. This method applies to fixed scene. [perspective_kernel_code] And [paper-zhang-CVPR2015] give detailed instruction about how to generate perspective density-map.</li>
+<li>use the k-nearest heads to generate gaussian kernels with different sizes to different heads. This method applies to very crowded scenes. [k_nearset_kernel_code] And [paper-MCNN-CVPR2016] give detailed instruction about how to generate k-nearest density-map.  </li>
+<li>（具体来说就是 1:形变较小的远距离安防场景用一样尺寸大小的高斯核就行了  2:有形变的就用随着高度变化的高斯核  3:如果说极度密集的话最好使用k近邻方法生成不同尺寸的高斯核）</li>
+</ol>
+</li>
+</ul>
+<h2 id="Model-for-beginner"><a href="#Model-for-beginner" class="headerlink" title="Model for beginner"></a>Model for beginner</h2><ul>
+<li>For beginner, [paper-MCNN-CVPR2016] is the most suitable model to learn crowd counting. The model is not complex and have an acceptable accuracy. We provide an easy [MCNN_model_code] to let you know MCNN rapidly and an easy full realization of [MCNN-pytorch]. （MCNN作为人群估计最为经典文章之一，非常适合作为入门首选）</li>
+</ul>
+<hr>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
+<h2 id="MCNN"><a href="#MCNN" class="headerlink" title="MCNN"></a>MCNN</h2><ul>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Single-Image Crowd Counting via Multi-Column Convolutional Neural Network</a></li>
+<li>Contributions of this paper<ul>
+<li>In this paper, we aim to conduct accurate crowd counting from an arbitrary still image, with an arbitrary camera perspective and crowd density. At first sight this seems to be a rather daunting task, since we obviously need to conquer series of challenges:<ul>
+<li>Foreground segmentation is indispensable in most existing work. However foreground segmentation is a challenging task all by itself and inaccurate segmentation will have irreversible bad effect on the final count. In our task, the viewpoint of an image can be arbitrary. Without information about scene geometry or motion, it is almost impossible to segment the crowd from its background accurately. Hence, we have to estimate the number of crowd without segmenting the foreground first. （抠出前景不是必须的了）</li>
+<li>The density and distribution of crowd vary significantly in our task (or datasets) and typically there are tremendous occlusions for most people in each image. Hence traditional detection-based methods do not work well on such images and situations.（热力图特好使）</li>
+<li>As there might be significant variation in the scale of the people in the images, we need to utilize features at different scales all together in order to accurately estimate crowd counts for different images. Since we do not have tracked features and it is difficult to handcraft features for all different scales, we have to resort to methods that can automatically learn effective features.（deep learning来啦小老弟）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>To overcome above challenges, in this work, we propose a novel framework based on convolutional neural network (CNN) [9, 16] for crowd counting in an arbitrary still image. More specifically, we propose a multi-column convolutional neural network (MCNN) inspired by the work of [8], which has proposed multi-column deep neural networks for image classification. In their model, an arbitrary number of columns can be trained on inputs preprocessed in different ways. Then final predictions are obtained by averaging individual predictions of all deep neural networks. Our MCNN contains three columns of convolutional neural networks whose filters have different sizes. Input of the MCNN is the image, and its output is a crowd density map whose integral gives the overall crowd count. Contributions of this paper are summarized as follows:<ul>
+<li>The reason for us to adopt a multi-column architecture here is rather natural: the three columns correspond to filters with receptive fields of different sizes (large, medium, small) so that the features learned by each column CNN is adaptive to (hence the overall network is robust to) large variation in people/head size due to perspective effect or across different image resolutions.（多分辨率玩法）</li>
+<li>In our MCNN, we replace the fully connected layer with a convolution layer whose filter size is 1 × 1. Therefore the input image of our model can be of arbitrary size to avoid distortion. The immediate output of the network is an estimate of the density.（全卷积替代FC）</li>
+<li><img src="/images/crowd_counting/MCNN_1.png" alt="MCNN_1.png"></li>
+</ul>
+</li>
+<li>We collect a new dataset for evaluation of crowd counting methods. Existing crowd counting datasets cannot fully test the performance of an algorithm in the diverse scenarios considered by this work because their limitations in the variation in viewpoints (UCSD, WorldExpo’10), crowd counts (UCSD), the scale of dataset (UCSD, UCF CC 50), or the variety of scenes (UCF CC 50). In this work we introduce a new large-scale crowd dataset named Shanghaitech of nearly 1,200 images with around 330,000 accurately labeled heads. As far as we know, it is the largest crowd counting dataset in terms of number annotated heads. No two images in this dataset are taken from the same viewpoint. This dataset consists of two parts: Part A and Part B. Images in Part A are randomly crawled from the Internet, most of them have a large number of people. Part B are taken from busy streets of metropolitan areas in Shanghai. We have manually annotated both parts of images and will share this dataset by request. Figure 1 shows some representative samples of this dataset.（发布了shanghaitech dataset）</li>
+<li>Density map via geometry-adaptive kernels <ul>
+<li>For each head xi in a given image, we denote the distances to its k nearest neighbors as {d i 1 , di 2 , . . . , di m}. The average distance is therefore ¯d i = 1 m ∑m j=1 d i j . Thus, the pixel associated with xi corresponds to an area on the ground in the scene roughly of a radius proportional to ¯d i . Therefore, to estimate the crowd density around the pixel xi , we need to convolve δ(x − xi) with a Gaussian kernel with variance σi proportional to ¯d i .More precisely, the density F should be</li>
+<li><img src="/images/crowd_counting/MCNN_2.png" alt="MCNN_2.png"></li>
+<li>for some parameter β. In other words, we convolve the labels H with density kernels adaptive to the local geometry around each data point, referred to as geometry-adaptive kernels. In our experiment, we have found empirically β = 0.3 gives the best result. In Figure 2, we have shown so-obtained density maps of two exemplar images in our dataset.</li>
+<li><img src="/images/crowd_counting/MCNN_3.png" alt="MCNN_3.png"></li>
+</ul>
+</li>
+<li>启发性里程碑意义的工作，标志着Crowd Counting进入深度时代。从这以后的工作基本就离不开热力图和shanghaitech数据集，基本就是在这篇工作的基础上改进model，大框架基本定性</li>
+</ul>
+<h2 id="Cascaded-MTL"><a href="#Cascaded-MTL" class="headerlink" title="Cascaded-MTL"></a>Cascaded-MTL</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1707.09605.pdf" target="_blank" rel="noopener">CNN-based Cascaded Multi-task Learning of High-level Prior and Density Estimation for Crowd Counting</a></li>
+<li>git <a href="https://github.com/svishwa/crowdcount-cascaded-mtl" target="_blank" rel="noopener">https://github.com/svishwa/crowdcount-cascaded-mtl</a></li>
+<li><img src="/images/crowd_counting/MTL1.png" alt="MTL1.png"></li>
+<li><img src="/images/crowd_counting/MTL2.png" alt="MTL2.png"></li>
+<li><img src="/images/crowd_counting/MTL3.png" alt="MTL3.png"></li>
+<li>Proposed method<ol>
+<li>Shared convolutional layers</li>
+<li>High-level prior stage<ul>
+<li>Classifying the crowd into several groups is an easier problem as compared to directly performing classification or regression for the whole count range which requires a larger amount of training data. Hence, we quantize the crowd count into ten groups and learn a crowd count group classifier which also performs the task of incorporating high-level prior into the network. Cross-entropy error is used as the loss layer for this stage. （将人群计数任务映射成为10类拥挤程度的分类问题）</li>
+</ul>
+</li>
+<li>Density estimation<ul>
+<li>Standard pixel-wise Euclidean loss is used as the loss layer for this stage. Note that this loss depends on intermediate output of the earlier cascade, thereby enforcing a causal relationship between count classification and density estimation.</li>
+</ul>
+</li>
+<li>Objective function<ul>
+<li><img src="/images/crowd_counting/MTL4.png" alt="MTL4.png"></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/MTL5.png" alt="MTL5.png"></li>
+</ul>
+</li>
+<li>这是第一篇提出将分类计数和热力图联合训练提高效果的文章，相较MCNN提升比较明显。后面几年没有人在这个方向继续深挖，直到19年出现一个人用类似思路在part B的MAE刷到了7以内，那就是后话了</li>
+</ul>
+<h2 id="CSRNet"><a href="#CSRNet" class="headerlink" title="CSRNet"></a>CSRNet</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1802.10062.pdf" target="_blank" rel="noopener">CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes</a></li>
+<li><a href="https://github.com/leeyeehoo/CSRNet-pytorch" target="_blank" rel="noopener">https://github.com/leeyeehoo/CSRNet-pytorch</a></li>
+<li>Proposed Solution<ol>
+<li>CSRNet architecture<ol>
+<li>Dilated convolution<ul>
+<li><img src="/images/crowd_counting/CSRNET1.png" alt="CSRNET1.png"> </li>
+</ul>
+</li>
+<li>Network Configuration  <ul>
+<li><img src="/images/crowd_counting/CSRNET2.png" alt="CSRNET2.png"> </li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Training method<ol>
+<li>Ground truth generation<ul>
+<li>follow mcnn</li>
+</ul>
+</li>
+<li>Data augmentation<ul>
+<li>We crop 9 patches from each image at different locations with 1/4 size of the original image. The first four patches contain four quarters of the image without overlapping while the other five patches are randomly cropped from the input image. After that, we mirror the patches so that we double the training set.</li>
+</ul>
+</li>
+<li>Training details<ul>
+<li><img src="/images/crowd_counting/CSRNET3.png" alt="CSRNET3.png"> </li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/CSRNET4.png" alt="CSRNET4.png"> </li>
+</ul>
+</li>
+<li>CSR的思路和Deeplab ASPP，RFB类似，都是通过不同的dilation rate进行不同感受野融合来加强结果的做法，整体来说比较work简单易理解。从这篇开始，dilation成为了crowd counting的标配</li>
+</ul>
+<h2 id="SANET"><a href="#SANET" class="headerlink" title="SANET"></a>SANET</h2><ul>
+<li>paper <a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinkun_Cao_Scale_Aggregation_Network_ECCV_2018_paper.pdf" target="_blank" rel="noopener">Scale Aggregation Network for Accurate and Efficient Crowd Counting</a></li>
+<li><img src="/images/crowd_counting/SANET1.png" alt="SANET1.png"></li>
+<li>This section presents the details of the Scale Aggregation Network (SANet). We first introduce our network architecture and then give descriptions of the proposed loss function.<ol>
+<li>Architecture<ul>
+<li>Feature Map Encoder (FME) DECODE<ul>
+<li><img src="/images/crowd_counting/SANET2.png" alt="SANET2.png"></li>
+</ul>
+</li>
+<li>ensity Map Estimator (DME) ENCODE</li>
+<li>Normalization Layers –&gt; Instance Normalization</li>
+</ul>
+</li>
+<li>Loss Function<ul>
+<li>Euclidean Loss – Euclidean between pred and gt per pixel</li>
+<li>Local Pattern Consistency Loss<ul>
+<li>Beyond the pixel-wise loss function, we also incorporate the local correlation in density maps to improve the quality of results.We utilize SSIM index to measure the local pattern consistency of estimated density maps and ground truths. SSIM index is usually used in image quality assessment.</li>
+<li><img src="/images/crowd_counting/SANET3.png" alt="SANET3.png"></li>
+<li><img src="/images/crowd_counting/SANET4.png" alt="SANET4.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/SANET5.png" alt="SANET5.png"></li>
+</ul>
+</li>
+<li>这其实就是使用inception block进行encode，普通deconv，外加使用in取代bn，在seg任务中IN的使用频率往往是更高也是更有效的。</li>
+<li>提出了SSIM loss，提出了patch base的训练测试方法 –-–-– 个人感觉和SNIPER一样把图拆小处理是充满争议的做法</li>
+<li>总体来说，在当时抛弃了VGG使用全新结构，改进了MCNN，简单高效，也是很有影响力的文章</li>
+</ul>
+<h2 id="SFCN"><a href="#SFCN" class="headerlink" title="SFCN"></a>SFCN</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.03303.pdf" target="_blank" rel="noopener">Learning from Synthetic Data for Crowd Counting in the Wild</a></li>
+<li>home <a href="https://gjy3035.github.io/GCC-CL/" target="_blank" rel="noopener">https://gjy3035.github.io/GCC-CL/</a></li>
+<li>In summary, this paper’s contributions are three-fold:<ol>
+<li>We are the first to develop a data collector and labeler for crowd counting, which can automatically collect and annotate images without any labor costs. By using them, we create the first large-scale, synthetic and diverse crowd counting dataset. (使用GTA5开发了一套Crowd Counting Dataset合成器)<ul>
+<li>Data Collection<ol>
+<li>Scene Selection</li>
+<li>Person Model</li>
+<li>Scenes Synthesis for Congested Crowd</li>
+<li>Summary</li>
+</ol>
+</li>
+<li>Properties of GCC<ul>
+<li>GCC dataset consists of 15,212 images, with resolution of 1080 × 1920, containing 7,625,843 persons.</li>
+</ul>
+</li>
+<li><img src="/images/crowd_counting/SFCN1.png" alt="SFCN1.png"></li>
+</ul>
+</li>
+<li>We present a pretrained scheme to facilitate the original method’s performance on the real data, which can more effectively reduce the estimation errors compared with random initialization and ImageNet model. Further, through the strategy, our proposed SFCN achieves the state-of-the-art results. （使用GCC训练的预训练模型比直接使用imagenet的预训练模型diao多了，而且我们还开发了SFCN使效果更进一步）<ul>
+<li><img src="/images/crowd_counting/SFCN2.png" alt="SFCN2.png"></li>
+<li>Network Architecture<ul>
+<li>In this paper, we design a spatial FCN (SFCN) to produce the density map, which adopt VGG-16 [34] or ResnNet-101 [12] as the backbone. To be specific, the spatial encoder is added to the top of the backbone. The feature map flow is illustrated as in Fig. 6. After the spatial encoder, a regression layer is added, which directly outputs the density map with input’s 1/8 size. Here, we do not review the spatial encoder because of the limited space. During the training phase, the objective is minimizing standard Mean Squared Error at the pixel-wise level; the learning rate is set as 10−5 ; and Adam algorithm is used to optimize SFCN.</li>
+<li><img src="/images/crowd_counting/SFCN3.png" alt="SFCN3.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>We are the first to propose a crowd counting method via domain adaptation, which does not use any label of the real data. By our designed SE Cycle GAN, the domain gap between the synthetic and real data can be significantly reduced. Finally, the proposed method outperforms the two baselines.（propose了一种SE-CycleGAN，即使只在GCC数据集上训练也可以通过GAN使结果大幅提高，减少了real data和synthetic data的domain gap）<ul>
+<li><img src="/images/crowd_counting/SFCN4.png" alt="SFCN4.png"></li>
+<li><img src="/images/crowd_counting/SFCN5.png" alt="SFCN5.png"></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/SFCN6.png" alt="SFCN6.png"></li>
+<li><img src="/images/crowd_counting/SFCN7.png" alt="SFCN7.png"></li>
+</ul>
+</li>
+<li>这是一篇非常全面的文章，兼顾数据集，模型，domain问题</li>
+<li>GCC-pretrained model非常work，值得推荐</li>
+<li>SFCN也非常简单好用，去除了patch的操作依然有不错的acc</li>
+</ul>
+<h2 id="CFF"><a href="#CFF" class="headerlink" title="CFF"></a>CFF</h2><ul>
+<li>paper <a href="https://staff.fnwi.uva.nl/z.shi/files/Counting_ICCV__2019.pdf" target="_blank" rel="noopener">Counting with Focus for Free</a></li>
+<li>git <a href="https://github.com/shizenglin/Counting-with-Focus-for-Free" target="_blank" rel="noopener">https://github.com/shizenglin/Counting-with-Focus-for-Free</a></li>
+<li><img src="/images/crowd_counting/CFF1.png" alt="CFF1.png"></li>
+</ul>
+<ol>
+<li>Focus from segmentation<ul>
+<li>Segmentation map<ul>
+<li>annotation as a mask like seg</li>
+</ul>
+</li>
+<li>Segmentation focus<ul>
+<li>use focal loss</li>
+</ul>
+</li>
+<li>Network detail<ul>
+<li>After the output of the base network, we perform a 1 × 1 convolution layer with parameters θs ∈ R C×2×1×1 , followed by a softmax function δ to generate a per-pixel probability map Pi = δ(θsV ) ∈ R 2×W×H. From this probability map, the second value along the first dimension represents the probability of each pixel being part of the segmentation foreground. We furthermore tile this slice C times to construct a separate output tensor Vs ∈ R C×W×H, which will be used in the density estimation branch itself</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Focus from global density<ul>
+<li>Global density<ul>
+<li>compute Global density in each patch</li>
+</ul>
+</li>
+<li>Global density focus<ul>
+<li>focal loss<ul>
+<li>Network details</li>
+</ul>
+</li>
+<li>For network output V , we first perform an outer product B = V V T ∈ R C×C , followed by a mean pooling along the second dimension to aggregate the bilinear features over the image, i.e. Bˆ = 1 C PC i=1 B[:, i] ∈ R C×1 . The bilinear vector Bˆ is `2-normalized, followed by signed square root normalization, which has shown to be effective in bilinear pooling [18]. Then we use a fully connected layer with parameters θc ∈ R C×M followed by a softmax function δc to make individual prediction C = δc(θcBˆ) ∈ RM×1 for the global density. Furthermore, another fully-connected layer with parameters θd ∈ R C×C followed by sigmoid function δd also on top of the bilinear pooling layer is added to generate global density focus output D = δd(θdBˆ) ∈ R C×1 . We note that this results in a focus over the channel dimensions, complementary to the focus over the spatial dimensions from segmentation. Akin to the focus from segmentation, we tile the output vector into Vd ∈ R C×W×H, also to be used in the density estimation branch.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Non-uniform kernel estimation</li>
+</ol>
+<ul>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/CFF2.png" alt="CFF2.png"></li>
+</ul>
+</li>
+<li>为model 增加了seg分支用于attention，kernel分支，相较SA（67）提高了少量的结果</li>
+</ul>
+<h2 id="CAN"><a href="#CAN" class="headerlink" title="CAN"></a>CAN</h2><ul>
+<li><p>paper <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Context-Aware Crowd Counting</a> </p>
+</li>
+<li><p>git <a href="https://github.com/weizheliu/Context-Aware-Crowd-Counting" target="_blank" rel="noopener">https://github.com/weizheliu/Context-Aware-Crowd-Counting</a></p>
+</li>
+<li><p><img src="/images/crowd_counting/CAN1.png" alt="CAN1.png"></p>
+</li>
+<li><p>Approach</p>
+<ol>
+<li><p>Scale-Aware Contextual Features</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ContextualModule</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, out_features=<span class="number">512</span>, sizes=<span class="params">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span>)</span>:</span></span><br><span class="line">        super(ContextualModule, self).__init__()</span><br><span class="line">        self.scales = []</span><br><span class="line">        self.scales = nn.ModuleList([self._make_scale(features, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])</span><br><span class="line">        self.bottleneck = nn.Conv2d(features * <span class="number">2</span>, out_features, kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">        self.weight_net = nn.Conv2d(features,features,kernel_size=<span class="number">1</span>)</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__make_weight</span><span class="params">(self,feature,scale_feature)</span>:</span></span><br><span class="line">        weight_feature = feature - scale_feature</span><br><span class="line">        <span class="keyword">return</span> F.sigmoid(self.weight_net(weight_feature))</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_scale</span><span class="params">(self, features, size)</span>:</span></span><br><span class="line">        prior = nn.AdaptiveAvgPool2d(output_size=(size, size))</span><br><span class="line">        conv = nn.Conv2d(features, features, kernel_size=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">return</span> nn.Sequential(prior, conv)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span></span><br><span class="line">        h, w = feats.size(<span class="number">2</span>), feats.size(<span class="number">3</span>)</span><br><span class="line">        multi_scales = [F.upsample(input=stage(feats), size=(h, w), mode=<span class="string">'bilinear'</span>) <span class="keyword">for</span> stage <span class="keyword">in</span> self.scales]</span><br><span class="line">        weights = [self.__make_weight(feats,scale_feature) <span class="keyword">for</span> scale_feature <span class="keyword">in</span> multi_scales]</span><br><span class="line">        overall_features = [(multi_scales[<span class="number">0</span>]*weights[<span class="number">0</span>]+multi_scales[<span class="number">1</span>]*weights[<span class="number">1</span>]+multi_scales[<span class="number">2</span>]*weights[<span class="number">2</span>]+multi_scales[<span class="number">3</span>]*weights[<span class="number">3</span>])/(weights[<span class="number">0</span>]+weights[<span class="number">1</span>]+weights[<span class="number">2</span>]+weights[<span class="number">3</span>])]+ [feats]</span><br><span class="line">        bottle = self.bottleneck(torch.cat(overall_features, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.relu(bottle)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过不同程度的avgpool + attention mask + concate，完成全图的多scale attention</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="DSSINet"><a href="#DSSINet" class="headerlink" title="DSSINet"></a>DSSINet</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1908.08692.pdf" target="_blank" rel="noopener">Crowd Counting with Deep Structured Scale Integration Network</a></li>
+<li>git <a href="https://github.com/Legion56/Counting-ICCV-DSSINet" target="_blank" rel="noopener">https://github.com/Legion56/Counting-ICCV-DSSINet</a></li>
+<li><img src="/images/crowd_counting/DSSINET1.png" alt="DSSINET1.png"></li>
+<li>base CRF构建了一个全新的模块；2.DMS-SSIM loss；3.在4个benchmark上均取得了sota<ul>
+<li><img src="/images/crowd_counting/DSSINET2.png" alt="DSSINET2.png"></li>
+</ul>
+</li>
+<li>整体架构图，可以看出，SFEM这个MessagePassing模块是整个网络的核心  <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MessagePassing</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, branch_n, input_ncs, bn=False)</span>:</span></span><br><span class="line">        super(MessagePassing, self).__init__()</span><br><span class="line">        self.branch_n = branch_n</span><br><span class="line">        self.iters = <span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(branch_n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(branch_n):</span><br><span class="line">                <span class="keyword">if</span> i == j:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                setattr(self, <span class="string">"w_0_&#123;&#125;_&#123;&#125;_0"</span>.format(j, i), \</span><br><span class="line">                        nn.Sequential(</span><br><span class="line">                                Conv2d_dilated(input_ncs[j],  input_ncs[i], <span class="number">1</span>, dilation=<span class="number">1</span>, same_padding=<span class="literal">True</span>, NL=<span class="literal">None</span>, bn=bn),</span><br><span class="line">                            )</span><br><span class="line">                        )</span><br><span class="line">        self.relu = nn.ReLU(inplace=<span class="literal">False</span>)</span><br><span class="line">        self.prelu = nn.PReLU()</span><br><span class="line">         </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, input)</span>:</span></span><br><span class="line">        hidden_state = input</span><br><span class="line">        side_state = []</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(self.iters):</span><br><span class="line">            hidden_state_new = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(self.branch_n):</span><br><span class="line"> </span><br><span class="line">                unary = hidden_state[i]</span><br><span class="line">                binary = <span class="literal">None</span></span><br><span class="line">                <span class="keyword">for</span> j <span class="keyword">in</span> range(self.branch_n):</span><br><span class="line">                    <span class="keyword">if</span> i == j:</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="keyword">if</span> binary <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                        binary = getattr(self, <span class="string">'w_0_&#123;&#125;_&#123;&#125;_0'</span>.format(j, i))(hidden_state[j])</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        binary = binary + getattr(self, <span class="string">'w_0_&#123;&#125;_&#123;&#125;_0'</span>.format(j, i))(hidden_state[j])</span><br><span class="line"> </span><br><span class="line">                binary = self.prelu(binary)</span><br><span class="line">                hidden_state_new += [self.relu(unary + binary)]</span><br><span class="line">            hidden_state = hidden_state_new</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> hidden_state</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以看到，对于 for hidden_state[i] in range(self.branch_n) 会和其他所有的非自己对象进行conv2d_dilated，输出和hidden_state[i]相同的channel数，然后prelu各自结合，再与原始值residual add</li>
+<li><img src="/images/crowd_counting/DSSINET3.png" alt="DSSINET3.png"></li>
+<li>loss部分，咋一看整个图，还以为作者是说吧所有层都算DMS-SSIM的意思，然而。。</li>
+<li><img src="/images/crowd_counting/DSSINET4.png" alt="DSSINET4.png"></li>
+<li>这里说的也比较清楚了，DMS-SSIM-m 代表有几个scale的DMS-SSIM loss，从代码实现上看，作者也仅仅用了最后一层算loss。structure示意图中4个SFEM也是对应了5个dilation scale，代码比较清楚<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">t_ssim</span><span class="params">(img1, img2, img11, img22, img12, window, channel, dilation=<span class="number">1</span>, size_average=True)</span>:</span></span><br><span class="line">    window_size = window.size()[<span class="number">2</span>]</span><br><span class="line">    input_shape = list(img1.size())</span><br><span class="line"> </span><br><span class="line">    padding, pad_input = compute_same_padding2d(input_shape, \</span><br><span class="line">                                                kernel_size=(window_size, window_size), \</span><br><span class="line">                                                strides=(<span class="number">1</span>,<span class="number">1</span>), \</span><br><span class="line">                                                dilation=(dilation, dilation))</span><br><span class="line">    <span class="keyword">if</span> img11 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img11 = img1 * img1</span><br><span class="line">    <span class="keyword">if</span> img22 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img22 = img2 * img2</span><br><span class="line">    <span class="keyword">if</span> img12 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img12 = img1 * img2</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> pad_input[<span class="number">0</span>] == <span class="number">1</span> <span class="keyword">or</span> pad_input[<span class="number">1</span>] == <span class="number">1</span>:</span><br><span class="line">        img1 = F.pad(img1, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img2 = F.pad(img2, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img11 = F.pad(img11, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img22 = F.pad(img22, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img12 = F.pad(img12, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line"> </span><br><span class="line">    padd = (padding[<span class="number">0</span>] // <span class="number">2</span>, padding[<span class="number">1</span>] // <span class="number">2</span>)</span><br><span class="line"> </span><br><span class="line">    mu1 = F.conv2d(img1, window , padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    mu2 = F.conv2d(img2, window , padding=padd, dilation=dilation, groups=channel)</span><br><span class="line"> </span><br><span class="line">    mu1_sq = mu1.pow(<span class="number">2</span>)</span><br><span class="line">    mu2_sq = mu2.pow(<span class="number">2</span>)</span><br><span class="line">    mu1_mu2 = mu1*mu2</span><br><span class="line"> </span><br><span class="line">    si11 = F.conv2d(img11, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    si22 = F.conv2d(img22, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    si12 = F.conv2d(img12, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line"> </span><br><span class="line">    sigma1_sq = si11 - mu1_sq</span><br><span class="line">    sigma2_sq = si22 - mu2_sq</span><br><span class="line">    sigma12 = si12 - mu1_mu2</span><br><span class="line"> </span><br><span class="line">    C1 = (<span class="number">0.01</span>*<span class="number">255</span>)**<span class="number">2</span></span><br><span class="line">    C2 = (<span class="number">0.03</span>*<span class="number">255</span>)**<span class="number">2</span></span><br><span class="line"> </span><br><span class="line">    ssim_map = ((<span class="number">2</span>*mu1_mu2 + C1)*(<span class="number">2</span>*sigma12 + C2))/((mu1_sq + mu2_sq + C1)*(sigma1_sq + sigma2_sq + C2))</span><br><span class="line"> </span><br><span class="line">    v1 = <span class="number">2.0</span> * sigma12 + C2</span><br><span class="line">    v2 = sigma1_sq + sigma2_sq + C2</span><br><span class="line">    cs = torch.mean(v1 / v2)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> size_average:</span><br><span class="line">        ret = ssim_map.mean()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ret = ssim_map.mean(<span class="number">1</span>).mean(<span class="number">1</span>).mean(<span class="number">1</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> ret, cs</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NORMMSSSIM</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sigma=<span class="number">1.0</span>, levels=<span class="number">5</span>, size_average=True, channel=<span class="number">1</span>)</span>:</span></span><br><span class="line">        super(NORMMSSSIM, self).__init__()</span><br><span class="line">        self.sigma = sigma</span><br><span class="line">        self.window_size = <span class="number">5</span></span><br><span class="line">        self.levels = levels</span><br><span class="line">        self.size_average = size_average</span><br><span class="line">        self.channel = channel</span><br><span class="line">        self.register_buffer(<span class="string">'window'</span>, create_window(self.window_size, self.channel, self.sigma))</span><br><span class="line">        self.register_buffer(<span class="string">'weights'</span>, torch.Tensor([<span class="number">0.0448</span>, <span class="number">0.2856</span>, <span class="number">0.3001</span>, <span class="number">0.2363</span>, <span class="number">0.1333</span>]))</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img1, img2)</span>:</span></span><br><span class="line">        img1 = (img1 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)</span><br><span class="line">        img2 = (img2 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)</span><br><span class="line"> </span><br><span class="line">        img1 = img1 * <span class="number">255.0</span></span><br><span class="line">        img2 = img2 * <span class="number">255.0</span></span><br><span class="line"> </span><br><span class="line">        msssim_score = self.msssim(img1, img2)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> - msssim_score</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">msssim</span><span class="params">(self, img1, img2)</span>:</span></span><br><span class="line">        levels = self.levels</span><br><span class="line">        mssim = []</span><br><span class="line">        mcs = []</span><br><span class="line"> </span><br><span class="line">        img1, img2, img11, img22, img12 = img1, img2, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(levels):</span><br><span class="line">            l, cs = \</span><br><span class="line">                    t_ssim(img1, img2, img11, img22, img12, \</span><br><span class="line">                                Variable(getattr(self, <span class="string">"window"</span>), requires_grad=<span class="literal">False</span>),\</span><br><span class="line">                                self.channel, size_average=self.size_average, dilation=(<span class="number">1</span> + int(i ** <span class="number">1.5</span>)))</span><br><span class="line"> </span><br><span class="line">            img1 = F.avg_pool2d(img1, (<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">            img2 = F.avg_pool2d(img2, (<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">            mssim.append(l)</span><br><span class="line">            mcs.append(cs)</span><br><span class="line"> </span><br><span class="line">        mssim = torch.stack(mssim)</span><br><span class="line">        mcs = torch.stack(mcs)</span><br><span class="line"> </span><br><span class="line">        weights = Variable(self.weights, requires_grad=<span class="literal">False</span>)</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> torch.prod(mssim ** weights)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这个levels就对应着文章中的m</li>
+<li><img src="/images/crowd_counting/DSSINET5.png" alt="DSSINET5.png"></li>
+<li>与代码对应的计算方式在文中所示</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/DSSINET6.png" alt="DSSINET6.png"></li>
+<li><img src="/images/crowd_counting/DSSINET8.png" alt="DSSINET8.png"></li>
+</ul>
+</li>
+<li>exp的结果是really SOTA，几乎是最好的水平</li>
+<li>神奇的方法，值得研究研究</li>
+</ul>
+<hr>
+<h1 id="Dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h1><hr>
+<h2 id="ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><a href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B" class="headerlink" title="ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)"></a>ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)</h2><ul>
+<li>A Well Konwn BenchMark</li>
+<li>Shanghaitech which contains 1198 annotated images, with a total of 330,165 people with centers of their heads annotated. As far as we know, this dataset is the largest one in terms of the number of annotated people. This dataset consists of two parts: there are 482 images in Part A which are randomly crawled from the Internet, and 716 images in Part B which are taken from the busy streets of metropolitan areas in Shanghai. The crowd density varies significantly between the two subsets, making accurate estimation of the crowd more challenging than most existing datasets. Both Part A and Part B are divided into training and testing: 300 images of Part A are used for training and the remaining 182 images for testing;, and 400 images of Part B are for training and 316 for testing</li>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf</a></li>
+<li>git <a href="https://github.com/desenzhou/ShanghaiTechDataset" target="_blank" rel="noopener">https://github.com/desenzhou/ShanghaiTechDataset</a></li>
+<li>Download url<ul>
+<li>Dropbox: <a href="https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0</a></li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1nuAYslz" target="_blank" rel="noopener">http://pan.baidu.com/s/1nuAYslz</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="GCC-Dataset"><a href="#GCC-Dataset" class="headerlink" title="GCC Dataset"></a>GCC Dataset</h2><ul>
+<li>A Generated Dataset For Getting Pretrained Model</li>
+<li>home <a href="https://gjy3035.github.io/GCC-CL/" target="_blank" rel="noopener">https://gjy3035.github.io/GCC-CL/</a></li>
+<li>Download url <ul>
+<li><a href="https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093" target="_blank" rel="noopener">https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093</a></li>
+<li><a href="https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset" target="_blank" rel="noopener">https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset</a></li>
+</ul>
+</li>
+<li>The data is collected from an electronic game Grand Theft Auto V (GTA5), thus it is named as “GTA5 Crowd Counting” (“GCC” for short) dataset. GCC dataset consists of 15,212 images, with resolution of 1080×1920, containing 7,625,843 persons. Compared with the existing datasets, GCC is a more large-scale crowd counting dataset in both the number of images and the number of persons.</li>
+<li><img src="/images/crowd_counting/GCC_dataset_1.png" alt="GCC_dataset_1"></li>
+<li><img src="/images/crowd_counting/GCC_dataset_2.png" alt="GCC_dataset_2"></li>
+</ul>
+<h2 id="Fudan-ShanghaiTech-Dataset"><a href="#Fudan-ShanghaiTech-Dataset" class="headerlink" title="Fudan-ShanghaiTech Dataset"></a>Fudan-ShanghaiTech Dataset</h2><ul>
+<li>We collected 100 videos captured from 13 different scenes, and FDST dataset contains 150,000 frames, with a total of 394,081 annotated heads, in particular,the training set of FDST dataset consists of 60 videos, 9000 frames and the testing set contains the remaining 40 videos, 6000 frames.</li>
+<li>git <a href="https://github.com/sweetyy83/Lstn_fdst_dataset" target="_blank" rel="noopener">https://github.com/sweetyy83/Lstn_fdst_dataset</a></li>
+<li>download url<ul>
+<li><a href="https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F</a></li>
+<li><a href="https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Venice-Dataset"><a href="#Venice-Dataset" class="headerlink" title="Venice Dataset"></a>Venice Dataset</h2><ul>
+<li>Venice. The four datasets discussed above have the advantage of being publicly available but do not contain precise calibration information. In practice, however, it can be readily obtained using either standard photogrammetry techniques or onboard sensors, for example when using a drone to acquire the images. To test this kind of scenario, we used a cellphone to film additional sequences of the Piazza San Marco in Venice, as seen from various viewpoints on the second floor of the basilica, as shown in the top two rows of Fig. 5. We then used the white lines on the ground to compute camera models. As shown in the bottom two rows of Fig. 5, this yields a more accurate calibration than in WorldExpo’10. The resulting dataset contains 4 different sequences and in total 167 annotated frames with fixed 1,280 × 720 resolution. 80 images from a single long sequence are taken as training data, and we use the images from the remaining 3 sequences for testing purposes. The ground-truth density maps were generated using fixed Gaussian kernels as in part B of the ShanghaiTech dataset.</li>
+<li>paper <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf</a></li>
+<li>git <a href="https://github.com/weizheliu/Context-Aware-Crowd-Counting" target="_blank" rel="noopener">https://github.com/weizheliu/Context-Aware-Crowd-Counting</a></li>
+<li>download url <a href="https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view" target="_blank" rel="noopener">https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view</a></li>
+</ul>
+<h2 id="UCF-QNRF"><a href="#UCF-QNRF" class="headerlink" title="UCF-QNRF"></a>UCF-QNRF</h2><ul>
+<li>We introduce the largest dataset to-date (in terms of number of annotations) for training and evaluating crowd counting and localization methods. It contains 1535 images which are divided into train and test sets of 1201 and 334 images respectively. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-qnrf/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip</a></li>
+<li><a href="https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view" target="_blank" rel="noopener">https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view</a></li>
+</ul>
+</li>
+<li><img src="/images/crowd_counting/UCF_QNRF_dataset_1.png" alt="UCF_QNRF_dataset_1"></li>
+</ul>
+<h2 id="UCF-CC-50"><a href="#UCF-CC-50" class="headerlink" title="UCF-CC-50"></a>UCF-CC-50</h2><ul>
+<li>Only 50 images. This data set contains images of extremely dense crowds. The images are collected mainly from the FLICKR. They are shared only for the research purposes. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-cc-50/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="WorldExpo’10-Dataset"><a href="#WorldExpo’10-Dataset" class="headerlink" title="WorldExpo’10 Dataset"></a>WorldExpo’10 Dataset</h2><ul>
+<li>We introduce a new large-scale cross-scene crowd counting dataset. To the best of our knowledge, this is the largest dataset focusing on cross-scene counting. It includes 1132 annotated video sequences captured by 108 surveillance cameras, all from Shanghai 2010 WorldExpo2. Since most of the cameras have disjoint bird views, they cover a large variety of scenes. We labeled a total of 199,923 pedestrians at the centers of their heads in 3,980 frames. These frames are uniformly sampled from all the video sequences.</li>
+<li>home <a href="http://www.ee.cuhk.edu.hk/~xgwang/expo.html" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/expo.html</a></li>
+<li>paper <a href="http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf</a></li>
+<li>download url <ul>
+<li>This paper is in cooperation with Shanghai Jiao Tong University. SJTU has the copyright of the dataset. So please email Prof. Xie (<a href="mailto:xierong@sjtu.edu.cn">xierong@sjtu.edu.cn</a>) with your name and affiliation to get the download link. It’s better to use your official email address. Thank you for your understanding.</li>
+<li><a href="https://pan.baidu.com/s/1mgh7W4w#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1mgh7W4w#list/path=%2F</a>   password：765k</li>
+<li>Thank you for your attention to download our dataset. The dataset can be downloaded from Baidu disk or Dropbox:</li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1mgh7W4w" target="_blank" rel="noopener">http://pan.baidu.com/s/1mgh7W4w</a> password：765k</li>
+<li>Dropbox: <a href="https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0</a> </li>
+<li>This dataset is ONLY released for academic use. Please do not further distribute the dataset (including the download link), or put any of the videos and images on the public website. The copyrights belongs to Shanghai Jiao Tong University.</li>
+<li>Please kindly cite these two papers if you use our data in your research. Thanks and hope you will benefit from our dataset.Cong Zhang, Kai Zhang, Hongsheng Li, Xiaogang Wang, Rong Xie　and Xiaokang Yang: Data-driven Crowd Understanding: a Baseline for a Large-scale Crowd Dataset. IEEE Transactions on Multimedia,  Vol. 18, No.6, pp1048 - 1061, 2016.Cong Zhang, Hongsheng Li, Xiaogang Wang, and Xiaokang Yang. “Cross-scene Crowd Counting via Deep Convolutional Neural Networks”. in Proceedings of IEEE Conference on Computer Vision and Pattern Recognition 2015.If you have any detail questions about the dataset, please feel free to contact us (<a href="mailto:xierong@sjtu.edu.cnand">xierong@sjtu.edu.cnand</a> <a href="mailto:xierong@sjtu.edu.cnand">mailto:xierong@sjtu.edu.cnand</a><a href="mailto:zhangcong0929@gmail.com">zhangcong0929@gmail.com</a> <a href="mailto:zhangcong0929@gmail.com">mailto:zhangcong0929@gmail.com</a>).Copyright (c) 2015, Shanghai Jiao Tong University All rights reserved. Best Regards, Rong </li>
+</ul>
+</li>
+</ul>
+<h2 id="Mall-Dataset"><a href="#Mall-Dataset" class="headerlink" title="Mall Dataset"></a>Mall Dataset</h2><ul>
+<li>The mall dataset was collected from a publicly accessible webcam for crowd counting and profiling research. Ground truth: Over 60,000 pedestrians were labelled in 2000 video frames. We annotated the data exhaustively by labelling the head position of every pedestrian in all frames. Video length: 2000 frames; Frame size: 640x480; Frame rate: &lt; 2 Hz </li>
+<li>home <a href="http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html</a></li>
+<li>download url<ul>
+<li><a href="http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="UCSD-Pedestrian-Database"><a href="#UCSD-Pedestrian-Database" class="headerlink" title="UCSD Pedestrian Database"></a>UCSD Pedestrian Database</h2><ul>
+<li>The database contains video of pedestrians on UCSD walkways, taken from a stationary camera. All videos are 8-bit grayscale, with dimensions 238 × 158 at 10 fps. The database is split into scenes, taken from different viewpoints (currently, only one scene is available…more are coming). Each scene is in its own directory vidX where X is a letter (e.g. vidf), and is split into video clips of length 200 named vidfXY 33 ZZZ.y, where Y and ZZZ are numbers. Finally, each video clip is saved as a set of .png files.</li>
+<li>home <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/</a></li>
+<li>pdf <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf</a></li>
+<li>download url <ul>
+<li><a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip</a> &amp;&amp; <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="SmartCity-Dataset"><a href="#SmartCity-Dataset" class="headerlink" title="SmartCity Dataset"></a>SmartCity Dataset</h2><ul>
+<li>We have collected a new dataset SmartCity in the paper. It consists of 50 images in total collected from ten city scenes including office entrance, sidewalk, atrium, shopping mall etc.. Some examples are shown in Fig. 4 in our arxiv paper. Unlike the existing crowd counting datasets with images of hundreds/thousands of pedestrians and nearly all the images being taken outdoors, SmartCity has few pedestrians in images and consists of both outdoor and indoor scenes: the average number of pedestrians is only 7.4 with minimum being 1 and maximum being 14. We use this set to test the generalization ability of the proposed framework on very sparse crowd scenes.</li>
+<li>git <a href="https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu" target="_blank" rel="noopener">https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1711.04433.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1711.04433.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://pan.baidu.com/s/1pMuGyNp" target="_blank" rel="noopener">https://pan.baidu.com/s/1pMuGyNp</a></li>
+<li><a href="https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI" target="_blank" rel="noopener">https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="AHU-Crowd-Dataset"><a href="#AHU-Crowd-Dataset" class="headerlink" title="AHU-Crowd Dataset"></a>AHU-Crowd Dataset</h2><ul>
+<li>The crowd datasets are obtained a variety of sources, such as UCF and Data-driven crowd datasets to evaluate the proposed framework. The sequences are diverse, representing dense crowd in the public spaces in various scenarios such as pilgrimage, station, marathon, rallies and stadium. In addition, the sequences have different field of views, resolutions, and exhibit a multitude of motion behaviors that cover both the obvious and subtle instabilities. </li>
+<li>extreme crowd</li>
+<li>home <a href="http://cs-chan.com/downloads_crowd_dataset.html" target="_blank" rel="noopener">http://cs-chan.com/downloads_crowd_dataset.html</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="CityStreet-Multi-View-Crowd-Counting-Dataset"><a href="#CityStreet-Multi-View-Crowd-Counting-Dataset" class="headerlink" title="CityStreet: Multi-View Crowd Counting Dataset"></a>CityStreet: Multi-View Crowd Counting Dataset</h2><ul>
+<li>The multi-view crowd counting datasets, used in our “wide-area crowd counting” paper, include our proposed dataset CityStreet, as well as two existing datasets PETS2009 and DukeMTMC repurposed for multi-view crowd counting.</li>
+<li>City Street: We collected a multi-view video dataset of a busy city street using 5 synchronized cameras. The videos are about 1 hour long with 2.7k (2704×1520) resolution at 30 fps. We select Cameras 1, 3 and 4 for the experiment (see Fig. 6 bottom). The cameras’ intrinsic and extrinsic parameters are estimated using the calibration algorithm from [52]. 500 multi-view images are uniformly sampled from the videos, and the first 300 are used for training and remaining 200 for testing. The ground-truth 2D and 3D annotations are obtained as follows. The head positions of the first camera-view are annotated manually, and then projected to other views and adjusted manually. Next, for the second camera view, new people (not seen in the first view), are also annotated and then projected to the other views. This process is repeated until all people in the scene are annotated and associated across all camera views. Our dataset has larger crowd numbers (70-150), compared with PETS (20-40) and DukeMTMC (10-30). Our new dataset also contains more crowd scale variations and occlusions due to vehicles and fixed structures.</li>
+<li>home <a href="http://visal.cs.cityu.edu.hk/research/citystreet/" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/research/citystreet/</a></li>
+<li>paper <a href="http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ" target="_blank" rel="noopener">https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ</a></li>
+<li><a href="https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg" target="_blank" rel="noopener">https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg</a>  (提取码5wca)</li>
+</ul>
+</li>
+</ul>
+<h2 id="CrowdHuman"><a href="#CrowdHuman" class="headerlink" title="CrowdHuman"></a>CrowdHuman</h2><ul>
+<li>MEGVII</li>
+<li>CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The CrowdHuman dataset is large, rich-annotated and contains high diversity. CrowdHuman contains 15000, 4370 and 5000 images for training, validation, and testing, respectively. There are a total of 470K human instances from train and validation subsets and 23 persons per image, with various kinds of occlusions in the dataset. Each human instance is annotated with a head bounding-box, human visible-region bounding-box and human full-body bounding-box. We hope our dataset will serve as a solid baseline and help promote future research in human detection tasks.</li>
+<li>home <a href="http://www.crowdhuman.org/" target="_blank" rel="noopener">http://www.crowdhuman.org/</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1805.00123.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1805.00123.pdf</a></li>
+<li>download <a href="http://www.crowdhuman.org/download.html" target="_blank" rel="noopener">http://www.crowdhuman.org/download.html</a></li>
+<li><img src="/images/crowd_counting/CrowdHuman_dataset_1.png" alt="CrowdHuman_dataset_1"></li>
+</ul>
+]]></content>
+      <categories>
+        <category>cv</category>
+      </categories>
+      <tags>
+        <tag>crowd_counting</tag>
+        <tag>cv</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 hexo + next 快速搭建github个人主页</title>
+    <url>/2020/02/21/begin_with_hexo&amp;next/</url>
+    <content><![CDATA[<p>介绍如何使用在github上构建next主题的个人页面</p>
+<a id="more"></a>
+<!-- toc -->
+
+
+<h2 id="安装-hexo-和-next"><a href="#安装-hexo-和-next" class="headerlink" title="安装 hexo 和 next"></a>安装 hexo 和 next</h2><ul>
+<li><p>hexo是通过npm安装的，npm是nodejs下的包管理器，类似Python里的pip</p>
+<ul>
+<li><p>nodejs下载地址: <a href="http://nodejs.cn/download/" target="_blank" rel="noopener">http://nodejs.cn/download/</a></p>
+</li>
+<li><p>nodejs在win 10下的安装和正常的软件安装无异，安装过程中有一步骤是选择安装依赖，确认后会在powershell中执行</p>
+</li>
+<li><p>安装完成后，打开cmd验证</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+<p>  v12.16.1</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+<p>  6.13.4</p>
+</li>
+</ul>
+</li>
+<li><p>安装npm</p>
+<ul>
+<li>官方给出的安装指令是<code>npm install hexo-cli -g</code></li>
+<li>安装完成后创建一个文件夹blog，然后执行<code>hexo init</code>完成初始化</li>
+<li>执行<code>hexo s</code>启动本地预览服务，默认网址为 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> ，可以使用 -p 指定端口</li>
+</ul>
+</li>
+<li><p>安装Next主题</p>
+<ul>
+<li>在 hexo init 过的文件夹blog中<code>git clone https://github.com/iissnan/hexo-theme-next themes/next</code></li>
+<li>修改站点根目录下的 _config.yml 文件中 theme: next</li>
+</ul>
+</li>
+</ul>
+<h2 id="申请-github-io-的公共仓库"><a href="#申请-github-io-的公共仓库" class="headerlink" title="申请 github.io 的公共仓库"></a>申请 github.io 的公共仓库</h2><ul>
+<li>到个人github目录下repositories，点击new</li>
+<li>Repository name 填和 ${owner}.github.io ，点击 create repository 就会生成个人主页仓库地址</li>
+<li>点击进入 项目repo ，点击 clone or download ，选择 http 或 ssh 方式保存repo链接</li>
+</ul>
+<h2 id="将本地的hexo项目发布到github"><a href="#将本地的hexo项目发布到github" class="headerlink" title="将本地的hexo项目发布到github"></a>将本地的hexo项目发布到github</h2><ul>
+<li>需要安装hexo发布到git的插件<code>npm install hexo-deployer-git --save</code></li>
+<li>修改站点根目录下的 _config.yml 中的内容 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: $&#123;repo链接&#125;</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure></li>
+<li>执行部署指令<code>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</code></li>
+<li>等待执行完毕，即可以访问 ${owner}.github.io 来查看自己的博客主页</li>
+</ul>
+]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>next</tag>
+        <tag>github</tag>
+        <tag>blog</tag>
+        <tag>help</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo Help</title>
+    <url>/2020/02/20/hexo_origin_readme/</url>
+    <content><![CDATA[<p>hexo 原始的readme文件</p>
+<a id="more"></a>
+<!-- toc -->
+<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h3 id="Deploy-amp-Update"><a href="#Deploy-amp-Update" class="headerlink" title="Deploy &amp; Update"></a>Deploy &amp; Update</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>help</tag>
+      </tags>
+  </entry>
+</search>
