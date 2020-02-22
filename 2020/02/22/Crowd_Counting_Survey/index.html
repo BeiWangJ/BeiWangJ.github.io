@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="梳理 Crowd Counting(人群密度估计) 相关介绍，数据集，算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Crowd Counting Survey ">
+<meta property="og:url" content="http://yoursite.com/2020/02/22/Crowd_Counting_Survey/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Crowd Counting(人群密度估计) 相关介绍，数据集，算法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/crowd_counting_density_map_sample.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MCNN_1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MCNN_2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MCNN_3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MTL1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MTL2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MTL3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MTL4.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/MTL5.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CSRNET1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CSRNET2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CSRNET3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CSRNET4.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SANET1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SANET2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SANET3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SANET4.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SANET5.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN4.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN5.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN6.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/SFCN7.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CFF1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CFF2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CAN1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET3.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET4.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET5.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET6.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/DSSINET8.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/GCC_dataset_1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/GCC_dataset_2.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/UCF_QNRF_dataset_1.png">
+<meta property="og:image" content="http://yoursite.com/images/crowd_counting/CrowdHuman_dataset_1.png">
+<meta property="article:published_time" content="2020-02-22T00:16:40.774Z">
+<meta property="article:modified_time" content="2020-02-22T02:21:56.969Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="crowd_counting">
+<meta property="article:tag" content="cv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/crowd_counting/crowd_counting_density_map_sample.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/22/Crowd_Counting_Survey/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Crowd Counting Survey  | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/22/Crowd_Counting_Survey/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Crowd Counting Survey 
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-22 08:16:40 / 修改时间：10:21:56" itemprop="dateCreated datePublished" datetime="2020-02-22T08:16:40+08:00">2020-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cv/" itemprop="url" rel="index">
+                    <span itemprop="name">cv</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Crowd Counting(人群密度估计) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
+<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>(mainly forked from <a href="https://github.com/CommissarMa/Crowd_counting_from_scratch" target="_blank" rel="noopener">https://github.com/CommissarMa/Crowd_counting_from_scratch</a>)</li>
+<li>Crowd counting has a long research history. About twenty years ago or even earlier, researchers have been interested in developing the method to count the number of pedestrians in the image automatically.</li>
+<li>There are mainly three categories of methods to count pedestrians in crowd.<ul>
+<li>Pedestrian detector. You can use traditional HOG-based detector or deeplearning-based detector like YOLOs or RCNNs. But effect of this category of methods are seriously affected by occlusion in crowd scenes. （检测器作为拥挤场景下人数估计受遮挡影响巨大）</li>
+<li>Number regression. This category of methods just capture some features from original images and use machine-learning models to map the relation between features and numbers. An improved version via deep-learning directly map the relation between original image and its numbers. Before deep-learning, regression-based methods were SOTA and researchers are focus on finding more effective features to estimate more accuracy results. But when deep-learning get popular and achieve better results, regression-based methods get less attention because it is hard to capture effective hand-crafted features. （使用手工特征 + ml方法进行人数统计，在deep learning之前是最work的方法）</li>
+<li>Density-map. This category of methods are the mainstream methods in crowd counting nowadays. Compared with detector-based methods and regression-based methods, density-map can not only give the information of pedestrian numbers, but also can reflect the distribution of pedestrians, which can make the models to fit original images with opposite density better.（将人群估计转化为 密度图|热力图 的逐像素回归问题是当下最常见的方案）</li>
+</ul>
+</li>
+</ul>
+<h2 id="What-is-density-map"><a href="#What-is-density-map" class="headerlink" title="What is density-map?"></a>What is density-map?</h2><ul>
+<li>Simply speaking, we use a gaussian kernel to simulate a head in corresponding position of the original image. After do this action for all heads in the image, we then perform normalization in matrix which is composed by all these gaussian kernels. The sample picture is as follows:（密集人群统计的标注都是json化的点，通过映射回原图进行高斯滤波得到gt的热力图）<ul>
+<li><img src="/images/crowd_counting/crowd_counting_density_map_sample.png" alt="crowd_counting_density_map_sample.png"></li>
+</ul>
+</li>
+<li>Further, there are three strategies to generate density-map.<ol>
+<li>use the same gaussian kernel to simulate all heads. This method applies to scene without severe perspective distortion. [fixed_kernel_code]</li>
+<li>use the perspective map(which is generated by linear regression of pedestrians’ height) to generate gaussian kernels with different sizes to different heads. This method applies to fixed scene. [perspective_kernel_code] And [paper-zhang-CVPR2015] give detailed instruction about how to generate perspective density-map.</li>
+<li>use the k-nearest heads to generate gaussian kernels with different sizes to different heads. This method applies to very crowded scenes. [k_nearset_kernel_code] And [paper-MCNN-CVPR2016] give detailed instruction about how to generate k-nearest density-map.  </li>
+<li>（具体来说就是 1:形变较小的远距离安防场景用一样尺寸大小的高斯核就行了  2:有形变的就用随着高度变化的高斯核  3:如果说极度密集的话最好使用k近邻方法生成不同尺寸的高斯核）</li>
+</ol>
+</li>
+</ul>
+<h2 id="Model-for-beginner"><a href="#Model-for-beginner" class="headerlink" title="Model for beginner"></a>Model for beginner</h2><ul>
+<li>For beginner, [paper-MCNN-CVPR2016] is the most suitable model to learn crowd counting. The model is not complex and have an acceptable accuracy. We provide an easy [MCNN_model_code] to let you know MCNN rapidly and an easy full realization of [MCNN-pytorch]. （MCNN作为人群估计最为经典文章之一，非常适合作为入门首选）</li>
+</ul>
+<hr>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><h2 id="MCNN"><a href="#MCNN" class="headerlink" title="MCNN"></a>MCNN</h2><ul>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Single-Image Crowd Counting via Multi-Column Convolutional Neural Network</a></li>
+<li>Contributions of this paper<ul>
+<li>In this paper, we aim to conduct accurate crowd counting from an arbitrary still image, with an arbitrary camera perspective and crowd density. At first sight this seems to be a rather daunting task, since we obviously need to conquer series of challenges:<ul>
+<li>Foreground segmentation is indispensable in most existing work. However foreground segmentation is a challenging task all by itself and inaccurate segmentation will have irreversible bad effect on the final count. In our task, the viewpoint of an image can be arbitrary. Without information about scene geometry or motion, it is almost impossible to segment the crowd from its background accurately. Hence, we have to estimate the number of crowd without segmenting the foreground first. （抠出前景不是必须的了）</li>
+<li>The density and distribution of crowd vary significantly in our task (or datasets) and typically there are tremendous occlusions for most people in each image. Hence traditional detection-based methods do not work well on such images and situations.（热力图特好使）</li>
+<li>As there might be significant variation in the scale of the people in the images, we need to utilize features at different scales all together in order to accurately estimate crowd counts for different images. Since we do not have tracked features and it is difficult to handcraft features for all different scales, we have to resort to methods that can automatically learn effective features.（deep learning来啦小老弟）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>To overcome above challenges, in this work, we propose a novel framework based on convolutional neural network (CNN) [9, 16] for crowd counting in an arbitrary still image. More specifically, we propose a multi-column convolutional neural network (MCNN) inspired by the work of [8], which has proposed multi-column deep neural networks for image classification. In their model, an arbitrary number of columns can be trained on inputs preprocessed in different ways. Then final predictions are obtained by averaging individual predictions of all deep neural networks. Our MCNN contains three columns of convolutional neural networks whose filters have different sizes. Input of the MCNN is the image, and its output is a crowd density map whose integral gives the overall crowd count. Contributions of this paper are summarized as follows:<ul>
+<li>The reason for us to adopt a multi-column architecture here is rather natural: the three columns correspond to filters with receptive fields of different sizes (large, medium, small) so that the features learned by each column CNN is adaptive to (hence the overall network is robust to) large variation in people/head size due to perspective effect or across different image resolutions.（多分辨率玩法）</li>
+<li>In our MCNN, we replace the fully connected layer with a convolution layer whose filter size is 1 × 1. Therefore the input image of our model can be of arbitrary size to avoid distortion. The immediate output of the network is an estimate of the density.（全卷积替代FC）</li>
+<li><img src="/images/crowd_counting/MCNN_1.png" alt="MCNN_1.png"></li>
+</ul>
+</li>
+<li>We collect a new dataset for evaluation of crowd counting methods. Existing crowd counting datasets cannot fully test the performance of an algorithm in the diverse scenarios considered by this work because their limitations in the variation in viewpoints (UCSD, WorldExpo’10), crowd counts (UCSD), the scale of dataset (UCSD, UCF CC 50), or the variety of scenes (UCF CC 50). In this work we introduce a new large-scale crowd dataset named Shanghaitech of nearly 1,200 images with around 330,000 accurately labeled heads. As far as we know, it is the largest crowd counting dataset in terms of number annotated heads. No two images in this dataset are taken from the same viewpoint. This dataset consists of two parts: Part A and Part B. Images in Part A are randomly crawled from the Internet, most of them have a large number of people. Part B are taken from busy streets of metropolitan areas in Shanghai. We have manually annotated both parts of images and will share this dataset by request. Figure 1 shows some representative samples of this dataset.（发布了shanghaitech dataset）</li>
+<li>Density map via geometry-adaptive kernels <ul>
+<li>For each head xi in a given image, we denote the distances to its k nearest neighbors as {d i 1 , di 2 , . . . , di m}. The average distance is therefore ¯d i = 1 m ∑m j=1 d i j . Thus, the pixel associated with xi corresponds to an area on the ground in the scene roughly of a radius proportional to ¯d i . Therefore, to estimate the crowd density around the pixel xi , we need to convolve δ(x − xi) with a Gaussian kernel with variance σi proportional to ¯d i .More precisely, the density F should be</li>
+<li><img src="/images/crowd_counting/MCNN_2.png" alt="MCNN_2.png"></li>
+<li>for some parameter β. In other words, we convolve the labels H with density kernels adaptive to the local geometry around each data point, referred to as geometry-adaptive kernels. In our experiment, we have found empirically β = 0.3 gives the best result. In Figure 2, we have shown so-obtained density maps of two exemplar images in our dataset.</li>
+<li><img src="/images/crowd_counting/MCNN_3.png" alt="MCNN_3.png"></li>
+</ul>
+</li>
+<li>启发性里程碑意义的工作，标志着Crowd Counting进入深度时代。从这以后的工作基本就离不开热力图和shanghaitech数据集，基本就是在这篇工作的基础上改进model，大框架基本定性</li>
+</ul>
+<h2 id="Cascaded-MTL"><a href="#Cascaded-MTL" class="headerlink" title="Cascaded-MTL"></a>Cascaded-MTL</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1707.09605.pdf" target="_blank" rel="noopener">CNN-based Cascaded Multi-task Learning of High-level Prior and Density Estimation for Crowd Counting</a></li>
+<li>git <a href="https://github.com/svishwa/crowdcount-cascaded-mtl" target="_blank" rel="noopener">https://github.com/svishwa/crowdcount-cascaded-mtl</a></li>
+<li><img src="/images/crowd_counting/MTL1.png" alt="MTL1.png"></li>
+<li><img src="/images/crowd_counting/MTL2.png" alt="MTL2.png"></li>
+<li><img src="/images/crowd_counting/MTL3.png" alt="MTL3.png"></li>
+<li>Proposed method<ol>
+<li>Shared convolutional layers</li>
+<li>High-level prior stage<ul>
+<li>Classifying the crowd into several groups is an easier problem as compared to directly performing classification or regression for the whole count range which requires a larger amount of training data. Hence, we quantize the crowd count into ten groups and learn a crowd count group classifier which also performs the task of incorporating high-level prior into the network. Cross-entropy error is used as the loss layer for this stage. （将人群计数任务映射成为10类拥挤程度的分类问题）</li>
+</ul>
+</li>
+<li>Density estimation<ul>
+<li>Standard pixel-wise Euclidean loss is used as the loss layer for this stage. Note that this loss depends on intermediate output of the earlier cascade, thereby enforcing a causal relationship between count classification and density estimation.</li>
+</ul>
+</li>
+<li>Objective function<ul>
+<li><img src="/images/crowd_counting/MTL4.png" alt="MTL4.png"></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/MTL5.png" alt="MTL5.png"></li>
+</ul>
+</li>
+<li>这是第一篇提出将分类计数和热力图联合训练提高效果的文章，相较MCNN提升比较明显。后面几年没有人在这个方向继续深挖，直到19年出现一个人用类似思路在part B的MAE刷到了7以内，那就是后话了</li>
+</ul>
+<h2 id="CSRNet"><a href="#CSRNet" class="headerlink" title="CSRNet"></a>CSRNet</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1802.10062.pdf" target="_blank" rel="noopener">CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes</a></li>
+<li><a href="https://github.com/leeyeehoo/CSRNet-pytorch" target="_blank" rel="noopener">https://github.com/leeyeehoo/CSRNet-pytorch</a></li>
+<li>Proposed Solution<ol>
+<li>CSRNet architecture<ol>
+<li>Dilated convolution<ul>
+<li><img src="/images/crowd_counting/CSRNET1.png" alt="CSRNET1.png"> </li>
+</ul>
+</li>
+<li>Network Configuration  <ul>
+<li><img src="/images/crowd_counting/CSRNET2.png" alt="CSRNET2.png"> </li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Training method<ol>
+<li>Ground truth generation<ul>
+<li>follow mcnn</li>
+</ul>
+</li>
+<li>Data augmentation<ul>
+<li>We crop 9 patches from each image at different locations with 1/4 size of the original image. The first four patches contain four quarters of the image without overlapping while the other five patches are randomly cropped from the input image. After that, we mirror the patches so that we double the training set.</li>
+</ul>
+</li>
+<li>Training details<ul>
+<li><img src="/images/crowd_counting/CSRNET3.png" alt="CSRNET3.png"> </li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/CSRNET4.png" alt="CSRNET4.png"> </li>
+</ul>
+</li>
+<li>CSR的思路和Deeplab ASPP，RFB类似，都是通过不同的dilation rate进行不同感受野融合来加强结果的做法，整体来说比较work简单易理解。从这篇开始，dilation成为了crowd counting的标配</li>
+</ul>
+<h2 id="SANET"><a href="#SANET" class="headerlink" title="SANET"></a>SANET</h2><ul>
+<li>paper <a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinkun_Cao_Scale_Aggregation_Network_ECCV_2018_paper.pdf" target="_blank" rel="noopener">Scale Aggregation Network for Accurate and Efficient Crowd Counting</a></li>
+<li><img src="/images/crowd_counting/SANET1.png" alt="SANET1.png"></li>
+<li>This section presents the details of the Scale Aggregation Network (SANet). We first introduce our network architecture and then give descriptions of the proposed loss function.<ol>
+<li>Architecture<ul>
+<li>Feature Map Encoder (FME) DECODE<ul>
+<li><img src="/images/crowd_counting/SANET2.png" alt="SANET2.png"></li>
+</ul>
+</li>
+<li>ensity Map Estimator (DME) ENCODE</li>
+<li>Normalization Layers –&gt; Instance Normalization</li>
+</ul>
+</li>
+<li>Loss Function<ul>
+<li>Euclidean Loss – Euclidean between pred and gt per pixel</li>
+<li>Local Pattern Consistency Loss<ul>
+<li>Beyond the pixel-wise loss function, we also incorporate the local correlation in density maps to improve the quality of results.We utilize SSIM index to measure the local pattern consistency of estimated density maps and ground truths. SSIM index is usually used in image quality assessment.</li>
+<li><img src="/images/crowd_counting/SANET3.png" alt="SANET3.png"></li>
+<li><img src="/images/crowd_counting/SANET4.png" alt="SANET4.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/SANET5.png" alt="SANET5.png"></li>
+</ul>
+</li>
+<li>这其实就是使用inception block进行encode，普通deconv，外加使用in取代bn，在seg任务中IN的使用频率往往是更高也是更有效的。</li>
+<li>提出了SSIM loss，提出了patch base的训练测试方法 –-–-– 个人感觉和SNIPER一样把图拆小处理是充满争议的做法</li>
+<li>总体来说，在当时抛弃了VGG使用全新结构，改进了MCNN，简单高效，也是很有影响力的文章</li>
+</ul>
+<h2 id="SFCN"><a href="#SFCN" class="headerlink" title="SFCN"></a>SFCN</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.03303.pdf" target="_blank" rel="noopener">Learning from Synthetic Data for Crowd Counting in the Wild</a></li>
+<li>home <a href="https://gjy3035.github.io/GCC-CL/" target="_blank" rel="noopener">https://gjy3035.github.io/GCC-CL/</a></li>
+<li>In summary, this paper’s contributions are three-fold:<ol>
+<li>We are the first to develop a data collector and labeler for crowd counting, which can automatically collect and annotate images without any labor costs. By using them, we create the first large-scale, synthetic and diverse crowd counting dataset. (使用GTA5开发了一套Crowd Counting Dataset合成器)<ul>
+<li>Data Collection<ol>
+<li>Scene Selection</li>
+<li>Person Model</li>
+<li>Scenes Synthesis for Congested Crowd</li>
+<li>Summary</li>
+</ol>
+</li>
+<li>Properties of GCC<ul>
+<li>GCC dataset consists of 15,212 images, with resolution of 1080 × 1920, containing 7,625,843 persons.</li>
+</ul>
+</li>
+<li><img src="/images/crowd_counting/SFCN1.png" alt="SFCN1.png"></li>
+</ul>
+</li>
+<li>We present a pretrained scheme to facilitate the original method’s performance on the real data, which can more effectively reduce the estimation errors compared with random initialization and ImageNet model. Further, through the strategy, our proposed SFCN achieves the state-of-the-art results. （使用GCC训练的预训练模型比直接使用imagenet的预训练模型diao多了，而且我们还开发了SFCN使效果更进一步）<ul>
+<li><img src="/images/crowd_counting/SFCN2.png" alt="SFCN2.png"></li>
+<li>Network Architecture<ul>
+<li>In this paper, we design a spatial FCN (SFCN) to produce the density map, which adopt VGG-16 [34] or ResnNet-101 [12] as the backbone. To be specific, the spatial encoder is added to the top of the backbone. The feature map flow is illustrated as in Fig. 6. After the spatial encoder, a regression layer is added, which directly outputs the density map with input’s 1/8 size. Here, we do not review the spatial encoder because of the limited space. During the training phase, the objective is minimizing standard Mean Squared Error at the pixel-wise level; the learning rate is set as 10−5 ; and Adam algorithm is used to optimize SFCN.</li>
+<li><img src="/images/crowd_counting/SFCN3.png" alt="SFCN3.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>We are the first to propose a crowd counting method via domain adaptation, which does not use any label of the real data. By our designed SE Cycle GAN, the domain gap between the synthetic and real data can be significantly reduced. Finally, the proposed method outperforms the two baselines.（propose了一种SE-CycleGAN，即使只在GCC数据集上训练也可以通过GAN使结果大幅提高，减少了real data和synthetic data的domain gap）<ul>
+<li><img src="/images/crowd_counting/SFCN4.png" alt="SFCN4.png"></li>
+<li><img src="/images/crowd_counting/SFCN5.png" alt="SFCN5.png"></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/SFCN6.png" alt="SFCN6.png"></li>
+<li><img src="/images/crowd_counting/SFCN7.png" alt="SFCN7.png"></li>
+</ul>
+</li>
+<li>这是一篇非常全面的文章，兼顾数据集，模型，domain问题</li>
+<li>GCC-pretrained model非常work，值得推荐</li>
+<li>SFCN也非常简单好用，去除了patch的操作依然有不错的acc</li>
+</ul>
+<h2 id="CFF"><a href="#CFF" class="headerlink" title="CFF"></a>CFF</h2><ul>
+<li>paper <a href="https://staff.fnwi.uva.nl/z.shi/files/Counting_ICCV__2019.pdf" target="_blank" rel="noopener">Counting with Focus for Free</a></li>
+<li>git <a href="https://github.com/shizenglin/Counting-with-Focus-for-Free" target="_blank" rel="noopener">https://github.com/shizenglin/Counting-with-Focus-for-Free</a></li>
+<li><img src="/images/crowd_counting/CFF1.png" alt="CFF1.png"></li>
+</ul>
+<ol>
+<li>Focus from segmentation<ul>
+<li>Segmentation map<ul>
+<li>annotation as a mask like seg</li>
+</ul>
+</li>
+<li>Segmentation focus<ul>
+<li>use focal loss</li>
+</ul>
+</li>
+<li>Network detail<ul>
+<li>After the output of the base network, we perform a 1 × 1 convolution layer with parameters θs ∈ R C×2×1×1 , followed by a softmax function δ to generate a per-pixel probability map Pi = δ(θsV ) ∈ R 2×W×H. From this probability map, the second value along the first dimension represents the probability of each pixel being part of the segmentation foreground. We furthermore tile this slice C times to construct a separate output tensor Vs ∈ R C×W×H, which will be used in the density estimation branch itself</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Focus from global density<ul>
+<li>Global density<ul>
+<li>compute Global density in each patch</li>
+</ul>
+</li>
+<li>Global density focus<ul>
+<li>focal loss<ul>
+<li>Network details</li>
+</ul>
+</li>
+<li>For network output V , we first perform an outer product B = V V T ∈ R C×C , followed by a mean pooling along the second dimension to aggregate the bilinear features over the image, i.e. Bˆ = 1 C PC i=1 B[:, i] ∈ R C×1 . The bilinear vector Bˆ is `2-normalized, followed by signed square root normalization, which has shown to be effective in bilinear pooling [18]. Then we use a fully connected layer with parameters θc ∈ R C×M followed by a softmax function δc to make individual prediction C = δc(θcBˆ) ∈ RM×1 for the global density. Furthermore, another fully-connected layer with parameters θd ∈ R C×C followed by sigmoid function δd also on top of the bilinear pooling layer is added to generate global density focus output D = δd(θdBˆ) ∈ R C×1 . We note that this results in a focus over the channel dimensions, complementary to the focus over the spatial dimensions from segmentation. Akin to the focus from segmentation, we tile the output vector into Vd ∈ R C×W×H, also to be used in the density estimation branch.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Non-uniform kernel estimation</li>
+</ol>
+<ul>
+<li>Experiment<ul>
+<li><img src="/images/crowd_counting/CFF2.png" alt="CFF2.png"></li>
+</ul>
+</li>
+<li>为model 增加了seg分支用于attention，kernel分支，相较SA（67）提高了少量的结果</li>
+</ul>
+<h2 id="CAN"><a href="#CAN" class="headerlink" title="CAN"></a>CAN</h2><ul>
+<li><p>paper <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Context-Aware Crowd Counting</a> </p>
+</li>
+<li><p>git <a href="https://github.com/weizheliu/Context-Aware-Crowd-Counting" target="_blank" rel="noopener">https://github.com/weizheliu/Context-Aware-Crowd-Counting</a></p>
+</li>
+<li><p><img src="/images/crowd_counting/CAN1.png" alt="CAN1.png"></p>
+</li>
+<li><p>Approach</p>
+<ol>
+<li><p>Scale-Aware Contextual Features</p>
+<ul>
+<li><pre><code class="python"><span class="class"><span class="keyword">class</span> <span class="title">ContextualModule</span><span class="params">(nn.Module)</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, out_features=<span class="number">512</span>, sizes=<span class="params">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span>)</span>:</span>
+        super(ContextualModule, self).__init__()
+        self.scales = []
+        self.scales = nn.ModuleList([self._make_scale(features, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])
+        self.bottleneck = nn.Conv2d(features * <span class="number">2</span>, out_features, kernel_size=<span class="number">1</span>)
+        self.relu = nn.ReLU()
+        self.weight_net = nn.Conv2d(features,features,kernel_size=<span class="number">1</span>)
+
+    <span class="function"><span class="keyword">def</span> <span class="title">__make_weight</span><span class="params">(self,feature,scale_feature)</span>:</span>
+        weight_feature = feature - scale_feature
+        <span class="keyword">return</span> F.sigmoid(self.weight_net(weight_feature))
+
+    <span class="function"><span class="keyword">def</span> <span class="title">_make_scale</span><span class="params">(self, features, size)</span>:</span>
+        prior = nn.AdaptiveAvgPool2d(output_size=(size, size))
+        conv = nn.Conv2d(features, features, kernel_size=<span class="number">1</span>, bias=<span class="literal">False</span>)
+        <span class="keyword">return</span> nn.Sequential(prior, conv)
+    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span>
+        h, w = feats.size(<span class="number">2</span>), feats.size(<span class="number">3</span>)
+        multi_scales = [F.upsample(input=stage(feats), size=(h, w), mode=<span class="string">'bilinear'</span>) <span class="keyword">for</span> stage <span class="keyword">in</span> self.scales]
+        weights = [self.__make_weight(feats,scale_feature) <span class="keyword">for</span> scale_feature <span class="keyword">in</span> multi_scales]
+        overall_features = [(multi_scales[<span class="number">0</span>]*weights[<span class="number">0</span>]+multi_scales[<span class="number">1</span>]*weights[<span class="number">1</span>]+multi_scales[<span class="number">2</span>]*weights[<span class="number">2</span>]+multi_scales[<span class="number">3</span>]*weights[<span class="number">3</span>])/(weights[<span class="number">0</span>]+weights[<span class="number">1</span>]+weights[<span class="number">2</span>]+weights[<span class="number">3</span>])]+ [feats]
+        bottle = self.bottleneck(torch.cat(overall_features, <span class="number">1</span>))
+        <span class="keyword">return</span> self.relu(bottle)</code></pre>
+</li>
+<li><p>通过不同程度的avgpool + attention mask + concate，完成全图的多scale attention</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="DSSINet"><a href="#DSSINet" class="headerlink" title="DSSINet"></a>DSSINet</h2><ul>
+<li><p>paper <a href="https://arxiv.org/pdf/1908.08692.pdf" target="_blank" rel="noopener">Crowd Counting with Deep Structured Scale Integration Network</a></p>
+</li>
+<li><p>git <a href="https://github.com/Legion56/Counting-ICCV-DSSINet" target="_blank" rel="noopener">https://github.com/Legion56/Counting-ICCV-DSSINet</a></p>
+</li>
+<li><p><img src="/images/crowd_counting/DSSINET1.png" alt="DSSINET1.png"></p>
+</li>
+<li><p>base CRF构建了一个全新的模块；2.DMS-SSIM loss；3.在4个benchmark上均取得了sota</p>
+<ul>
+<li><img src="/images/crowd_counting/DSSINET2.png" alt="DSSINET2.png"></li>
+</ul>
+</li>
+<li><p>整体架构图，可以看出，SFEM这个MessagePassing模块是整个网络的核心</p>
+<ul>
+<li><p>```python<br>class MessagePassing(nn.Module):</p>
+<pre><code>def __init__(self, branch_n, input_ncs, bn=False):
+    super(MessagePassing, self).__init__()
+    self.branch_n = branch_n
+    self.iters = 2
+    for i in range(branch_n):
+        for j in range(branch_n):
+            if i == j:
+                continue
+            setattr(self, &quot;w_0_{}_{}_0&quot;.format(j, i), \
+                    nn.Sequential(
+                            Conv2d_dilated(input_ncs[j],  input_ncs[i], 1, dilation=1, same_padding=True, NL=None, bn=bn),
+                        )
+                    )
+    self.relu = nn.ReLU(inplace=False)
+    self.prelu = nn.PReLU()
+
+def forward(self, input):
+    hidden_state = input
+    side_state = []
+
+    for _ in range(self.iters):
+        hidden_state_new = []
+        for i in range(self.branch_n):
+
+            unary = hidden_state[i]
+            binary = None
+            for j in range(self.branch_n):
+                if i == j:
+                    continue
+                if binary is None:
+                    binary = getattr(self, &apos;w_0_{}_{}_0&apos;.format(j, i))(hidden_state[j])
+                else:
+                    binary = binary + getattr(self, &apos;w_0_{}_{}_0&apos;.format(j, i))(hidden_state[j])
+
+            binary = self.prelu(binary)
+            hidden_state_new += [self.relu(unary + binary)]
+        hidden_state = hidden_state_new
+
+    return hidden_state</code></pre></li>
+<li><p>可以看到，对于 for hidden_state[i] in range(self.branch_n) 会和其他所有的非自己对象进行conv2d_dilated，输出和hidden_state[i]相同的channel数，然后prelu各自结合，再与原始值residual add</p>
+</li>
+<li><p><img src="/images/crowd_counting/DSSINET3.png" alt="DSSINET3.png"></p>
+</li>
+<li><p>loss部分，咋一看整个图，还以为作者是说吧所有层都算DMS-SSIM的意思，然而。。</p>
+</li>
+<li><p><img src="/images/crowd_counting/DSSINET4.png" alt="DSSINET4.png"></p>
+</li>
+<li><p>这里说的也比较清楚了，DMS-SSIM-m 代表有几个scale的DMS-SSIM loss，从代码实现上看，作者也仅仅用了最后一层算loss。structure示意图中4个SFEM也是对应了5个dilation scale，代码比较清楚</p>
+</li>
+<li><pre><code class="python">
+<span class="function"><span class="keyword">def</span> <span class="title">t_ssim</span><span class="params">(img1, img2, img11, img22, img12, window, channel, dilation=<span class="number">1</span>, size_average=True)</span>:</span>
+    window_size = window.size()[<span class="number">2</span>]
+    input_shape = list(img1.size())
+
+    padding, pad_input = compute_same_padding2d(input_shape, \
+                                                kernel_size=(window_size, window_size), \
+                                                strides=(<span class="number">1</span>,<span class="number">1</span>), \
+                                                dilation=(dilation, dilation))
+    <span class="keyword">if</span> img11 <span class="keyword">is</span> <span class="literal">None</span>:
+        img11 = img1 * img1
+    <span class="keyword">if</span> img22 <span class="keyword">is</span> <span class="literal">None</span>:
+        img22 = img2 * img2
+    <span class="keyword">if</span> img12 <span class="keyword">is</span> <span class="literal">None</span>:
+        img12 = img1 * img2
+
+    <span class="keyword">if</span> pad_input[<span class="number">0</span>] == <span class="number">1</span> <span class="keyword">or</span> pad_input[<span class="number">1</span>] == <span class="number">1</span>:
+        img1 = F.pad(img1, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
+        img2 = F.pad(img2, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
+        img11 = F.pad(img11, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
+        img22 = F.pad(img22, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
+        img12 = F.pad(img12, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
+
+    padd = (padding[<span class="number">0</span>] // <span class="number">2</span>, padding[<span class="number">1</span>] // <span class="number">2</span>)
+
+    mu1 = F.conv2d(img1, window , padding=padd, dilation=dilation, groups=channel)
+    mu2 = F.conv2d(img2, window , padding=padd, dilation=dilation, groups=channel)
+
+    mu1_sq = mu1.pow(<span class="number">2</span>)
+    mu2_sq = mu2.pow(<span class="number">2</span>)
+    mu1_mu2 = mu1*mu2
+
+    si11 = F.conv2d(img11, window, padding=padd, dilation=dilation, groups=channel)
+    si22 = F.conv2d(img22, window, padding=padd, dilation=dilation, groups=channel)
+    si12 = F.conv2d(img12, window, padding=padd, dilation=dilation, groups=channel)
+
+    sigma1_sq = si11 - mu1_sq
+    sigma2_sq = si22 - mu2_sq
+    sigma12 = si12 - mu1_mu2
+
+    C1 = (<span class="number">0.01</span>*<span class="number">255</span>)**<span class="number">2</span>
+    C2 = (<span class="number">0.03</span>*<span class="number">255</span>)**<span class="number">2</span>
+
+    ssim_map = ((<span class="number">2</span>*mu1_mu2 + C1)*(<span class="number">2</span>*sigma12 + C2))/((mu1_sq + mu2_sq + C1)*(sigma1_sq + sigma2_sq + C2))
+
+    v1 = <span class="number">2.0</span> * sigma12 + C2
+    v2 = sigma1_sq + sigma2_sq + C2
+    cs = torch.mean(v1 / v2)
+
+    <span class="keyword">if</span> size_average:
+        ret = ssim_map.mean()
+    <span class="keyword">else</span>:
+        ret = ssim_map.mean(<span class="number">1</span>).mean(<span class="number">1</span>).mean(<span class="number">1</span>)
+
+    <span class="keyword">return</span> ret, cs
+
+<span class="class"><span class="keyword">class</span> <span class="title">NORMMSSSIM</span><span class="params">(torch.nn.Module)</span>:</span>
+
+    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sigma=<span class="number">1.0</span>, levels=<span class="number">5</span>, size_average=True, channel=<span class="number">1</span>)</span>:</span>
+        super(NORMMSSSIM, self).__init__()
+        self.sigma = sigma
+        self.window_size = <span class="number">5</span>
+        self.levels = levels
+        self.size_average = size_average
+        self.channel = channel
+        self.register_buffer(<span class="string">'window'</span>, create_window(self.window_size, self.channel, self.sigma))
+        self.register_buffer(<span class="string">'weights'</span>, torch.Tensor([<span class="number">0.0448</span>, <span class="number">0.2856</span>, <span class="number">0.3001</span>, <span class="number">0.2363</span>, <span class="number">0.1333</span>]))
+
+    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img1, img2)</span>:</span>
+        img1 = (img1 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)
+        img2 = (img2 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)
+
+        img1 = img1 * <span class="number">255.0</span>
+        img2 = img2 * <span class="number">255.0</span>
+
+        msssim_score = self.msssim(img1, img2)
+        <span class="keyword">return</span> <span class="number">1</span> - msssim_score
+
+    <span class="function"><span class="keyword">def</span> <span class="title">msssim</span><span class="params">(self, img1, img2)</span>:</span>
+        levels = self.levels
+        mssim = []
+        mcs = []
+
+        img1, img2, img11, img22, img12 = img1, img2, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(levels):
+            l, cs = \
+                    t_ssim(img1, img2, img11, img22, img12, \
+                                Variable(getattr(self, <span class="string">"window"</span>), requires_grad=<span class="literal">False</span>),\
+                                self.channel, size_average=self.size_average, dilation=(<span class="number">1</span> + int(i ** <span class="number">1.5</span>)))
+
+            img1 = F.avg_pool2d(img1, (<span class="number">2</span>, <span class="number">2</span>))
+            img2 = F.avg_pool2d(img2, (<span class="number">2</span>, <span class="number">2</span>))
+            mssim.append(l)
+            mcs.append(cs)
+
+        mssim = torch.stack(mssim)
+        mcs = torch.stack(mcs)
+
+        weights = Variable(self.weights, requires_grad=<span class="literal">False</span>)
+
+        <span class="keyword">return</span> torch.prod(mssim ** weights)</code></pre>
+<ul>
+<li>这个levels就对应着文章中的m</li>
+<li><img src="/images/crowd_counting/DSSINET5.png" alt="DSSINET5.png"></li>
+<li>与代码对应的计算方式在文中所示</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Experiment</p>
+<ul>
+<li><img src="/images/crowd_counting/DSSINET6.png" alt="DSSINET6.png"></li>
+<li><img src="/images/crowd_counting/DSSINET8.png" alt="DSSINET8.png"></li>
+</ul>
+</li>
+<li><p>exp的结果是really SOTA，几乎是最好的水平</p>
+</li>
+<li><p>神奇的方法，值得研究研究</p>
+</li>
+</ul>
+<hr>
+<h1 id="Dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h1><h2 id="ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><a href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B" class="headerlink" title="ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)"></a>ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)</h2><ul>
+<li>A Well Konwn BenchMark</li>
+<li>Shanghaitech which contains 1198 annotated images, with a total of 330,165 people with centers of their heads annotated. As far as we know, this dataset is the largest one in terms of the number of annotated people. This dataset consists of two parts: there are 482 images in Part A which are randomly crawled from the Internet, and 716 images in Part B which are taken from the busy streets of metropolitan areas in Shanghai. The crowd density varies significantly between the two subsets, making accurate estimation of the crowd more challenging than most existing datasets. Both Part A and Part B are divided into training and testing: 300 images of Part A are used for training and the remaining 182 images for testing;, and 400 images of Part B are for training and 316 for testing</li>
+<li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf</a></li>
+<li>git <a href="https://github.com/desenzhou/ShanghaiTechDataset" target="_blank" rel="noopener">https://github.com/desenzhou/ShanghaiTechDataset</a></li>
+<li>Download url<ul>
+<li>Dropbox: <a href="https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/s/fipgjqxl7uj8hd5/ShanghaiTech.zip?dl=0</a></li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1nuAYslz" target="_blank" rel="noopener">http://pan.baidu.com/s/1nuAYslz</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="GCC-Dataset"><a href="#GCC-Dataset" class="headerlink" title="GCC Dataset"></a>GCC Dataset</h2><ul>
+<li>A Generated Dataset For Getting Pretrained Model</li>
+<li>home <a href="https://gjy3035.github.io/GCC-CL/" target="_blank" rel="noopener">https://gjy3035.github.io/GCC-CL/</a></li>
+<li>Download url <ul>
+<li><a href="https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093" target="_blank" rel="noopener">https://share-7a4a1d992bf4e98dee11852a48215193.fangcloud.cn/share/4625d2bfa9427708060b5a5981?folder_id=385000263093</a></li>
+<li><a href="https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset" target="_blank" rel="noopener">https://mailnwpueducn-my.sharepoint.com/personal/gjy3035_mail_nwpu_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fgjy3035%5Fmail%5Fnwpu%5Fedu%5Fcn%2FDocuments%2F%E8%AE%BA%E6%96%87%E5%BC%80%E6%BA%90%E6%95%B0%E6%8D%AE%2FGCC%20Dataset</a></li>
+</ul>
+</li>
+<li>The data is collected from an electronic game Grand Theft Auto V (GTA5), thus it is named as “GTA5 Crowd Counting” (“GCC” for short) dataset. GCC dataset consists of 15,212 images, with resolution of 1080×1920, containing 7,625,843 persons. Compared with the existing datasets, GCC is a more large-scale crowd counting dataset in both the number of images and the number of persons.</li>
+<li><img src="/images/crowd_counting/GCC_dataset_1.png" alt="GCC_dataset_1"></li>
+<li><img src="/images/crowd_counting/GCC_dataset_2.png" alt="GCC_dataset_2"></li>
+</ul>
+<h2 id="Fudan-ShanghaiTech-Dataset"><a href="#Fudan-ShanghaiTech-Dataset" class="headerlink" title="Fudan-ShanghaiTech Dataset"></a>Fudan-ShanghaiTech Dataset</h2><ul>
+<li>We collected 100 videos captured from 13 different scenes, and FDST dataset contains 150,000 frames, with a total of 394,081 annotated heads, in particular,the training set of FDST dataset consists of 60 videos, 9000 frames and the testing set contains the remaining 40 videos, 6000 frames.</li>
+<li>git <a href="https://github.com/sweetyy83/Lstn_fdst_dataset" target="_blank" rel="noopener">https://github.com/sweetyy83/Lstn_fdst_dataset</a></li>
+<li>download url<ul>
+<li><a href="https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1NNaJ1vtsxCPJUjDNhZ1sHA#list/path=%2F</a></li>
+<li><a href="https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/drive/folders/19c2X529VTNjl3YL1EYweBg60G70G2D-w?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Venice-Dataset"><a href="#Venice-Dataset" class="headerlink" title="Venice Dataset"></a>Venice Dataset</h2><ul>
+<li>Venice. The four datasets discussed above have the advantage of being publicly available but do not contain precise calibration information. In practice, however, it can be readily obtained using either standard photogrammetry techniques or onboard sensors, for example when using a drone to acquire the images. To test this kind of scenario, we used a cellphone to film additional sequences of the Piazza San Marco in Venice, as seen from various viewpoints on the second floor of the basilica, as shown in the top two rows of Fig. 5. We then used the white lines on the ground to compute camera models. As shown in the bottom two rows of Fig. 5, this yields a more accurate calibration than in WorldExpo’10. The resulting dataset contains 4 different sequences and in total 167 annotated frames with fixed 1,280 × 720 resolution. 80 images from a single long sequence are taken as training data, and we use the images from the remaining 3 sequences for testing purposes. The ground-truth density maps were generated using fixed Gaussian kernels as in part B of the ShanghaiTech dataset.</li>
+<li>paper <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">http://openaccess.thecvf.com/content_CVPR_2019/papers/Liu_Context-Aware_Crowd_Counting_CVPR_2019_paper.pdf</a></li>
+<li>git <a href="https://github.com/weizheliu/Context-Aware-Crowd-Counting" target="_blank" rel="noopener">https://github.com/weizheliu/Context-Aware-Crowd-Counting</a></li>
+<li>download url <a href="https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view" target="_blank" rel="noopener">https://drive.google.com/file/d/15PUf7C3majy-BbWJSSHaXUlot0SUh3mJ/view</a></li>
+</ul>
+<h2 id="UCF-QNRF"><a href="#UCF-QNRF" class="headerlink" title="UCF-QNRF"></a>UCF-QNRF</h2><ul>
+<li>We introduce the largest dataset to-date (in terms of number of annotations) for training and evaluating crowd counting and localization methods. It contains 1535 images which are divided into train and test sets of 1201 and 334 images respectively. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-qnrf/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/eccv2018/2324.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip</a></li>
+<li><a href="https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view" target="_blank" rel="noopener">https://drive.google.com/file/d/1fLZdOsOXlv2muNB_bXEW6t-IS9MRziL6/view</a></li>
+</ul>
+</li>
+<li><img src="/images/crowd_counting/UCF_QNRF_dataset_1.png" alt="UCF_QNRF_dataset_1"></li>
+</ul>
+<h2 id="UCF-CC-50"><a href="#UCF-CC-50" class="headerlink" title="UCF-CC-50"></a>UCF-CC-50</h2><ul>
+<li>Only 50 images. This data set contains images of extremely dense crowds. The images are collected mainly from the FLICKR. They are shared only for the research purposes. </li>
+<li>home <a href="https://www.crcv.ucf.edu/data/ucf-cc-50/" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/</a></li>
+<li>paper <a href="https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf" target="_blank" rel="noopener">https://www.crcv.ucf.edu/papers/cvpr2013/Counting_V3o.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar" target="_blank" rel="noopener">https://www.crcv.ucf.edu/data/ucf-cc-50/UCFCrowdCountingDataset_CVPR13.rar</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="WorldExpo’10-Dataset"><a href="#WorldExpo’10-Dataset" class="headerlink" title="WorldExpo’10 Dataset"></a>WorldExpo’10 Dataset</h2><ul>
+<li>We introduce a new large-scale cross-scene crowd counting dataset. To the best of our knowledge, this is the largest dataset focusing on cross-scene counting. It includes 1132 annotated video sequences captured by 108 surveillance cameras, all from Shanghai 2010 WorldExpo2. Since most of the cameras have disjoint bird views, they cover a large variety of scenes. We labeled a total of 199,923 pedestrians at the centers of their heads in 3,980 frames. These frames are uniformly sampled from all the video sequences.</li>
+<li>home <a href="http://www.ee.cuhk.edu.hk/~xgwang/expo.html" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/expo.html</a></li>
+<li>paper <a href="http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf" target="_blank" rel="noopener">http://www.ee.cuhk.edu.hk/~xgwang/Project%20Page%20of%20Cross-scene%20Crowd%20Counting%20via%20Deep%20Convolutional%20Neural%20Networks_files/0994.pdf</a></li>
+<li>download url <ul>
+<li>This paper is in cooperation with Shanghai Jiao Tong University. SJTU has the copyright of the dataset. So please email Prof. Xie (<a href="mailto:xierong@sjtu.edu.cn">xierong@sjtu.edu.cn</a>) with your name and affiliation to get the download link. It’s better to use your official email address. Thank you for your understanding.</li>
+<li><a href="https://pan.baidu.com/s/1mgh7W4w#list/path=%2F" target="_blank" rel="noopener">https://pan.baidu.com/s/1mgh7W4w#list/path=%2F</a>   password：765k</li>
+<li>Thank you for your attention to download our dataset. The dataset can be downloaded from Baidu disk or Dropbox:</li>
+<li>Baidu Disk: <a href="http://pan.baidu.com/s/1mgh7W4w" target="_blank" rel="noopener">http://pan.baidu.com/s/1mgh7W4w</a> password：765k</li>
+<li>Dropbox: <a href="https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0" target="_blank" rel="noopener">https://www.dropbox.com/sh/kx9hctd9begjbn9/AAA65gQXG-xZ4e94wSNBDBrHa?dl=0</a> </li>
+<li>This dataset is ONLY released for academic use. Please do not further distribute the dataset (including the download link), or put any of the videos and images on the public website. The copyrights belongs to Shanghai Jiao Tong University.</li>
+<li>Please kindly cite these two papers if you use our data in your research. Thanks and hope you will benefit from our dataset.Cong Zhang, Kai Zhang, Hongsheng Li, Xiaogang Wang, Rong Xie　and Xiaokang Yang: Data-driven Crowd Understanding: a Baseline for a Large-scale Crowd Dataset. IEEE Transactions on Multimedia,  Vol. 18, No.6, pp1048 - 1061, 2016.Cong Zhang, Hongsheng Li, Xiaogang Wang, and Xiaokang Yang. “Cross-scene Crowd Counting via Deep Convolutional Neural Networks”. in Proceedings of IEEE Conference on Computer Vision and Pattern Recognition 2015.If you have any detail questions about the dataset, please feel free to contact us (<a href="mailto:xierong@sjtu.edu.cnand">xierong@sjtu.edu.cnand</a> <a href="mailto:xierong@sjtu.edu.cnand">mailto:xierong@sjtu.edu.cnand</a><a href="mailto:zhangcong0929@gmail.com">zhangcong0929@gmail.com</a> <a href="mailto:zhangcong0929@gmail.com">mailto:zhangcong0929@gmail.com</a>).Copyright (c) 2015, Shanghai Jiao Tong University All rights reserved. Best Regards, Rong </li>
+</ul>
+</li>
+</ul>
+<h2 id="Mall-Dataset"><a href="#Mall-Dataset" class="headerlink" title="Mall Dataset"></a>Mall Dataset</h2><ul>
+<li>The mall dataset was collected from a publicly accessible webcam for crowd counting and profiling research. Ground truth: Over 60,000 pedestrians were labelled in 2000 video frames. We annotated the data exhaustively by labelling the head position of every pedestrian in all frames. Video length: 2000 frames; Frame size: 640x480; Frame rate: &lt; 2 Hz </li>
+<li>home <a href="http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/downloads_mall_dataset.html</a></li>
+<li>download url<ul>
+<li><a href="http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip" target="_blank" rel="noopener">http://personal.ie.cuhk.edu.hk/~ccloy/files/datasets/mall_dataset.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="UCSD-Pedestrian-Database"><a href="#UCSD-Pedestrian-Database" class="headerlink" title="UCSD Pedestrian Database"></a>UCSD Pedestrian Database</h2><ul>
+<li>The database contains video of pedestrians on UCSD walkways, taken from a stationary camera. All videos are 8-bit grayscale, with dimensions 238 × 158 at 10 fps. The database is split into scenes, taken from different viewpoints (currently, only one scene is available…more are coming). Each scene is in its own directory vidX where X is a letter (e.g. vidf), and is split into video clips of length 200 named vidfXY 33 ZZZ.y, where Y and ZZZ are numbers. Finally, each video clip is saved as a set of .png files.</li>
+<li>home <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/</a></li>
+<li>pdf <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/readme.pdf</a></li>
+<li>download url <ul>
+<li><a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/ucsdpeds.zip</a> &amp;&amp; <a href="http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip" target="_blank" rel="noopener">http://www.svcl.ucsd.edu/projects/peoplecnt/db/vidf-cvpr.zip</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="SmartCity-Dataset"><a href="#SmartCity-Dataset" class="headerlink" title="SmartCity Dataset"></a>SmartCity Dataset</h2><ul>
+<li>We have collected a new dataset SmartCity in the paper. It consists of 50 images in total collected from ten city scenes including office entrance, sidewalk, atrium, shopping mall etc.. Some examples are shown in Fig. 4 in our arxiv paper. Unlike the existing crowd counting datasets with images of hundreds/thousands of pedestrians and nearly all the images being taken outdoors, SmartCity has few pedestrians in images and consists of both outdoor and indoor scenes: the average number of pedestrians is only 7.4 with minimum being 1 and maximum being 14. We use this set to test the generalization ability of the proposed framework on very sparse crowd scenes.</li>
+<li>git <a href="https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu" target="_blank" rel="noopener">https://github.com/miao0913/SaCNN-CrowdCounting-Tencent_Youtu</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1711.04433.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1711.04433.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://pan.baidu.com/s/1pMuGyNp" target="_blank" rel="noopener">https://pan.baidu.com/s/1pMuGyNp</a></li>
+<li><a href="https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI" target="_blank" rel="noopener">https://drive.google.com/open?id=14SPZPGnLmgE3dtfNlM0UwbQD-MzAISfI</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="AHU-Crowd-Dataset"><a href="#AHU-Crowd-Dataset" class="headerlink" title="AHU-Crowd Dataset"></a>AHU-Crowd Dataset</h2><ul>
+<li>The crowd datasets are obtained a variety of sources, such as UCF and Data-driven crowd datasets to evaluate the proposed framework. The sequences are diverse, representing dense crowd in the public spaces in various scenarios such as pilgrimage, station, marathon, rallies and stadium. In addition, the sequences have different field of views, resolutions, and exhibit a multitude of motion behaviors that cover both the obvious and subtle instabilities. </li>
+<li>extreme crowd</li>
+<li>home <a href="http://cs-chan.com/downloads_crowd_dataset.html" target="_blank" rel="noopener">http://cs-chan.com/downloads_crowd_dataset.html</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing" target="_blank" rel="noopener">https://drive.google.com/file/d/1pN35I5MmJA4Ase2dZRdcwsFiOM286fXc/view?usp=sharing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="CityStreet-Multi-View-Crowd-Counting-Dataset"><a href="#CityStreet-Multi-View-Crowd-Counting-Dataset" class="headerlink" title="CityStreet: Multi-View Crowd Counting Dataset"></a>CityStreet: Multi-View Crowd Counting Dataset</h2><ul>
+<li>The multi-view crowd counting datasets, used in our “wide-area crowd counting” paper, include our proposed dataset CityStreet, as well as two existing datasets PETS2009 and DukeMTMC repurposed for multi-view crowd counting.</li>
+<li>City Street: We collected a multi-view video dataset of a busy city street using 5 synchronized cameras. The videos are about 1 hour long with 2.7k (2704×1520) resolution at 30 fps. We select Cameras 1, 3 and 4 for the experiment (see Fig. 6 bottom). The cameras’ intrinsic and extrinsic parameters are estimated using the calibration algorithm from [52]. 500 multi-view images are uniformly sampled from the videos, and the first 300 are used for training and remaining 200 for testing. The ground-truth 2D and 3D annotations are obtained as follows. The head positions of the first camera-view are annotated manually, and then projected to other views and adjusted manually. Next, for the second camera view, new people (not seen in the first view), are also annotated and then projected to the other views. This process is repeated until all people in the scene are annotated and associated across all camera views. Our dataset has larger crowd numbers (70-150), compared with PETS (20-40) and DukeMTMC (10-30). Our new dataset also contains more crowd scale variations and occlusions due to vehicles and fixed structures.</li>
+<li>home <a href="http://visal.cs.cityu.edu.hk/research/citystreet/" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/research/citystreet/</a></li>
+<li>paper <a href="http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf" target="_blank" rel="noopener">http://visal.cs.cityu.edu.hk/static/pubs/conf/cvpr19-wacc.pdf</a></li>
+<li>download url <ul>
+<li><a href="https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ" target="_blank" rel="noopener">https://drive.google.com/open?id=11hK1REG3P35S9ANXk1YB7C1-_SS_LQGJ</a></li>
+<li><a href="https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg" target="_blank" rel="noopener">https://pan.baidu.com/share/init?surl=21YyyhLX4ff6iaATHn4hWg</a>  (提取码5wca)</li>
+</ul>
+</li>
+</ul>
+<h2 id="CrowdHuman"><a href="#CrowdHuman" class="headerlink" title="CrowdHuman"></a>CrowdHuman</h2><ul>
+<li>MEGVII</li>
+<li>CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The CrowdHuman dataset is large, rich-annotated and contains high diversity. CrowdHuman contains 15000, 4370 and 5000 images for training, validation, and testing, respectively. There are a total of 470K human instances from train and validation subsets and 23 persons per image, with various kinds of occlusions in the dataset. Each human instance is annotated with a head bounding-box, human visible-region bounding-box and human full-body bounding-box. We hope our dataset will serve as a solid baseline and help promote future research in human detection tasks.</li>
+<li>home <a href="http://www.crowdhuman.org/" target="_blank" rel="noopener">http://www.crowdhuman.org/</a></li>
+<li>paper <a href="https://arxiv.org/pdf/1805.00123.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1805.00123.pdf</a></li>
+<li>download <a href="http://www.crowdhuman.org/download.html" target="_blank" rel="noopener">http://www.crowdhuman.org/download.html</a></li>
+<li><img src="/images/crowd_counting/CrowdHuman_dataset_1.png" alt="CrowdHuman_dataset_1"></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crowd-counting/" rel="tag"># crowd_counting</a>
+              <a href="/tags/cv/" rel="tag"># cv</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/21/begin_with_hexo&next/" rel="prev" title="使用 hexo + next 快速搭建github个人主页">
+      <i class="fa fa-chevron-left"></i> 使用 hexo + next 快速搭建github个人主页
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Foreword"><span class="nav-number">1.1.</span> <span class="nav-text">Foreword</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-density-map"><span class="nav-number">1.2.</span> <span class="nav-text">What is density-map?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-for-beginner"><span class="nav-number">1.3.</span> <span class="nav-text">Model for beginner</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MCNN"><span class="nav-number">2.1.</span> <span class="nav-text">MCNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cascaded-MTL"><span class="nav-number">2.2.</span> <span class="nav-text">Cascaded-MTL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRNet"><span class="nav-number">2.3.</span> <span class="nav-text">CSRNet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SANET"><span class="nav-number">2.4.</span> <span class="nav-text">SANET</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SFCN"><span class="nav-number">2.5.</span> <span class="nav-text">SFCN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CFF"><span class="nav-number">2.6.</span> <span class="nav-text">CFF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAN"><span class="nav-number">2.7.</span> <span class="nav-text">CAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSSINet"><span class="nav-number">2.8.</span> <span class="nav-text">DSSINet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dataset"><span class="nav-number">3.</span> <span class="nav-text">Dataset</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><span class="nav-number">3.1.</span> <span class="nav-text">ShanghaiTechDataset (ShanghaiTech&#x2F;SHT A &amp; B)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCC-Dataset"><span class="nav-number">3.2.</span> <span class="nav-text">GCC Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fudan-ShanghaiTech-Dataset"><span class="nav-number">3.3.</span> <span class="nav-text">Fudan-ShanghaiTech Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Venice-Dataset"><span class="nav-number">3.4.</span> <span class="nav-text">Venice Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCF-QNRF"><span class="nav-number">3.5.</span> <span class="nav-text">UCF-QNRF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCF-CC-50"><span class="nav-number">3.6.</span> <span class="nav-text">UCF-CC-50</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WorldExpo’10-Dataset"><span class="nav-number">3.7.</span> <span class="nav-text">WorldExpo’10 Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mall-Dataset"><span class="nav-number">3.8.</span> <span class="nav-text">Mall Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UCSD-Pedestrian-Database"><span class="nav-number">3.9.</span> <span class="nav-text">UCSD Pedestrian Database</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SmartCity-Dataset"><span class="nav-number">3.10.</span> <span class="nav-text">SmartCity Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AHU-Crowd-Dataset"><span class="nav-number">3.11.</span> <span class="nav-text">AHU-Crowd Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CityStreet-Multi-View-Crowd-Counting-Dataset"><span class="nav-number">3.12.</span> <span class="nav-text">CityStreet: Multi-View Crowd Counting Dataset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CrowdHuman"><span class="nav-number">3.13.</span> <span class="nav-text">CrowdHuman</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
