@@ -31,10 +31,10 @@
 <meta property="article:modified_time" content="2020-02-22T00:28:30.021Z">
 <meta property="article:author" content="Bei">
 <meta property="article:tag" content="hexo">
+<meta property="article:tag" content="help">
 <meta property="article:tag" content="next">
 <meta property="article:tag" content="github">
 <meta property="article:tag" content="blog">
-<meta property="article:tag" content="help">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2020/02/21/begin_with_hexo&next/">
@@ -237,6 +237,20 @@
               <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/02/21/begin_with_hexo&next/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/21/begin_with_hexo&next/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -302,10 +316,10 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/hexo/" rel="tag"># hexo</a>
+              <a href="/tags/help/" rel="tag"># help</a>
               <a href="/tags/next/" rel="tag"># next</a>
               <a href="/tags/github/" rel="tag"># github</a>
               <a href="/tags/blog/" rel="tag"># blog</a>
-              <a href="/tags/help/" rel="tag"># help</a>
           </div>
 
         
@@ -334,6 +348,7 @@
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -515,6 +530,35 @@
   
 
   
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dJ0rQquk22lsdG4t3BrB9qyt-9Nh9j0Va',
+      appKey     : 'kcDcreWpivcr3LFMi97jrt4k',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
 
 </body>
 </html>
