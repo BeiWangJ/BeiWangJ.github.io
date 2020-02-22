@@ -47,9 +47,9 @@
       
         <tags>
             
-            <tag> PAR </tag>
-            
             <tag> cv </tag>
+            
+            <tag> PAR </tag>
             
         </tags>
       
@@ -74,9 +74,9 @@
       
         <tags>
             
-            <tag> cv </tag>
-            
             <tag> human_parsing </tag>
+            
+            <tag> cv </tag>
             
         </tags>
       
