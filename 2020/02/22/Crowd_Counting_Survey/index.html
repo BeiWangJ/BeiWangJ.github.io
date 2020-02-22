@@ -67,10 +67,10 @@
 <meta property="og:image" content="http://yoursite.com/images/crowd_counting/UCF_QNRF_dataset_1.png">
 <meta property="og:image" content="http://yoursite.com/images/crowd_counting/CrowdHuman_dataset_1.png">
 <meta property="article:published_time" content="2020-02-22T00:16:40.774Z">
-<meta property="article:modified_time" content="2020-02-22T02:21:56.969Z">
+<meta property="article:modified_time" content="2020-02-22T05:56:45.381Z">
 <meta property="article:author" content="Bei">
-<meta property="article:tag" content="crowd_counting">
 <meta property="article:tag" content="cv">
+<meta property="article:tag" content="crowd_counting">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/crowd_counting/crowd_counting_density_map_sample.png">
 
@@ -221,7 +221,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-22 08:16:40 / 修改时间：10:21:56" itemprop="dateCreated datePublished" datetime="2020-02-22T08:16:40+08:00">2020-02-22</time>
+              <time title="创建时间：2020-02-22 08:16:40 / 修改时间：13:56:45" itemprop="dateCreated datePublished" datetime="2020-02-22T08:16:40+08:00">2020-02-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,6 +250,7 @@
 <a id="more"></a>
 <!-- toc -->
 
+<hr>
 <h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
 <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
 <li>(mainly forked from <a href="https://github.com/CommissarMa/Crowd_counting_from_scratch" target="_blank" rel="noopener">https://github.com/CommissarMa/Crowd_counting_from_scratch</a>)</li>
@@ -278,7 +279,8 @@
 <li>For beginner, [paper-MCNN-CVPR2016] is the most suitable model to learn crowd counting. The model is not complex and have an acceptable accuracy. We provide an easy [MCNN_model_code] to let you know MCNN rapidly and an easy full realization of [MCNN-pytorch]. （MCNN作为人群估计最为经典文章之一，非常适合作为入门首选）</li>
 </ul>
 <hr>
-<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><h2 id="MCNN"><a href="#MCNN" class="headerlink" title="MCNN"></a>MCNN</h2><ul>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
+<h2 id="MCNN"><a href="#MCNN" class="headerlink" title="MCNN"></a>MCNN</h2><ul>
 <li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Single-Image Crowd Counting via Multi-Column Convolutional Neural Network</a></li>
 <li>Contributions of this paper<ul>
 <li>In this paper, we aim to conduct accurate crowd counting from an arbitrary still image, with an arbitrary camera perspective and crowd density. At first sight this seems to be a rather daunting task, since we obviously need to conquer series of challenges:<ul>
@@ -503,204 +505,30 @@
 <li><p>Approach</p>
 <ol>
 <li><p>Scale-Aware Contextual Features</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ContextualModule</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, out_features=<span class="number">512</span>, sizes=<span class="params">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span>)</span>:</span></span><br><span class="line">        super(ContextualModule, self).__init__()</span><br><span class="line">        self.scales = []</span><br><span class="line">        self.scales = nn.ModuleList([self._make_scale(features, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])</span><br><span class="line">        self.bottleneck = nn.Conv2d(features * <span class="number">2</span>, out_features, kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">        self.weight_net = nn.Conv2d(features,features,kernel_size=<span class="number">1</span>)</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__make_weight</span><span class="params">(self,feature,scale_feature)</span>:</span></span><br><span class="line">        weight_feature = feature - scale_feature</span><br><span class="line">        <span class="keyword">return</span> F.sigmoid(self.weight_net(weight_feature))</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_scale</span><span class="params">(self, features, size)</span>:</span></span><br><span class="line">        prior = nn.AdaptiveAvgPool2d(output_size=(size, size))</span><br><span class="line">        conv = nn.Conv2d(features, features, kernel_size=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">return</span> nn.Sequential(prior, conv)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span></span><br><span class="line">        h, w = feats.size(<span class="number">2</span>), feats.size(<span class="number">3</span>)</span><br><span class="line">        multi_scales = [F.upsample(input=stage(feats), size=(h, w), mode=<span class="string">'bilinear'</span>) <span class="keyword">for</span> stage <span class="keyword">in</span> self.scales]</span><br><span class="line">        weights = [self.__make_weight(feats,scale_feature) <span class="keyword">for</span> scale_feature <span class="keyword">in</span> multi_scales]</span><br><span class="line">        overall_features = [(multi_scales[<span class="number">0</span>]*weights[<span class="number">0</span>]+multi_scales[<span class="number">1</span>]*weights[<span class="number">1</span>]+multi_scales[<span class="number">2</span>]*weights[<span class="number">2</span>]+multi_scales[<span class="number">3</span>]*weights[<span class="number">3</span>])/(weights[<span class="number">0</span>]+weights[<span class="number">1</span>]+weights[<span class="number">2</span>]+weights[<span class="number">3</span>])]+ [feats]</span><br><span class="line">        bottle = self.bottleneck(torch.cat(overall_features, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> self.relu(bottle)</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li><pre><code class="python"><span class="class"><span class="keyword">class</span> <span class="title">ContextualModule</span><span class="params">(nn.Module)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, out_features=<span class="number">512</span>, sizes=<span class="params">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span>)</span>:</span>
-        super(ContextualModule, self).__init__()
-        self.scales = []
-        self.scales = nn.ModuleList([self._make_scale(features, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])
-        self.bottleneck = nn.Conv2d(features * <span class="number">2</span>, out_features, kernel_size=<span class="number">1</span>)
-        self.relu = nn.ReLU()
-        self.weight_net = nn.Conv2d(features,features,kernel_size=<span class="number">1</span>)
-
-    <span class="function"><span class="keyword">def</span> <span class="title">__make_weight</span><span class="params">(self,feature,scale_feature)</span>:</span>
-        weight_feature = feature - scale_feature
-        <span class="keyword">return</span> F.sigmoid(self.weight_net(weight_feature))
-
-    <span class="function"><span class="keyword">def</span> <span class="title">_make_scale</span><span class="params">(self, features, size)</span>:</span>
-        prior = nn.AdaptiveAvgPool2d(output_size=(size, size))
-        conv = nn.Conv2d(features, features, kernel_size=<span class="number">1</span>, bias=<span class="literal">False</span>)
-        <span class="keyword">return</span> nn.Sequential(prior, conv)
-    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span>
-        h, w = feats.size(<span class="number">2</span>), feats.size(<span class="number">3</span>)
-        multi_scales = [F.upsample(input=stage(feats), size=(h, w), mode=<span class="string">'bilinear'</span>) <span class="keyword">for</span> stage <span class="keyword">in</span> self.scales]
-        weights = [self.__make_weight(feats,scale_feature) <span class="keyword">for</span> scale_feature <span class="keyword">in</span> multi_scales]
-        overall_features = [(multi_scales[<span class="number">0</span>]*weights[<span class="number">0</span>]+multi_scales[<span class="number">1</span>]*weights[<span class="number">1</span>]+multi_scales[<span class="number">2</span>]*weights[<span class="number">2</span>]+multi_scales[<span class="number">3</span>]*weights[<span class="number">3</span>])/(weights[<span class="number">0</span>]+weights[<span class="number">1</span>]+weights[<span class="number">2</span>]+weights[<span class="number">3</span>])]+ [feats]
-        bottle = self.bottleneck(torch.cat(overall_features, <span class="number">1</span>))
-        <span class="keyword">return</span> self.relu(bottle)</code></pre>
-</li>
-<li><p>通过不同程度的avgpool + attention mask + concate，完成全图的多scale attention</p>
-</li>
+<li>通过不同程度的avgpool + attention mask + concate，完成全图的多scale attention</li>
 </ul>
 </li>
 </ol>
 </li>
 </ul>
 <h2 id="DSSINet"><a href="#DSSINet" class="headerlink" title="DSSINet"></a>DSSINet</h2><ul>
-<li><p>paper <a href="https://arxiv.org/pdf/1908.08692.pdf" target="_blank" rel="noopener">Crowd Counting with Deep Structured Scale Integration Network</a></p>
-</li>
-<li><p>git <a href="https://github.com/Legion56/Counting-ICCV-DSSINet" target="_blank" rel="noopener">https://github.com/Legion56/Counting-ICCV-DSSINet</a></p>
-</li>
-<li><p><img src="/images/crowd_counting/DSSINET1.png" alt="DSSINET1.png"></p>
-</li>
-<li><p>base CRF构建了一个全新的模块；2.DMS-SSIM loss；3.在4个benchmark上均取得了sota</p>
-<ul>
+<li>paper <a href="https://arxiv.org/pdf/1908.08692.pdf" target="_blank" rel="noopener">Crowd Counting with Deep Structured Scale Integration Network</a></li>
+<li>git <a href="https://github.com/Legion56/Counting-ICCV-DSSINet" target="_blank" rel="noopener">https://github.com/Legion56/Counting-ICCV-DSSINet</a></li>
+<li><img src="/images/crowd_counting/DSSINET1.png" alt="DSSINET1.png"></li>
+<li>base CRF构建了一个全新的模块；2.DMS-SSIM loss；3.在4个benchmark上均取得了sota<ul>
 <li><img src="/images/crowd_counting/DSSINET2.png" alt="DSSINET2.png"></li>
 </ul>
 </li>
-<li><p>整体架构图，可以看出，SFEM这个MessagePassing模块是整个网络的核心</p>
+<li>整体架构图，可以看出，SFEM这个MessagePassing模块是整个网络的核心  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MessagePassing</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, branch_n, input_ncs, bn=False)</span>:</span></span><br><span class="line">        super(MessagePassing, self).__init__()</span><br><span class="line">        self.branch_n = branch_n</span><br><span class="line">        self.iters = <span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(branch_n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(branch_n):</span><br><span class="line">                <span class="keyword">if</span> i == j:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                setattr(self, <span class="string">"w_0_&#123;&#125;_&#123;&#125;_0"</span>.format(j, i), \</span><br><span class="line">                        nn.Sequential(</span><br><span class="line">                                Conv2d_dilated(input_ncs[j],  input_ncs[i], <span class="number">1</span>, dilation=<span class="number">1</span>, same_padding=<span class="literal">True</span>, NL=<span class="literal">None</span>, bn=bn),</span><br><span class="line">                            )</span><br><span class="line">                        )</span><br><span class="line">        self.relu = nn.ReLU(inplace=<span class="literal">False</span>)</span><br><span class="line">        self.prelu = nn.PReLU()</span><br><span class="line">         </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, input)</span>:</span></span><br><span class="line">        hidden_state = input</span><br><span class="line">        side_state = []</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(self.iters):</span><br><span class="line">            hidden_state_new = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(self.branch_n):</span><br><span class="line"> </span><br><span class="line">                unary = hidden_state[i]</span><br><span class="line">                binary = <span class="literal">None</span></span><br><span class="line">                <span class="keyword">for</span> j <span class="keyword">in</span> range(self.branch_n):</span><br><span class="line">                    <span class="keyword">if</span> i == j:</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="keyword">if</span> binary <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                        binary = getattr(self, <span class="string">'w_0_&#123;&#125;_&#123;&#125;_0'</span>.format(j, i))(hidden_state[j])</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        binary = binary + getattr(self, <span class="string">'w_0_&#123;&#125;_&#123;&#125;_0'</span>.format(j, i))(hidden_state[j])</span><br><span class="line"> </span><br><span class="line">                binary = self.prelu(binary)</span><br><span class="line">                hidden_state_new += [self.relu(unary + binary)]</span><br><span class="line">            hidden_state = hidden_state_new</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> hidden_state</span><br></pre></td></tr></table></figure>
 <ul>
-<li><p>```python<br>class MessagePassing(nn.Module):</p>
-<pre><code>def __init__(self, branch_n, input_ncs, bn=False):
-    super(MessagePassing, self).__init__()
-    self.branch_n = branch_n
-    self.iters = 2
-    for i in range(branch_n):
-        for j in range(branch_n):
-            if i == j:
-                continue
-            setattr(self, &quot;w_0_{}_{}_0&quot;.format(j, i), \
-                    nn.Sequential(
-                            Conv2d_dilated(input_ncs[j],  input_ncs[i], 1, dilation=1, same_padding=True, NL=None, bn=bn),
-                        )
-                    )
-    self.relu = nn.ReLU(inplace=False)
-    self.prelu = nn.PReLU()
-
-def forward(self, input):
-    hidden_state = input
-    side_state = []
-
-    for _ in range(self.iters):
-        hidden_state_new = []
-        for i in range(self.branch_n):
-
-            unary = hidden_state[i]
-            binary = None
-            for j in range(self.branch_n):
-                if i == j:
-                    continue
-                if binary is None:
-                    binary = getattr(self, &apos;w_0_{}_{}_0&apos;.format(j, i))(hidden_state[j])
-                else:
-                    binary = binary + getattr(self, &apos;w_0_{}_{}_0&apos;.format(j, i))(hidden_state[j])
-
-            binary = self.prelu(binary)
-            hidden_state_new += [self.relu(unary + binary)]
-        hidden_state = hidden_state_new
-
-    return hidden_state</code></pre></li>
-<li><p>可以看到，对于 for hidden_state[i] in range(self.branch_n) 会和其他所有的非自己对象进行conv2d_dilated，输出和hidden_state[i]相同的channel数，然后prelu各自结合，再与原始值residual add</p>
-</li>
-<li><p><img src="/images/crowd_counting/DSSINET3.png" alt="DSSINET3.png"></p>
-</li>
-<li><p>loss部分，咋一看整个图，还以为作者是说吧所有层都算DMS-SSIM的意思，然而。。</p>
-</li>
-<li><p><img src="/images/crowd_counting/DSSINET4.png" alt="DSSINET4.png"></p>
-</li>
-<li><p>这里说的也比较清楚了，DMS-SSIM-m 代表有几个scale的DMS-SSIM loss，从代码实现上看，作者也仅仅用了最后一层算loss。structure示意图中4个SFEM也是对应了5个dilation scale，代码比较清楚</p>
-</li>
-<li><pre><code class="python">
-<span class="function"><span class="keyword">def</span> <span class="title">t_ssim</span><span class="params">(img1, img2, img11, img22, img12, window, channel, dilation=<span class="number">1</span>, size_average=True)</span>:</span>
-    window_size = window.size()[<span class="number">2</span>]
-    input_shape = list(img1.size())
-
-    padding, pad_input = compute_same_padding2d(input_shape, \
-                                                kernel_size=(window_size, window_size), \
-                                                strides=(<span class="number">1</span>,<span class="number">1</span>), \
-                                                dilation=(dilation, dilation))
-    <span class="keyword">if</span> img11 <span class="keyword">is</span> <span class="literal">None</span>:
-        img11 = img1 * img1
-    <span class="keyword">if</span> img22 <span class="keyword">is</span> <span class="literal">None</span>:
-        img22 = img2 * img2
-    <span class="keyword">if</span> img12 <span class="keyword">is</span> <span class="literal">None</span>:
-        img12 = img1 * img2
-
-    <span class="keyword">if</span> pad_input[<span class="number">0</span>] == <span class="number">1</span> <span class="keyword">or</span> pad_input[<span class="number">1</span>] == <span class="number">1</span>:
-        img1 = F.pad(img1, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
-        img2 = F.pad(img2, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
-        img11 = F.pad(img11, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
-        img22 = F.pad(img22, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
-        img12 = F.pad(img12, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])
-
-    padd = (padding[<span class="number">0</span>] // <span class="number">2</span>, padding[<span class="number">1</span>] // <span class="number">2</span>)
-
-    mu1 = F.conv2d(img1, window , padding=padd, dilation=dilation, groups=channel)
-    mu2 = F.conv2d(img2, window , padding=padd, dilation=dilation, groups=channel)
-
-    mu1_sq = mu1.pow(<span class="number">2</span>)
-    mu2_sq = mu2.pow(<span class="number">2</span>)
-    mu1_mu2 = mu1*mu2
-
-    si11 = F.conv2d(img11, window, padding=padd, dilation=dilation, groups=channel)
-    si22 = F.conv2d(img22, window, padding=padd, dilation=dilation, groups=channel)
-    si12 = F.conv2d(img12, window, padding=padd, dilation=dilation, groups=channel)
-
-    sigma1_sq = si11 - mu1_sq
-    sigma2_sq = si22 - mu2_sq
-    sigma12 = si12 - mu1_mu2
-
-    C1 = (<span class="number">0.01</span>*<span class="number">255</span>)**<span class="number">2</span>
-    C2 = (<span class="number">0.03</span>*<span class="number">255</span>)**<span class="number">2</span>
-
-    ssim_map = ((<span class="number">2</span>*mu1_mu2 + C1)*(<span class="number">2</span>*sigma12 + C2))/((mu1_sq + mu2_sq + C1)*(sigma1_sq + sigma2_sq + C2))
-
-    v1 = <span class="number">2.0</span> * sigma12 + C2
-    v2 = sigma1_sq + sigma2_sq + C2
-    cs = torch.mean(v1 / v2)
-
-    <span class="keyword">if</span> size_average:
-        ret = ssim_map.mean()
-    <span class="keyword">else</span>:
-        ret = ssim_map.mean(<span class="number">1</span>).mean(<span class="number">1</span>).mean(<span class="number">1</span>)
-
-    <span class="keyword">return</span> ret, cs
-
-<span class="class"><span class="keyword">class</span> <span class="title">NORMMSSSIM</span><span class="params">(torch.nn.Module)</span>:</span>
-
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sigma=<span class="number">1.0</span>, levels=<span class="number">5</span>, size_average=True, channel=<span class="number">1</span>)</span>:</span>
-        super(NORMMSSSIM, self).__init__()
-        self.sigma = sigma
-        self.window_size = <span class="number">5</span>
-        self.levels = levels
-        self.size_average = size_average
-        self.channel = channel
-        self.register_buffer(<span class="string">'window'</span>, create_window(self.window_size, self.channel, self.sigma))
-        self.register_buffer(<span class="string">'weights'</span>, torch.Tensor([<span class="number">0.0448</span>, <span class="number">0.2856</span>, <span class="number">0.3001</span>, <span class="number">0.2363</span>, <span class="number">0.1333</span>]))
-
-    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img1, img2)</span>:</span>
-        img1 = (img1 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)
-        img2 = (img2 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)
-
-        img1 = img1 * <span class="number">255.0</span>
-        img2 = img2 * <span class="number">255.0</span>
-
-        msssim_score = self.msssim(img1, img2)
-        <span class="keyword">return</span> <span class="number">1</span> - msssim_score
-
-    <span class="function"><span class="keyword">def</span> <span class="title">msssim</span><span class="params">(self, img1, img2)</span>:</span>
-        levels = self.levels
-        mssim = []
-        mcs = []
-
-        img1, img2, img11, img22, img12 = img1, img2, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>
-        <span class="keyword">for</span> i <span class="keyword">in</span> range(levels):
-            l, cs = \
-                    t_ssim(img1, img2, img11, img22, img12, \
-                                Variable(getattr(self, <span class="string">"window"</span>), requires_grad=<span class="literal">False</span>),\
-                                self.channel, size_average=self.size_average, dilation=(<span class="number">1</span> + int(i ** <span class="number">1.5</span>)))
-
-            img1 = F.avg_pool2d(img1, (<span class="number">2</span>, <span class="number">2</span>))
-            img2 = F.avg_pool2d(img2, (<span class="number">2</span>, <span class="number">2</span>))
-            mssim.append(l)
-            mcs.append(cs)
-
-        mssim = torch.stack(mssim)
-        mcs = torch.stack(mcs)
-
-        weights = Variable(self.weights, requires_grad=<span class="literal">False</span>)
-
-        <span class="keyword">return</span> torch.prod(mssim ** weights)</code></pre>
+<li>可以看到，对于 for hidden_state[i] in range(self.branch_n) 会和其他所有的非自己对象进行conv2d_dilated，输出和hidden_state[i]相同的channel数，然后prelu各自结合，再与原始值residual add</li>
+<li><img src="/images/crowd_counting/DSSINET3.png" alt="DSSINET3.png"></li>
+<li>loss部分，咋一看整个图，还以为作者是说吧所有层都算DMS-SSIM的意思，然而。。</li>
+<li><img src="/images/crowd_counting/DSSINET4.png" alt="DSSINET4.png"></li>
+<li>这里说的也比较清楚了，DMS-SSIM-m 代表有几个scale的DMS-SSIM loss，从代码实现上看，作者也仅仅用了最后一层算loss。structure示意图中4个SFEM也是对应了5个dilation scale，代码比较清楚<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">t_ssim</span><span class="params">(img1, img2, img11, img22, img12, window, channel, dilation=<span class="number">1</span>, size_average=True)</span>:</span></span><br><span class="line">    window_size = window.size()[<span class="number">2</span>]</span><br><span class="line">    input_shape = list(img1.size())</span><br><span class="line"> </span><br><span class="line">    padding, pad_input = compute_same_padding2d(input_shape, \</span><br><span class="line">                                                kernel_size=(window_size, window_size), \</span><br><span class="line">                                                strides=(<span class="number">1</span>,<span class="number">1</span>), \</span><br><span class="line">                                                dilation=(dilation, dilation))</span><br><span class="line">    <span class="keyword">if</span> img11 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img11 = img1 * img1</span><br><span class="line">    <span class="keyword">if</span> img22 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img22 = img2 * img2</span><br><span class="line">    <span class="keyword">if</span> img12 <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        img12 = img1 * img2</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> pad_input[<span class="number">0</span>] == <span class="number">1</span> <span class="keyword">or</span> pad_input[<span class="number">1</span>] == <span class="number">1</span>:</span><br><span class="line">        img1 = F.pad(img1, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img2 = F.pad(img2, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img11 = F.pad(img11, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img22 = F.pad(img22, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line">        img12 = F.pad(img12, [<span class="number">0</span>, int(pad_input[<span class="number">0</span>]), <span class="number">0</span>, int(pad_input[<span class="number">1</span>])])</span><br><span class="line"> </span><br><span class="line">    padd = (padding[<span class="number">0</span>] // <span class="number">2</span>, padding[<span class="number">1</span>] // <span class="number">2</span>)</span><br><span class="line"> </span><br><span class="line">    mu1 = F.conv2d(img1, window , padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    mu2 = F.conv2d(img2, window , padding=padd, dilation=dilation, groups=channel)</span><br><span class="line"> </span><br><span class="line">    mu1_sq = mu1.pow(<span class="number">2</span>)</span><br><span class="line">    mu2_sq = mu2.pow(<span class="number">2</span>)</span><br><span class="line">    mu1_mu2 = mu1*mu2</span><br><span class="line"> </span><br><span class="line">    si11 = F.conv2d(img11, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    si22 = F.conv2d(img22, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line">    si12 = F.conv2d(img12, window, padding=padd, dilation=dilation, groups=channel)</span><br><span class="line"> </span><br><span class="line">    sigma1_sq = si11 - mu1_sq</span><br><span class="line">    sigma2_sq = si22 - mu2_sq</span><br><span class="line">    sigma12 = si12 - mu1_mu2</span><br><span class="line"> </span><br><span class="line">    C1 = (<span class="number">0.01</span>*<span class="number">255</span>)**<span class="number">2</span></span><br><span class="line">    C2 = (<span class="number">0.03</span>*<span class="number">255</span>)**<span class="number">2</span></span><br><span class="line"> </span><br><span class="line">    ssim_map = ((<span class="number">2</span>*mu1_mu2 + C1)*(<span class="number">2</span>*sigma12 + C2))/((mu1_sq + mu2_sq + C1)*(sigma1_sq + sigma2_sq + C2))</span><br><span class="line"> </span><br><span class="line">    v1 = <span class="number">2.0</span> * sigma12 + C2</span><br><span class="line">    v2 = sigma1_sq + sigma2_sq + C2</span><br><span class="line">    cs = torch.mean(v1 / v2)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> size_average:</span><br><span class="line">        ret = ssim_map.mean()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ret = ssim_map.mean(<span class="number">1</span>).mean(<span class="number">1</span>).mean(<span class="number">1</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> ret, cs</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NORMMSSSIM</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sigma=<span class="number">1.0</span>, levels=<span class="number">5</span>, size_average=True, channel=<span class="number">1</span>)</span>:</span></span><br><span class="line">        super(NORMMSSSIM, self).__init__()</span><br><span class="line">        self.sigma = sigma</span><br><span class="line">        self.window_size = <span class="number">5</span></span><br><span class="line">        self.levels = levels</span><br><span class="line">        self.size_average = size_average</span><br><span class="line">        self.channel = channel</span><br><span class="line">        self.register_buffer(<span class="string">'window'</span>, create_window(self.window_size, self.channel, self.sigma))</span><br><span class="line">        self.register_buffer(<span class="string">'weights'</span>, torch.Tensor([<span class="number">0.0448</span>, <span class="number">0.2856</span>, <span class="number">0.3001</span>, <span class="number">0.2363</span>, <span class="number">0.1333</span>]))</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img1, img2)</span>:</span></span><br><span class="line">        img1 = (img1 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)</span><br><span class="line">        img2 = (img2 + <span class="number">1e-12</span>) / (img2.max() + <span class="number">1e-12</span>)</span><br><span class="line"> </span><br><span class="line">        img1 = img1 * <span class="number">255.0</span></span><br><span class="line">        img2 = img2 * <span class="number">255.0</span></span><br><span class="line"> </span><br><span class="line">        msssim_score = self.msssim(img1, img2)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> - msssim_score</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">msssim</span><span class="params">(self, img1, img2)</span>:</span></span><br><span class="line">        levels = self.levels</span><br><span class="line">        mssim = []</span><br><span class="line">        mcs = []</span><br><span class="line"> </span><br><span class="line">        img1, img2, img11, img22, img12 = img1, img2, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(levels):</span><br><span class="line">            l, cs = \</span><br><span class="line">                    t_ssim(img1, img2, img11, img22, img12, \</span><br><span class="line">                                Variable(getattr(self, <span class="string">"window"</span>), requires_grad=<span class="literal">False</span>),\</span><br><span class="line">                                self.channel, size_average=self.size_average, dilation=(<span class="number">1</span> + int(i ** <span class="number">1.5</span>)))</span><br><span class="line"> </span><br><span class="line">            img1 = F.avg_pool2d(img1, (<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">            img2 = F.avg_pool2d(img2, (<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">            mssim.append(l)</span><br><span class="line">            mcs.append(cs)</span><br><span class="line"> </span><br><span class="line">        mssim = torch.stack(mssim)</span><br><span class="line">        mcs = torch.stack(mcs)</span><br><span class="line"> </span><br><span class="line">        weights = Variable(self.weights, requires_grad=<span class="literal">False</span>)</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> torch.prod(mssim ** weights)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>这个levels就对应着文章中的m</li>
 <li><img src="/images/crowd_counting/DSSINET5.png" alt="DSSINET5.png"></li>
@@ -709,19 +537,17 @@ def forward(self, input):
 </li>
 </ul>
 </li>
-<li><p>Experiment</p>
-<ul>
+<li>Experiment<ul>
 <li><img src="/images/crowd_counting/DSSINET6.png" alt="DSSINET6.png"></li>
 <li><img src="/images/crowd_counting/DSSINET8.png" alt="DSSINET8.png"></li>
 </ul>
 </li>
-<li><p>exp的结果是really SOTA，几乎是最好的水平</p>
-</li>
-<li><p>神奇的方法，值得研究研究</p>
-</li>
+<li>exp的结果是really SOTA，几乎是最好的水平</li>
+<li>神奇的方法，值得研究研究</li>
 </ul>
 <hr>
-<h1 id="Dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h1><h2 id="ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><a href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B" class="headerlink" title="ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)"></a>ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)</h2><ul>
+<h1 id="Dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h1><hr>
+<h2 id="ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B"><a href="#ShanghaiTechDataset-ShanghaiTech-SHT-A-amp-B" class="headerlink" title="ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)"></a>ShanghaiTechDataset (ShanghaiTech/SHT A &amp; B)</h2><ul>
 <li>A Well Konwn BenchMark</li>
 <li>Shanghaitech which contains 1198 annotated images, with a total of 330,165 people with centers of their heads annotated. As far as we know, this dataset is the largest one in terms of the number of annotated people. This dataset consists of two parts: there are 482 images in Part A which are randomly crawled from the Internet, and 716 images in Part B which are taken from the busy streets of metropolitan areas in Shanghai. The crowd density varies significantly between the two subsets, making accurate estimation of the crowd more challenging than most existing datasets. Both Part A and Part B are divided into training and testing: 300 images of Part A are used for training and the remaining 182 images for testing;, and 400 images of Part B are for training and 316 for testing</li>
 <li>paper <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf</a></li>
@@ -858,8 +684,8 @@ def forward(self, input):
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/crowd-counting/" rel="tag"># crowd_counting</a>
               <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/crowd-counting/" rel="tag"># crowd_counting</a>
           </div>
 
         
@@ -871,7 +697,10 @@ def forward(self, input):
     <a href="/2020/02/21/begin_with_hexo&next/" rel="prev" title="使用 hexo + next 快速搭建github个人主页">
       <i class="fa fa-chevron-left"></i> 使用 hexo + next 快速搭建github个人主页
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/22/Human_Parsing_Survey/" rel="next" title="Human Parsing Survey">
+      Human Parsing Survey <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -947,7 +776,7 @@ def forward(self, input):
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -960,7 +789,7 @@ def forward(self, input):
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
