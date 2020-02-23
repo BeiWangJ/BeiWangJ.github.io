@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 4.2.0">
@@ -99,12 +99,12 @@
   .use-motion .logo-line-before i { left: initial; }
   .use-motion .logo-line-after i { right: initial; }
   </style>
-</noscript>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -262,10 +262,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>梳理 Pedestrian Detection(行人检测) 相关介绍，数据集，算法</p>
-<a id="more"></a>
-<!-- toc -->
-
+        <p>梳理 Pedestrian Detection(行人检测) 相关介绍，数据集，算法<br><a id="more"></a><br><!-- toc --></p>
 <hr>
 <h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
 <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
@@ -372,94 +369,98 @@
 <li>项目库 <a href="https://bitbucket.org/shanshanzhang/citypersons/src/default/" target="_blank" rel="noopener">https://bitbucket.org/shanshanzhang/citypersons/src/default/</a></li>
 <li>Benchmark</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">Method</th>
-<th align="center">MR (Reasonable)</th>
-<th align="center">MR (Reasonable_small)</th>
-<th align="center">MR (Reasonable_occ=heavy)</th>
-<th align="center">MR (All)</th>
+<th style="text-align:center">Method</th>
+<th style="text-align:center">MR (Reasonable)</th>
+<th style="text-align:center">MR (Reasonable_small)</th>
+<th style="text-align:center">MR (Reasonable_occ=heavy)</th>
+<th style="text-align:center">MR (All)</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center"><a href="https://arxiv.org/abs/1910.09188" target="_blank" rel="noopener">APD</a>*</td>
-<td align="center">8.27%</td>
-<td align="center">11.03%</td>
-<td align="center">35.45%</td>
-<td align="center">35.65%</td>
+<tbody>
+<tr>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1910.09188" target="_blank" rel="noopener">APD</a>*</td>
+<td style="text-align:center">8.27%</td>
+<td style="text-align:center">11.03%</td>
+<td style="text-align:center">35.45%</td>
+<td style="text-align:center">35.65%</td>
 </tr>
 <tr>
-<td align="center">YT-PedDet*</td>
-<td align="center">8.41%</td>
-<td align="center">10.60%</td>
-<td align="center">37.88%</td>
-<td align="center">37.22%</td>
+<td style="text-align:center">YT-PedDet*</td>
+<td style="text-align:center">8.41%</td>
+<td style="text-align:center">10.60%</td>
+<td style="text-align:center">37.88%</td>
+<td style="text-align:center">37.22%</td>
 </tr>
 <tr>
-<td align="center">STNet*</td>
-<td align="center">8.92%</td>
-<td align="center">11.13%</td>
-<td align="center">34.31%</td>
-<td align="center">29.54%</td>
+<td style="text-align:center">STNet*</td>
+<td style="text-align:center">8.92%</td>
+<td style="text-align:center">11.13%</td>
+<td style="text-align:center">34.31%</td>
+<td style="text-align:center">29.54%</td>
 </tr>
 <tr>
-<td align="center"><a href="https://arxiv.org/abs/1910.06160" target="_blank" rel="noopener">MGAN</a></td>
-<td align="center">9.29%</td>
-<td align="center">11.38%</td>
-<td align="center">40.97%</td>
-<td align="center">38.86%</td>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1910.06160" target="_blank" rel="noopener">MGAN</a></td>
+<td style="text-align:center">9.29%</td>
+<td style="text-align:center">11.38%</td>
+<td style="text-align:center">40.97%</td>
+<td style="text-align:center">38.86%</td>
 </tr>
 <tr>
-<td align="center">DVRNet*</td>
-<td align="center">10.99%</td>
-<td align="center">15.68%</td>
-<td align="center">43.77%</td>
-<td align="center">41.48%</td>
+<td style="text-align:center">DVRNet*</td>
+<td style="text-align:center">10.99%</td>
+<td style="text-align:center">15.68%</td>
+<td style="text-align:center">43.77%</td>
+<td style="text-align:center">41.48%</td>
 </tr>
 <tr>
-<td align="center"><a href="https://arxiv.org/abs/1911.11985" target="_blank" rel="noopener">HBA-RCNN</a>*</td>
-<td align="center">11.26%</td>
-<td align="center">15.68%</td>
-<td align="center">39.54%</td>
-<td align="center">38.77%</td>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1911.11985" target="_blank" rel="noopener">HBA-RCNN</a>*</td>
+<td style="text-align:center">11.26%</td>
+<td style="text-align:center">15.68%</td>
+<td style="text-align:center">39.54%</td>
+<td style="text-align:center">38.77%</td>
 </tr>
 <tr>
-<td align="center"><a href="https://arxiv.org/abs/1807.08407" target="_blank" rel="noopener">OR-CNN</a></td>
-<td align="center">11.32%</td>
-<td align="center">14.19%</td>
-<td align="center">51.43%</td>
-<td align="center">40.19%</td>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1807.08407" target="_blank" rel="noopener">OR-CNN</a></td>
+<td style="text-align:center">11.32%</td>
+<td style="text-align:center">14.19%</td>
+<td style="text-align:center">51.43%</td>
+<td style="text-align:center">40.19%</td>
 </tr>
 <tr>
-<td align="center"><a href="http://arxiv.org/abs/1711.07752" target="_blank" rel="noopener">Repultion Loss</a></td>
-<td align="center">11.48%</td>
-<td align="center">15.67%</td>
-<td align="center">52.59%</td>
-<td align="center">39.17%</td>
+<td style="text-align:center"><a href="http://arxiv.org/abs/1711.07752" target="_blank" rel="noopener">Repultion Loss</a></td>
+<td style="text-align:center">11.48%</td>
+<td style="text-align:center">15.67%</td>
+<td style="text-align:center">52.59%</td>
+<td style="text-align:center">39.17%</td>
 </tr>
 <tr>
-<td align="center"><a href="https://arxiv.org/abs/1906.09756" target="_blank" rel="noopener">Cascade MS-CNN</a></td>
-<td align="center">11.62%</td>
-<td align="center">13.64%</td>
-<td align="center">47.14%</td>
-<td align="center">37.63%</td>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1906.09756" target="_blank" rel="noopener">Cascade MS-CNN</a></td>
+<td style="text-align:center">11.62%</td>
+<td style="text-align:center">13.64%</td>
+<td style="text-align:center">47.14%</td>
+<td style="text-align:center">37.63%</td>
 </tr>
 <tr>
-<td align="center"><a href="http://202.119.95.70/cache/12/03/openaccess.thecvf.com/f36bf52f1783160552c75ae3cd300e84/Zhang_CityPersons_A_Diverse_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Adapted FasterRCNN</a></td>
-<td align="center">12.97%</td>
-<td align="center">37.24%</td>
-<td align="center">50.47%</td>
-<td align="center">43.86%</td>
+<td style="text-align:center"><a href="http://202.119.95.70/cache/12/03/openaccess.thecvf.com/f36bf52f1783160552c75ae3cd300e84/Zhang_CityPersons_A_Diverse_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Adapted FasterRCNN</a></td>
+<td style="text-align:center">12.97%</td>
+<td style="text-align:center">37.24%</td>
+<td style="text-align:center">50.47%</td>
+<td style="text-align:center">43.86%</td>
 </tr>
 <tr>
-<td align="center"><a href="https://arxiv.org/abs/1607.07155" target="_blank" rel="noopener">MS-CNN</a></td>
-<td align="center">13.32%</td>
-<td align="center">15.86%</td>
-<td align="center">51.88%</td>
-<td align="center">39.94%</td>
+<td style="text-align:center"><a href="https://arxiv.org/abs/1607.07155" target="_blank" rel="noopener">MS-CNN</a></td>
+<td style="text-align:center">13.32%</td>
+<td style="text-align:center">15.86%</td>
+<td style="text-align:center">51.88%</td>
+<td style="text-align:center">39.94%</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="Caltech"><a href="#Caltech" class="headerlink" title="Caltech"></a>Caltech</h2><ul>
 <li>home <a href="http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/" target="_blank" rel="noopener">http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/</a></li>
 <li>The Caltech Pedestrian Dataset consists of approximately 10 hours of 640x480 30Hz video taken from a vehicle driving through regular traffic in an urban environment. About 250,000 frames (in 137 approximately minute long segments) with a total of 350,000 bounding boxes and 2300 unique pedestrians were annotated. The annotation includes temporal correspondence between bounding boxes and detailed occlusion labels. More information can be found in our PAMI 2012 and CVPR 2009 benchmarking papers.</li>
@@ -582,20 +583,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -684,7 +685,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 

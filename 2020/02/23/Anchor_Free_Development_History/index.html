@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="梳理 Anchor Free 的发展史">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Anchor Free Development History">
+<meta property="og:url" content="http://yoursite.com/2020/02/23/Anchor_Free_Development_History/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Anchor Free 的发展史">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/detection/yolo1_1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/yolo1_2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/yolo1_3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/yolo1_4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/densebox1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/densebox2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/densebox3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernet1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernet2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernet3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernet4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernet5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/extremenet6.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fsaf6.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos6.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/fcos7.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetop1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetop2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetop3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetop4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetop5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/centernetkt6.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite5.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite6.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite7.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/cornernetlite8.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/reppoints1.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/reppoints2.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/reppoints3.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/reppoints4.png">
+<meta property="og:image" content="http://yoursite.com/images/detection/reppoints5.png">
+<meta property="article:published_time" content="2020-02-23T08:51:34.405Z">
+<meta property="article:modified_time" content="2020-02-23T10:17:47.820Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="anchor_free">
+<meta property="article:tag" content="detection">
+<meta property="article:tag" content="cv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/detection/yolo1_1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/23/Anchor_Free_Development_History/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Anchor Free Development History | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/23/Anchor_Free_Development_History/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Anchor Free Development History
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-23 16:51:34 / 修改时间：18:17:47" itemprop="dateCreated datePublished" datetime="2020-02-23T16:51:34+08:00">2020-02-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cv/" itemprop="url" rel="index">
+                    <span itemprop="name">cv</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Anchor Free 的发展史<br><a id="more"></a><br><!-- toc --></p>
+<hr>
+<h2 id="YOLO-v1"><a href="#YOLO-v1" class="headerlink" title="YOLO v1"></a>YOLO v1</h2><ul>
+<li>paper <a href="http://arxiv.org/abs/1506.02640" target="_blank" rel="noopener">You Only Look Once: Unified, Real-Time Object Detection</a> </li>
+<li>git <a href="https://github.com/pjreddie/darknet" target="_blank" rel="noopener">https://github.com/pjreddie/darknet</a></li>
+<li><img src="/images/detection/yolo1_1.png" alt="yolo1_1.png"></li>
+<li><img src="/images/detection/yolo1_2.png" alt="yolo1_2.png"></li>
+<li>Each grid cell predicts B bounding boxes and confidence scores for those boxes.</li>
+<li>Our system models detection as a regression problem. It divides the image into an S × S grid and for each grid cell predicts B bounding boxes, confidence for those boxes, and C class probabilities. These predictions are encoded as an S × S × (B ∗ 5 + C) tensor.<ul>
+<li>For evaluating YOLO on PASCAL VOC, we use S = 7, B = 2. PASCAL VOC has 20 labelled classes so C = 20. Our final prediction is a 7 × 7 × 30 tensor.</li>
+</ul>
+</li>
+<li>loss<ul>
+<li><img src="/images/detection/yolo1_3.png" alt="yolo1_3.png"></li>
+</ul>
+</li>
+<li>exp<ul>
+<li><img src="/images/detection/yolo1_4.png" alt="yolo1_4.png"></li>
+</ul>
+</li>
+<li>现在看来简单粗暴，在当时可谓是轰动一时，方法是极具开创性的。</li>
+<li>FRRCNN的速度不敢恭维，而YOLO v1 几乎是率先达到了DEEP learning 的实时水平，虽然anchor free只是无心插柳，但也确实是anchor free。</li>
+<li>但是没有anchor — 召回低，没有mu-level-feature 精度有限，backbone是darknet19，精度低</li>
+<li>在这篇文章之后，这个彩虹小马哥吸取 ssd 的anchor及mul-level做法，使得yolo2 与 ssd 一时瑜亮</li>
+</ul>
+<h2 id="DenseBox"><a href="#DenseBox" class="headerlink" title="DenseBox"></a>DenseBox</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1509.04874.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1509.04874.pdf</a></li>
+<li><img src="/images/detection/densebox1.png" alt="densebox1.png"></li>
+<li><img src="/images/detection/densebox2.png" alt="densebox2.png"></li>
+<li><img src="/images/detection/densebox3.png" alt="densebox3.png"></li>
+<li>这是一篇思路很清晰的文章，看流程图就能明白他做了些什么</li>
+<li>在那个VGG还盛行的年代，率先使用了高低level通过upsample方式融合特征出结果，还是用了landmark信息refine检测框</li>
+<li>可惜后续没能深挖下去，不然现有anchor free的结构会提前好些时间出来，可能与 FPN 类似的高低层特征融合 及 ssd 这样多level 出框的思路出来有关</li>
+</ul>
+<h2 id="CornerNet"><a href="#CornerNet" class="headerlink" title="CornerNet"></a>CornerNet</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1808.01244.pdf" target="_blank" rel="noopener">CornerNet: Detecting Objects as Paired Keypoints</a></li>
+<li>git <a href="https://github.com/princeton-vl/CornerNet" target="_blank" rel="noopener">https://github.com/princeton-vl/CornerNet</a></li>
+<li><img src="/images/detection/cornernet1.png" alt="cornernet1.png"></li>
+<li><img src="/images/detection/cornernet2.png" alt="cornernet2.png"></li>
+<li><img src="/images/detection/cornernet3.png" alt="cornernet3.png"></li>
+<li>这是一篇用人体关键点类似的思路去做检测的文章</li>
+<li>heatmaps: 这个grid是不是要找的 左上|右下 点</li>
+<li>embedings: 向量，用于左上右下点匹配</li>
+<li>offset: 用于关键点微调</li>
+<li>corner pooling: 特殊的maxpooling 用于 进一步凸显 左上|右下 的信息</li>
+<li><img src="/images/detection/cornernet4.png" alt="cornernet4.png"></li>
+<li>值得一提的文章中类比了两种loss，pull loss用于使CornerPair向量接近更匹配，push loss用于区分不同的CornerPair</li>
+<li><img src="/images/detection/cornernet5.png" alt="cornernet5.png"></li>
+<li>Anchor Free reborn! 原来没有anchor也可以SOTA! </li>
+<li>文章的创新点太多太多，以至于让人感觉非常的繁复，于是后面的人满脑子想的就是，哎？能不能简单点</li>
+<li>Hourglass-104 太强了！不过真的慢还很大啊</li>
+<li>heatmap 的做法使得 当 classes 很多时计算量很大 又慢了些</li>
+<li>还得 左上|右下 各算一个heatmap 又慢了些</li>
+<li>还得匹配 左上|右下 点？ 又慢了些</li>
+<li>还有额外的为了提升这个设计思路的 pooling？ 又慢了些</li>
+<li>总的来说，该文章首次让 anchor free 站上 coco map 40+，researchers 纷纷开始尝试，是不是可以干掉这个该死的anchor</li>
+</ul>
+<h2 id="ExtremeNet"><a href="#ExtremeNet" class="headerlink" title="ExtremeNet"></a>ExtremeNet</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1901.08043.pdf" target="_blank" rel="noopener">Bottom-up Object Detection by Grouping Extreme and Center Points</a></li>
+<li>git <a href="https://github.com/xingyizhou/ExtremeNet" target="_blank" rel="noopener">https://github.com/xingyizhou/ExtremeNet</a></li>
+<li><img src="/images/detection/extremenet1.png" alt="extremenet1.png"></li>
+<li>看效果牛逼哄哄，究竟是怎么实现的呢？</li>
+<li>We detect four extreme points (top-most, leftmost, bottom-most, right-most) and one center point of objects using a standard keypoint estimation network.</li>
+<li>There are no direct extreme point annotation in the COCO. However, there are complete annotations for object segmentation masks. We thus find extreme points as extrema in the polygonal mask annotations. In cases where an edge is parallel to an axis or within a 3 ◦ angle, we place the extreme point at the center of the edge. Although our training data is derived from the more expensive segmentation annotation, the extreme point data itself is 4× cheaper to collect than the standard bounding box.</li>
+<li>o(╯□╰)o  竟然是从mask里转换出来的，然后还说我这个标注啊比标准的bbox标注便宜4倍  （黑人问号？？？）</li>
+<li>文章的启迪来自于 cvpr 2018 的 <a href="https://arxiv.org/pdf/1711.09081.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1711.09081.pdf</a> Deep Extreme Cut: From Extreme Points to Object Segmentation</li>
+<li><img src="/images/detection/extremenet2.png" alt="extremenet2.png"></li>
+<li>ExtremeNet的主framework， heatmap 对应各个 classification，offset不对类别分别处置，4 x (x,y) x H x w</li>
+<li>那怎么把这些点组装起来呢</li>
+<li><img src="/images/detection/extremenet3.png" alt="extremenet3.png"></li>
+<li><img src="/images/detection/extremenet4.png" alt="extremenet4.png"></li>
+<li>第一步，ExtrectPeak。 即提取heatmap中所有的极值点，极值点定义为在3x3滑动窗口中的极大值。</li>
+<li>第二步，暴力枚举。对于每一种极值点组合（进行适当的剪枝以减小遍历规模），计算它们的中心点，如果center map对应位置上的响应超过预设阈值，则将这一组5个点作为一个备选，该备选组合的score为5个对应点的score平均值。</li>
+<li>做着做着发现有 ghost box，啥意思呢。</li>
+<li>Center grouping may give a high-confidence falsepositive detection for three equally spaced colinear objects of the same size. The center object has two choices here, commit to the correct small box, or predict a much larger box containing the extreme points of its neighbors. We call these false-positive detections “ghost” boxes.</li>
+<li>。。。这个不就是你的算法缺陷吗？咋解决呢？</li>
+<li>To discourage ghost boxes, we use a form of soft non-maxima suppression [1]. If the sum of scores of all boxes contained in a certain bounding box exceeds 3 times of the score of itself, we divide its score by 2.</li>
+<li>堵上。。。真的醉了。</li>
+<li>然后回归出来的极值点数值不够大，咋整呢？cornernet不是有个corner pooling 使方向上max一致吗，那搞个edge aggregation吧，把极值点加强一下，尽量就一个极值点</li>
+<li>解决办法是，对每一个极值点，向它的两个方向进行聚集。具体做法是，沿着X/Y轴方向，将第一个单调下降区间内的点的score按一定权重累加到原极值点上。效果如下图所示，可以看出，红圈部分的响应明显增强了。</li>
+<li><img src="/images/detection/extremenet5.png" alt="extremenet5.png"></li>
+<li><img src="/images/detection/extremenet6.png" alt="extremenet6.png"></li>
+<li>方法太过繁琐，有没有简单方便的方法呢</li>
+</ul>
+<h2 id="FSAF"><a href="#FSAF" class="headerlink" title="FSAF"></a>FSAF</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.00621.pdf" target="_blank" rel="noopener">Feature Selective Anchor-Free Module for Single-Shot Object Detection</a></li>
+<li>Feature Selective Anchor-Free Module for Single-Shot Object Detection 文章title就说明了文章的主体思想，下面两张图也很清晰</li>
+<li><img src="/images/detection/fsaf1.png" alt="fsaf1.png"></li>
+<li><img src="/images/detection/fsaf2.png" alt="fsaf2.png"></li>
+<li>主要的motivation是，不同尺寸的物体依据其与FPN每一层 Anchor 的适配程度，分配到不同分辨率的层上进行学习</li>
+<li>two limitations:<br>  1) heuristicguided feature selection;<br>  2) overlap-based anchor sampling. During training, each instance is always matched to the closest anchor box(es) according to IoU overlap. And anchor boxes are associated with a certain level of feature map by human-defined rules, such as box size. Therefore, the selected feature level for each instance is purely based on adhoc heuristics.</li>
+<li>这个想法其实是很对的，anchor能iou匹配去搞这些事情，在没有anchor的情况下，我们该如何去分配每一层的目标呢？</li>
+<li>那就把anchor堆起来，看看那个匹配了形成真值，然后anchor free的分支依据这个真值去选择用那一层的特征去做最后的检测，原文</li>
+<li>Our motivation is to let each instance select the best level of feature freely to optimize the network, so there should be no anchor boxes to constrain the feature selection in our module. Instead, we encode the instances in an anchor-free manner to learn the parameters for classification and regression. The general concept is presented in Figure 3. An anchor-free branch is built per level of feature pyramid, independent to the anchor-based branch. Similar to the anchor-based branch, it consists of a classification subnet and a regression subnet (not shown in figure). An instance can be assigned to arbitrary level of the anchor-free branch. During training, we dynamically select the most suitable level of feature for each instance based on the instance content instead of just the size of instance box. The selected level of feature then learns to detect the assigned instances. At inference, the FSAF module can run independently or jointly with anchorbased branches. Our FSAF module is agnostic to the backbone network and can be applied to single-shot detectors with a structure of feature pyramid. Additionally, the instantiation of anchor-free branches and online feature selection can be various. In this work, we keep the implementation of our FSAF module simple so that its computational cost is marginal compared to the whole network</li>
+<li><img src="/images/detection/fsaf3.png" alt="fsaf3.png"></li>
+<li><img src="/images/detection/fsaf4.png" alt="fsaf4.png"></li>
+<li>那anchor-free的分支是不是在更新参数的时候只更新匹配上的那个level的feature呢？ （Online feature selection mechanism）</li>
+<li><img src="/images/detection/fsaf5.png" alt="fsaf5.png"></li>
+<li><img src="/images/detection/fsaf6.png" alt="fsaf6.png"></li>
+<li>关于 inference，作者说anchor-base分支其实在inference的时候是可以不用的，但是不用的话。其实如table2所示，精度上是和原来的retina差不多的</li>
+<li>Inference: The FSAF module just adds a few convolution layers to the fully-convolutional RetinaNet, so the inference is still as simple as forwarding an image through the network. For anchor-free branches, we only decode box predictions from at most 1k top-scoring locations in each pyramid level, after thresholding the confidence scores by 0.05. These top predictions from all levels are merged with the box predictions from anchor-based branches, followed by non-maximum suppression with a threshold of 0.5, yielding the final detections.</li>
+<li>文章目前没有官方的开源代码，总体来说结论偏向于，训练时候 anchor-base 和 anchor-free 共存，在inference阶段可以单独使用anchor-free分支或者联合使用</li>
+<li>这是首个在inference阶段的anchor-free能到达anchor-base精度的文章，最最重要的一点是，如何让anchor-free能work well，不同level的feature会成为关键</li>
+</ul>
+<h2 id="FCOS"><a href="#FCOS" class="headerlink" title="FCOS"></a>FCOS</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1904.01355.pdf" target="_blank" rel="noopener">FCOS: Fully Convolutional One-Stage Object Detection</a></li>
+<li>git <a href="https://github.com/tianzhi0549/FCOS" target="_blank" rel="noopener">https://github.com/tianzhi0549/FCOS</a></li>
+<li><img src="/images/detection/fcos1.png" alt="fcos1.png"></li>
+<li>文章里有提到一个例子，对于anchor-free而言，对于一个grid，很有可能会作为多个 obj 的center，那如何解决这个问题呢？使用mul-level feature</li>
+<li><img src="/images/detection/fcos2.png" alt="fcos2.png"></li>
+<li>蓝色 + 绿色 是标准的 ssd-fpn 的结构，head 里也是常规的 tower， 额外引入了一个center-loss作为辅助</li>
+<li>那如何在无anchor的情况下去正确匹配ground truth呢？如何解决前言的问题呢？</li>
+<li>估计是受 FSAF 和 trident RCNN，SNIPER 启发，作者让每一层仅关注对应大小的bbox，让不同 level 的 feature 出 不同大小的 bbox，从而避免了前言里的问题（当然这有一个前提：同样大小的同一类别obj不会拥有同一个center）</li>
+<li><img src="/images/detection/fcos3.png" alt="fcos3.png"></li>
+<li><img src="/images/detection/fcos4.png" alt="fcos4.png"></li>
+<li><img src="/images/detection/fcos5.png" alt="fcos5.png"></li>
+<li>这个center-ness的思路是很好的。对于一个ground truth，可能grid不足以完全匹配其center，周边会有好几个近邻的grid都匹配上了。那如何去筛选呢？当然是选最近的。</li>
+<li>作者在插入 center-ness 分支的时候也做了实验，这是一个由中心距算出来的loss是不是应该插在 regression 分支呢？ 作者做了实验，发现插 regression 分支还不如不插。</li>
+<li>我个人的理解是，虽然这是一个和距离相关的loss，但其实仍然是一个分类为目的的loss，用于区分其是否为中心点，与最后分类的分值相辅相成，所以还是加在 分类 的分支里</li>
+<li><img src="/images/detection/fcos6.png" alt="fcos6.png"></li>
+<li><img src="/images/detection/fcos7.png" alt="fcos7.png"></li>
+<li>最后，作者还就FCOS作为RPN网络进行了分析，实验证明，FCOS不仅recall更高而且在高IOU threshold下效果依然好过retinanet</li>
+<li>值得推荐的好方法</li>
+<li>值得一提的是社区给作者提供了许多改进点，速度不变的情况下提升了1.*%的COCO map，具体可以看git repo</li>
+</ul>
+<h2 id="CenterNet-op"><a href="#CenterNet-op" class="headerlink" title="CenterNet-op"></a>CenterNet-op</h2><ul>
+<li>paper <a href="https://arxiv.org/abs/1904.07850" target="_blank" rel="noopener">Objects as Points</a></li>
+<li>git <a href="https://github.com/xingyizhou/CenterNet" target="_blank" rel="noopener">https://github.com/xingyizhou/CenterNet</a></li>
+<li><img src="/images/detection/centernetop1.png" alt="centernetop1.png"></li>
+<li>上来就是拳打RetinaNet, 脚踢YOLO3</li>
+<li>CenterNet achieves the best speed-accuracy trade-off on the MS COCO dataset, with 28.1% AP at 142 FPS, 37.4% AP at 52 FPS, and 45.1% AP with multi-scale testing at 1.4 FPS. </li>
+<li>看看他究竟是怎么做的</li>
+<li>首先假设输入图像为I（W <em> H </em> 3），其中W和H分别为图像的宽和高，然后在预测的时候，我们要产生出关键点的热点图(keypoint heatmap)：Y（W/R <em> H/R </em> C）<ul>
+<li>其中R为输出对应原图的步长，而C是在目标检测中对应着检测点的数量，如在COCO目标检测任务中，这个C的值为80，代表当前有80个类别。</li>
+</ul>
+</li>
+<li>We use the default output stride of R = 4 in literature [4,40,42]. The output stride downsamples the output prediction by a factor R. A prediction Yˆ x,y,c = 1 corresponds to a detected keypoint, while Yˆ x,y,c = 0 is background.</li>
+<li><img src="/images/detection/centernetop2.png" alt="centernetop2.png"></li>
+<li><img src="/images/detection/centernetop3.png" alt="centernetop3.png"></li>
+<li><img src="/images/detection/centernetop4.png" alt="centernetop4.png"></li>
+<li>说的很明白。</li>
+<li>h = H // 4  w = W // 4</li>
+<li>hw: n<em>c</em>h<em>w  wh: n</em>2<em>h</em>w  reg: n<em>2</em>h*w</li>
+<li>对于每一个类分别生成heatmap，将gt keypoints以高斯核的形式结合进去形成easy-hard mining类似的heatmap</li>
+<li>使用 l1 loss 作为regression的loss</li>
+<li>后处理 对hw使用 sigmoid + maxpooling 进行nms，取代了传统的nms模块，说是很efficient 在我看来也只是对于 anchor很多情况下 nms慢的问题，anchor少的时候优势不大</li>
+<li>附源代码<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_nms</span><span class="params">(heat, kernel=<span class="number">3</span>)</span>:</span></span><br><span class="line">    pad = (kernel - <span class="number">1</span>) // <span class="number">2</span></span><br><span class="line"> hmax = nn.functional.max_pool2d(</span><br><span class="line">        heat, (kernel, kernel), stride=<span class="number">1</span>, padding=pad)</span><br><span class="line">    keep = (hmax == heat).float()</span><br><span class="line">    x = heat * keep</span><br><span class="line"> <span class="keyword">return</span> x</span><br><span class="line">hm = output[<span class="string">'hm'</span>].sigmoid_()</span><br><span class="line">heat = _nms(heat)</span><br></pre></td></tr></table></figure></li>
+<li><img src="/images/detection/centernetop5.png" alt="centernetop5.png"></li>
+<li>同样是简单有效的方案</li>
+<li>对backbone有很大的依赖，当backbone能力下降时（不适用dcn）效果下降迅速，不适合端化</li>
+<li>当分辨率提高时计算量增幅大</li>
+<li>当中心点重合时，由于单grid只回归一个框，故会出现意料之外的问题</li>
+</ul>
+<h2 id="CenterNet-kt"><a href="#CenterNet-kt" class="headerlink" title="CenterNet-kt"></a>CenterNet-kt</h2><ul>
+<li>paper <a href="https://arxiv.org/abs/1904.08189" target="_blank" rel="noopener">CenterNet: Keypoint Triplets for Object Detection</a></li>
+<li>git <a href="https://github.com/Duankaiwen/CenterNet" target="_blank" rel="noopener">https://github.com/Duankaiwen/CenterNet</a></li>
+<li><img src="/images/detection/centernetkt1.png" alt="centernetkt1.png"></li>
+<li>CornerNet 换个思路版本</li>
+<li>本文利用关键点三元组即中心点、左上角点和右下角点三个关键点而不是两个点来确定一个目标，使网络花费了很小的代价便具备了感知物体内部信息的能力，从而能有效抑制误检。另外，为了更好的检测中心点和角点，我们分别提出了 center pooling 和 cascade corner pooling 来提取中心点和角点的特征。 啥意思呢？CornerPair对当且仅当其中心位置附近包含Center时才算是真的是个bbox</li>
+<li>先从特征对齐角度分析一波motivation</li>
+<li>为啥2阶段好呢？有roi pooling，分类的结果和bbox的信息是对齐的；但凡是anchor-based的one-stage det方案，anchor和特征就是对不齐的，CornerNet虽然没有anchor也有存在这样的问题</li>
+<li>咋整呢？那我是不是可以验证一下这个框到底对不对</li>
+<li><img src="/images/detection/centernetkt2.png" alt="centernetkt2.png"></li>
+<li><img src="/images/detection/centernetkt3.png" alt="centernetkt3.png"></li>
+<li>作者把自己的方法叫做 Object Detection as Keypoint Triplets</li>
+<li>通过 center pooling 和 cascade corner pooling 分别得到 center heatmap 和 corner heatmaps，用来预测关键点的位置。得到角点的位置和类别后，通过 offsets 将角点的位置映射到输入图片的对应位置，然后通过 embedings 判断哪两个角点属于同一个物体，以便组成一个检测框。相似于CornerNet的Pooling，本文也有一个CenterPooling</li>
+<li><img src="/images/detection/centernetkt4.png" alt="centernetkt4.png"></li>
+<li><img src="/images/detection/centernetkt5.png" alt="centernetkt5.png"></li>
+<li>其他的就和CornerNet一样了，就不重复叙述了，上结果</li>
+<li><img src="/images/detection/centernetkt6.png" alt="centernetkt6.png"></li>
+<li>结果还是很强势的，吊打了在座的各位 One-Stage Det，但是由于是CornerNet加重版，inference的速度还是有点慢的 （且仅仅511*511 分辨率）</li>
+<li>With an average inference time of 270ms using a 52-layer hourglass backbone [29] and 340ms using a 104-layer hourglass backbone [29] per image, CenterNet is quite efficient yet closely matches the state-of-the-art performance of the other twostage detectors.</li>
+<li>很强大，相当于CornerNet上再加了一层是否包含Center的判断，就是太慢了</li>
+</ul>
+<h2 id="CornerNet-Lite"><a href="#CornerNet-Lite" class="headerlink" title="CornerNet-Lite"></a>CornerNet-Lite</h2><ul>
+<li>paper <a href="https://arxiv.org/abs/1904.08900" target="_blank" rel="noopener">CornerNet-Lite: Efficient Keypoint Based Object Detection</a></li>
+<li>git <a href="https://github.com/princeton-vl/CornerNet-Lite" target="_blank" rel="noopener">https://github.com/princeton-vl/CornerNet-Lite</a></li>
+<li><img src="/images/detection/cornernetlite1.png" alt="cornernetlite1.png"></li>
+<li>上来就是拳打前作cornernet，脚踢正在风头的YOLO3，那么问题来了。这上面的inference time竟然是在7700k+1080ti上的时间。。。（令人害怕）</li>
+<li>恩，我觉得我们这个conrnet是有点慢啊，那要不减少点计算的像素量不改变结构或者是干脆减轻结构？</li>
+<li><img src="/images/detection/cornernetlite2.png" alt="cornernetlite2.png"></li>
+<li>saccade的overview。全图直接检测好烦，计算量太大了。我先down size，然后生成类似与trident的三个level的attention maps，映射到原图剪出来，然后走正常的cornernet流程。。。</li>
+<li>值得一提的是。。作者说这样做相较于CornerNet原生减少了6x的时间而且仅提升了1%的accuracy。</li>
+<li>这一整套的出发点和处理技巧和SPIPER和相似。说实在的。。这个结构说他 two-stage 一点也不冤枉啊。。</li>
+<li>接下来看 squeeze，核心思路是 well-known 的depth wise conv，和预期的相似，cornernet-squeeze 变快了，精度也下降了</li>
+<li><img src="/images/detection/cornernetlite3.png" alt="cornernetlite3.png"></li>
+<li><img src="/images/detection/cornernetlite4.png" alt="cornernetlite4.png"></li>
+<li>最后，作者提出了 cornernet-saccade的几个亮点：1-训练占用内存少2-attention效果拔群3-用了Hourglass-54精度还上升了！</li>
+<li><img src="/images/detection/cornernetlite5.png" alt="cornernetlite5.png"></li>
+<li><img src="/images/detection/cornernetlite6.png" alt="cornernetlite6.png"></li>
+<li><img src="/images/detection/cornernetlite7.png" alt="cornernetlite7.png"></li>
+<li>实验做的好，说什么都对。不过话说回来，对于尺寸较小的图片，深的网络确实不一定比稍微浅一些的网络强。经过gt-attention裁剪原图后图片基本变小了</li>
+<li>值得一提的是，corner-saccade 的 APs 高的吓人，但此处并非coco-test的结果，下面的才是。 24.4也是当前one-stage中 APs 非常高的存在了</li>
+<li><img src="/images/detection/cornernetlite8.png" alt="cornernetlite8.png"></li>
+<li>（伪）one-stage 当前最高精度可能性的存在</li>
+</ul>
+<h2 id="RepPoints"><a href="#RepPoints" class="headerlink" title="RepPoints"></a>RepPoints</h2><ul>
+<li>paper <a href="https://arxiv.org/abs/1904.11490" target="_blank" rel="noopener">RepPoints: Point Set Representation for Object Detection</a></li>
+<li>git <a href="https://github.com/microsoft/RepPoints" target="_blank" rel="noopener">https://github.com/microsoft/RepPoints</a></li>
+<li><img src="/images/detection/reppoints1.png" alt="reppoints1.png"></li>
+<li>干净利落的 refineDet 加强版？</li>
+<li>any FPN branch feature – 1st deconv (point loss 1) – 2st deconv (point loss 2) + normal class pred</li>
+<li>这个deconv怎么用来算bbox呢</li>
+<li><img src="/images/detection/reppoints2.png" alt="reppoints2.png"></li>
+<li><img src="/images/detection/reppoints3.png" alt="reppoints3.png"></li>
+<li><img src="/images/detection/reppoints4.png" alt="reppoints4.png"></li>
+<li>使用 1st DCONV  的 OFFSET_MAP 作为回归的 pseudo BOX（生成‘anchor’），然后对其进行分类，微调</li>
+<li><img src="/images/detection/reppoints5.png" alt="reppoints5.png"></li>
+<li>文章思路新颖，颇有开辟新流派的趋势</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/anchor-free/" rel="tag"># anchor_free</a>
+              <a href="/tags/detection/" rel="tag"># detection</a>
+              <a href="/tags/cv/" rel="tag"># cv</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Segmentation_Survey/" rel="prev" title="Segmentation Survey">
+      <i class="fa fa-chevron-left"></i> Segmentation Survey
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Random_Forest/" rel="next" title="Random Forest">
+      Random Forest <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">1.</span> <span class="nav-text">YOLO v1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DenseBox"><span class="nav-number">2.</span> <span class="nav-text">DenseBox</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CornerNet"><span class="nav-number">3.</span> <span class="nav-text">CornerNet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ExtremeNet"><span class="nav-number">4.</span> <span class="nav-text">ExtremeNet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FSAF"><span class="nav-number">5.</span> <span class="nav-text">FSAF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FCOS"><span class="nav-number">6.</span> <span class="nav-text">FCOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CenterNet-op"><span class="nav-number">7.</span> <span class="nav-text">CenterNet-op</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CenterNet-kt"><span class="nav-number">8.</span> <span class="nav-text">CenterNet-kt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CornerNet-Lite"><span class="nav-number">9.</span> <span class="nav-text">CornerNet-Lite</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RepPoints"><span class="nav-number">10.</span> <span class="nav-text">RepPoints</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

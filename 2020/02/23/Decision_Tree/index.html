@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="梳理 Decision Tree(决策树) 算法原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Decision Tree">
+<meta property="og:url" content="http://yoursite.com/2020/02/23/Decision_Tree/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Decision Tree(决策树) 算法原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_2.jpg">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_4.jpg">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/ID3_6.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/C4.5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/cart1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/cart2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/cart3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/cart4.png">
+<meta property="article:published_time" content="2020-02-23T10:56:27.996Z">
+<meta property="article:modified_time" content="2020-02-23T12:11:20.142Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="tree">
+<meta property="article:tag" content="ml">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/ml/ID3_1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/23/Decision_Tree/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Decision Tree | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/23/Decision_Tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Decision Tree
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-23 18:56:27 / 修改时间：20:11:20" itemprop="dateCreated datePublished" datetime="2020-02-23T18:56:27+08:00">2020-02-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ml/" itemprop="url" rel="index">
+                    <span itemprop="name">ml</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Decision Tree(决策树) 算法原理<br><a id="more"></a><br><!-- toc --></p>
+<h2 id="foreword"><a href="#foreword" class="headerlink" title="foreword"></a>foreword</h2><ul>
+<li>相信所有学习过数据结构这门课的朋友们都学习过树。我们从ID3开始复习下这玩意</li>
+</ul>
+<h2 id="ID3"><a href="#ID3" class="headerlink" title="ID3"></a>ID3</h2><ul>
+<li><img src="/images/ml/ID3_1.png" alt="ID3_1.png"></li>
+<li>H(C) 代表C的熵，H(C|D) 代表C在D下的熵， 所以 gain(D) D对于C的信息增益就是 C的信息增益 - C在D发生时的熵</li>
+<li>结合例子说明</li>
+<li><img src="/images/ml/ID3_2.jpg" alt="ID3_2.png"></li>
+<li>以play为root，构建DT，其中 play 的gain(play) 就是如下所示</li>
+<li><img src="/images/ml/ID3_3.png" alt="ID3_3.png"></li>
+<li><img src="/images/ml/ID3_4.jpg" alt="ID3_4.png"></li>
+<li>我们单列所有变量，对其进行分析</li>
+<li><img src="/images/ml/ID3_5.png" alt="ID3_5.png"></li>
+<li>非常简单明了，其中 gain(天气) = gain(play) - H(天气)，其他也同理。这说明在 outlook temperature humidity windy 四者中，outlook最重要，选取为第一位的节点</li>
+<li>由此生成第一节点，分裂出三个分叉，其中overcast的gain为0，低于随意一个阈值，停止分裂，其他两项继续分裂</li>
+<li>ID3伪代码：</li>
+<li><img src="/images/ml/ID3_6.png" alt="ID3_6.png"></li>
+<li>ID3 缺点<ul>
+<li>ID3 没有剪枝策略，容易过拟合；</li>
+<li>信息增益准则对可取值数目较多的特征有所偏好，类似“编号”的特征其信息增益接近于 1；</li>
+<li>只能用于处理离散分布的特征；</li>
+<li>没有考虑缺失值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h2><ol>
+<li>可以处理连续数值型属性 <ul>
+<li>对于离散值，C4.5和ID3的处理方法相同，对于某个属性的值连续时，假设这这个节点上的数据集合样本为total，C4.5算法进行如下处理： <ul>
+<li>将样本数据该属性A上的具体数值按照升序排列，得到属性序列值：{A1,A2,A3,…,Atotal}</li>
+<li>在上一步生成的序列值中生成total-1个分割点。第i个分割点的取值为Ai和Ai+1的均值，每个分割点都将属性序列划分为两个子集。</li>
+<li>计算每个分割点的信息增益(Information Gain),得到total-1个信息增益。</li>
+<li>对分裂点的信息增益进行修正：减去log2(N-1)/|D|，其中N为可能的分裂点个数，D为数据集合大小。</li>
+<li>选择修正后的信息增益值最大的分类点作为该属性的最佳分类点</li>
+<li>计算最佳分裂点的信息增益率(Gain Ratio)作为该属性的Gain Ratio</li>
+<li>选择Gain Ratio最大的属性作为分类属性。</li>
+</ul>
+</li>
+<li>其实就是把连续值问题转化为多分类问题</li>
+</ul>
+</li>
+<li>信息增益率<ul>
+<li>C4.5对信息增益添加了罚项，改为了信息增益比。并且能够处理连续特征了。以及相比于ID3，能够处理缺失值了。但是C4.5仍然只能用于分类。C4.5也可以是多叉树。</li>
+<li>gain 函数被重新定义为</li>
+<li><img src="/images/ml/C4.5.png" alt="C4.5.png"></li>
+<li>以 outlook 为例</li>
+<li>H(outlook) = -(5/14 <em> log2(5/14) + 4/14 </em> log2(4/14) + 5/14 * log2(5/14)) = 1.5774062828523454</li>
+<li>C(outlook) = gain(outlook) / H(outlook) = 0.247 / 1.5774 = 0.156586788</li>
+<li>在计算信息增益时，C4.5考虑了变量本身的熵，熵越大的变量得到惩罚越高，从而综合考虑得到了新的选择</li>
+<li>同样的可以得到</li>
+<li>H(temperature) = -(4/14 <em> log2(4/14) + 6/14 </em> log2(6/14) + 4/14 * log2(4/14)) = 1.5566567074628228</li>
+<li>C(temperature) = 0.029 / 1.5567 = 0.018629151</li>
+<li>H(humidity) = -(7/14 <em> log2(7/14) + 7/14 </em> log2(7/14)) = 1</li>
+<li>C(humidity) = 0.152 / 1 = 0.152</li>
+<li>H(windy) = -(8/14 <em> log2(8/14) + 6/14 </em> log2(6/14))  = 0.9852281360342515</li>
+<li>C(windy) = 0.048 / 0.9852 = 0.048721072</li>
+<li>虽然结果还是选择outlook，但是outlook 和 humidity的差距已经被拉得很近</li>
+</ul>
+</li>
+<li>剪枝<ul>
+<li>预剪枝：在节点划分前来确定是否继续增长，及早停止增长的主要方法有：<ul>
+<li>节点内数据样本低于某一阈值；</li>
+<li>所有节点特征都已分裂；</li>
+<li>节点划分前准确率比划分后准确率高。</li>
+</ul>
+</li>
+<li>后剪枝：在已经生成的决策树上进行剪枝，从而得到简化版的剪枝决策树，C4.5是采用后剪枝的方法<ul>
+<li>采用的悲观剪枝方法，用递归的方式从低往上针对每一个非叶子节点，评估用一个最佳叶子节点去代替这课子树是否有益</li>
+<li>如果剪枝后与剪枝前相比其错误率是保持或者下降，则这棵子树就可以被替换掉</li>
+<li>C4.5 通过训练数据集上的错误分类数量来估算未知样本上的错误率。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缺失值处理 <ul>
+<li>对于某些采样数据，可能会缺少属性值</li>
+<li>在这种情况下，处理缺少属性值的通常做法是赋予该属性的常见值，或者属性均值</li>
+<li>另外一种比较好的方法是为该属性的每个可能值赋予一个概率，即将该属性以概率形式赋值<ul>
+<li>例如给定Boolean属性B，已知采样数据有12个B=0和88个B=1实例，那么在赋值过程中，B属性的缺失值被赋值为B(0)=0.12、B(1)=0.88；所以属性B的缺失值以12%概率被分到False的分支，以88%概率被分到True的分支。这种处理的目的是计算信息增益，使得这种属性值缺失的样本也能处理。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>剪枝策略可以再优化；</li>
+<li>C4.5 用的是多叉树，用二叉树效率更高；</li>
+<li>C4.5 使用的熵模型拥有大量耗时的对数运算，连续值还有排序运算；</li>
+<li>C4.5 在构造树的过程中，对数值属性值需要按照其大小进行排序，从中选择一个分割点，所以只适合于能够驻留于内存的数据集，当训练集大得无法在内存容纳时，程序无法运行。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>伪代码<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Function C4.5(R:包含连续属性的无类别属性集合,C:类别属性,S:训练集)    </span><br><span class="line">Begin    </span><br><span class="line">   If S为空,返回一个值为Failure的单个节点;    </span><br><span class="line">   If S是由相同类别属性值的记录组成,    </span><br><span class="line">      返回一个带有该值的单个节点;    </span><br><span class="line">   If R为空,则返回一个单节点,其值为在S的记录中找出的频率最高的类别属性值;    </span><br><span class="line">   [注意未出现错误则意味着是不适合分类的记录]；    </span><br><span class="line">  For 所有的属性R(Ri) Do    </span><br><span class="line">        If 属性Ri为连续属性，则    </span><br><span class="line">        Begin    </span><br><span class="line">           sort(Ri属性值)  </span><br><span class="line">           将Ri的最小值赋给A1：    </span><br><span class="line">             将Ri的最大值赋给Am；    </span><br><span class="line">           For j From 1 To m-1 Do Aj&#x3D;(A1+Aj+1)&#x2F;2;    </span><br><span class="line">           将Ri点的基于Aj(1&lt;&#x3D;j&lt;&#x3D;m-1划分的最大信息增益属性(Ri,S)赋给A；    </span><br><span class="line">        End；    </span><br><span class="line">  将R中属性之间具有最大信息增益的属性(D,S)赋给D;    </span><br><span class="line">  将属性D的值赋给&#123;dj&#x2F;j&#x3D;1,2...m&#125;；    </span><br><span class="line">  将分别由对应于D的值为dj的记录组成的S的子集赋给&#123;sj&#x2F;j&#x3D;1,2...m&#125;;    </span><br><span class="line">  返回一棵树，其根标记为D;树枝标记为d1,d2...dm;    </span><br><span class="line">  再分别构造以下树:    </span><br><span class="line">  C4.5(R-&#123;D&#125;,C,S1),C4.5(R-&#123;D&#125;,C,S2)...C4.5(R-&#123;D&#125;,C,Sm);    </span><br><span class="line">End C4.5</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="CART"><a href="#CART" class="headerlink" title="CART"></a>CART</h2><ul>
+<li>以基尼系数为准则选择最优划分属性，可以应用于分类和回归</li>
+<li>CART是一棵二叉树，采用二元切分法，每次把数据切成两份，分别进入左子树、右子树。而且每个非叶子节点都有两个孩子，所以CART的叶子节点比非叶子多1</li>
+<li>相比ID3和C4.5，CART应用要多一些，既可以用于分类也可以用于回归</li>
+<li>CART 包含的基本过程有分裂，剪枝和树选择。<ul>
+<li>分裂：分裂过程是一个二叉递归划分过程，其输入和预测特征既可以是连续型的也可以是离散型的，CART 没有停止准则，会一直生长下去；</li>
+<li>剪枝：采用代价复杂度剪枝，从最大树开始，每次选择训练数据熵对整体性能贡献最小的那个分裂节点作为下一个剪枝对象，直到只剩下根节点。CART 会产生一系列嵌套的剪枝树，需要从中选出一颗最优的决策树；</li>
+<li>树选择：用单独的测试集评估每棵剪枝树的预测性能（也可以用交叉验证）。</li>
+</ul>
+</li>
+<li>CART 在 C4.5 的基础上进行了很多提升。<ul>
+<li>C4.5 为多叉树，运算速度慢，CART 为二叉树，运算速度快；</li>
+<li>C4.5 只能分类，CART 既可以分类也可以回归；</li>
+<li>CART 使用 Gini 系数作为变量的不纯度量，减少了大量的对数运算；</li>
+<li>CART 采用代理测试来估计缺失值，而 C4.5 以不同概率划分到不同节点中；</li>
+<li>CART 采用“基于代价复杂度剪枝”方法进行剪枝，而 C4.5 采用悲观剪枝方法。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>分类树<ul>
+<li>CART作为分类树时，特征属性可以是连续类型也可以是离散类型，但观察属性(即标签属性或者分类属性)必须是离散类型。</li>
+<li>类似于C4.5，对于连续值，先把连续属性转换为离散属性再进行处理。</li>
+<li>另外，对于连续属性先进行排序（升序），只有在决策属性（即分类发生了变化）发生改变的地方才需要切开，这可以显著减少运算量。<ol>
+<li>对特征的取值进行升序排序</li>
+<li>两个特征取值之间的中点作为可能的分裂点，将数据集分成两部分，计算每个可能的分裂点的GiniGain。优化算法就是只计算分类属性发生改变的那些特征取值</li>
+<li>选择GiniGain最小的分裂点作为该特征的最佳分裂点（注意，若修正则此处需对最佳分裂点的Gini Gain减去log2(N-1)/|D|（N是连续特征的取值个数，D是训练数据数目） </li>
+</ol>
+</li>
+<li>必须注意的是：根据离散特征分支划分数据集时，子数据集中不再包含该特征（因为每个分支下的子数据集该特征的取值就会是一样的，信息增益或者Gini Gain将不再变化，这也是C4.5等决策树离散型特征不会被重复选择为节点分裂的属性）；而根据连续特征分支时，各分支下的子数据集必须依旧包含该特征（当然，左右分支各包含的分别是取值小于、大于等于分裂值的子数据集），因为该连续特征再接下来的树分支过程中可能依旧起着决定性作用。</li>
+<li>CART分类时，使用基尼指数（Gini）来选择最好的数据分割的特征，gini描述的是纯度，与信息熵的含义相似。CART中每一次迭代都会降低GINI系数。</li>
+<li><img src="/images/ml/cart1.png" alt="cart1.png"></li>
+<li>对于上题<ul>
+<li>G(oulook) = 5/14 <em> (1 - (2/5)<strong>2 - (3/5)</strong>2) + 4/14 </em> (1 - (4/4)<strong>2 - 0</strong>2) + 5/14 <em>(1 - (3/5)<em>*2 - (2/5)</em></em>2) = 0.34285714285714286</li>
+<li>G(temperature) = 4/14 <em> (1 - (2/4)<strong>2 - (2/4)</strong>2) + 6/14 </em> (1 - (4/6)<strong>2 - (2/6)</strong>2) + 4/14 <em>(1 - (3/4)<em>*2 - (1/4)</em></em>2) = 0.44047619047619047</li>
+<li>G(humidity) = 7/14 <em> (1 - (3/7)<strong>2 - (4/7)</strong>2) + 7/14 </em> (1 - (6/7)<strong>2 - (1/7)</strong>2) = 0.3673469387755103</li>
+<li>G(windy) = 8/14 <em> (1 - (6/8)<strong>2 - (2/8)</strong>2) + 6/14 </em> (1 - (3/6)<strong>2 - (3/6)</strong>2) = 0.42857142857142855</li>
+<li>仍然选 outlook，但是变量间差异变化较大</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>缺失值<ul>
+<li>对于缺失值，cart和c4.5的处理方式类似，缺失特征的gini是在非缺失数据上先划分然后根据非缺失值的比例前面乘上相应系数，降低存在缺失值特征的gini然后和其它特征分裂之后的gini增益进行比较。</li>
+<li>如果缺失特征恰好是gini增益最大的特征，那么要在有缺失值的特征上分裂就比较麻烦了：</li>
+<li>cart使用的方式是：surrogate splits</li>
+<li>翻译为中文是代理特征分裂，有两种情况：<ol>
+<li>首先，如果某个存在缺失值的特征恰好是当前的分裂增益最大的特征，那么我们需要遍历剩余的特征，剩余的特征中如果有也存在缺失值的特征，那么这些特征忽略，仅仅在完全没有缺失值的特征上进行选择，我们选择其中能够与最佳增益的缺失特征分裂之后增益最接近的特征进行分裂。</li>
+<li>如果我们事先设置了一定的标准仅仅选择仅仅选择差异性在一定范围内的特征作为代理特征进行分裂而导致了没有特征和最佳缺失特征的差异性满足要求，或者所有特征都存在缺失值的情况下，缺失样本默认进入个数最大的叶子节点。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>剪枝<ul>
+<li>CART 剪枝算法从完全生长的决策树的底端剪去一些子树，使决策树变小（模型简单），从而能够对未知数据有更准确的预测。CART剪枝算法由两步组成：首先从生成算法产生的决策树T0T0底端开始不断剪枝，直到T0T0的根节点，形成一个子序列T0,T1,T3,…..TnT0,T1,T3,…..Tn,然后通过交叉验证在独立的验证集上对子树序列进行测试，从中选择最优子树。</li>
+<li><img src="/images/ml/cart2.png" alt="cart2.png"></li>
+<li>其中，alpha最大只会是T0的depth，对于分类树交叉验证gini，对于回归树一般交叉验证lsd</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>回归树<ul>
+<li>回归树要求观察属性是连续类型，由于节点分裂选择特征属性时通常使用最小绝对偏差（LAD）或者最小二乘偏差（LSD）法，因此通常特征属性也是连续类型。</li>
+<li>也就是 mae mse</li>
+<li><img src="/images/ml/cart3.png" alt="cart3.png"></li>
+<li>以最小绝对偏差（LAD）为例 <ol>
+<li>先令最佳方差为无限大bestVar=inf</li>
+<li>依次计算根据某特征（FeatureCount次迭代）划分数据后的总方差currentVar（，计算方法为：划分后左右子数据集的总方差之和），如果currentVar</li>
+<li>返回最佳分支特征、分支特征值（离散特征则为二分序列、连续特征则为分裂点的值），左右分支子数据集。</li>
+</ol>
+</li>
+<li>举个栗子</li>
+<li><img src="/images/ml/cart4.png" alt="cart4.png"></li>
+<li>这里是使用了 LSD，也就是MSE作为评估，取代GINI作为分裂标准</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tree/" rel="tag"># tree</a>
+              <a href="/tags/ml/" rel="tag"># ml</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Random_Forest/" rel="prev" title="Random Forest">
+      <i class="fa fa-chevron-left"></i> Random Forest
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Boosting/" rel="next" title="Boosting">
+      Boosting <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#foreword"><span class="nav-number">1.</span> <span class="nav-text">foreword</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ID3"><span class="nav-number">2.</span> <span class="nav-text">ID3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C4-5"><span class="nav-number">3.</span> <span class="nav-text">C4.5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CART"><span class="nav-number">4.</span> <span class="nav-text">CART</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

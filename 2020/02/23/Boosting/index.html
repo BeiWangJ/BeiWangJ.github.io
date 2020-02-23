@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="梳理 Boosting 相关算法原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Boosting">
+<meta property="og:url" content="http://yoursite.com/2020/02/23/Boosting/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Boosting 相关算法原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/ml/adaboost1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/adaboost2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/adaboost3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/adaboost4.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/adaboost5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt4.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt6.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt7.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt8.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt9.jpg">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt10.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt11.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt12.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt13.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt14.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt15.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt16.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/gbdt17.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost4.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost6.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost7.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost8.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost9.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost10.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost11.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost12.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost13.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost14.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost15.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost16.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost17.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost18.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost19.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost20.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost21.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost22.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost23.gif">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost24.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost25.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost26.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost27.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/xgboost28.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm4.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm6.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm7.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm8.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm9.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/lightgbm10.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost1.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost2.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost3.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost4.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost5.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost6.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost7.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost8.png">
+<meta property="og:image" content="http://yoursite.com/images/ml/catboost9.png">
+<meta property="article:published_time" content="2020-02-23T12:10:33.114Z">
+<meta property="article:modified_time" content="2020-02-23T13:47:01.002Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="tree">
+<meta property="article:tag" content="boosting">
+<meta property="article:tag" content="ml">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/ml/adaboost1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/23/Boosting/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Boosting | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/23/Boosting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Boosting
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-23 20:10:33 / 修改时间：21:47:01" itemprop="dateCreated datePublished" datetime="2020-02-23T20:10:33+08:00">2020-02-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ml/" itemprop="url" rel="index">
+                    <span itemprop="name">ml</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Boosting 相关算法原理</p>
+<a id="more"></a>
+<!-- toc -->
+<hr>
+<h2 id="Adaboost"><a href="#Adaboost" class="headerlink" title="Adaboost"></a>Adaboost</h2><ul>
+<li>参考链接<ul>
+<li><a href="https://www.cnblogs.com/ScorpioLu/p/8295990.html" target="_blank" rel="noopener">https://www.cnblogs.com/ScorpioLu/p/8295990.html</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/58052322" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/58052322</a> <a href="https://zhuanlan.zhihu.com/p/26215100" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/26215100</a></li>
+</ul>
+</li>
+<li><img src="/images/ml/adaboost1.png" alt="adaboost1.png"></li>
+<li>基于这个原理理解，对于adaboost既可以是回归树也可以是分类树，对于每一次迭代产生的loss，都依赖上一轮的迭代结果，从而产生不同划分的tree（弱分类器）</li>
+<li><img src="/images/ml/adaboost2.png" alt="adaboost2.png"></li>
+<li>这个图很能说明adaboost的想法，通过不断更新样本权重，生成数个弱分类器，ensemble得到结果</li>
+<li><img src="/images/ml/adaboost3.png" alt="adaboost3.png"><ol>
+<li>step 1<ul>
+<li>初始化所有样本的weight为 1/N </li>
+</ul>
+</li>
+<li>step2<ul>
+<li>计算 t时刻 error = sum(wt(i) * (yi == h(xi))) / sum(wi)   # sum(wi)=1</li>
+<li>alpha(t) = 0.5 * ln(1/error - 1)</li>
+<li>update w(t+1)(i) = wt(i) <em> exp(alpha(t) </em> (yi == h(xi))) / Z (其中Z为归一化参数，为sum(w(t+1)))</li>
+</ul>
+</li>
+<li>step3<ul>
+<li>FINAL = sgn(accumlatesum(alpha*h(x), 1, T)) </li>
+</ul>
+</li>
+</ol>
+</li>
+<li><img src="/images/ml/adaboost4.png" alt="adaboost4.png"></li>
+<li><img src="/images/ml/adaboost5.png" alt="adaboost5.png"></li>
+<li>综上所述，adaboost的想法是在输入上迭代参数，re-weght，迭代多颗树综合出结果，类似 deep learning 中hard mining的操作，ohem focal等</li>
+</ul>
+<h2 id="GBDT"><a href="#GBDT" class="headerlink" title="GBDT"></a>GBDT</h2><ul>
+<li>paper <a href="http://docs.salford-systems.com/GreedyFuncApproxSS.pdf" target="_blank" rel="noopener">http://docs.salford-systems.com/GreedyFuncApproxSS.pdf</a></li>
+<li>参考链接 <a href="https://www.jianshu.com/p/405f233ed04b" target="_blank" rel="noopener">https://www.jianshu.com/p/405f233ed04b</a> <a href="https://www.cnblogs.com/ScorpioLu/p/8296994.html" target="_blank" rel="noopener">https://www.cnblogs.com/ScorpioLu/p/8296994.html</a> </li>
+<li>区别于 adaboost， Gradient boosting在原始定义中只会是回归树，如果将分类问题转化为概率问题也可以适用于GBDT</li>
+<li>对于adaboost而言，每一迭代的树的输入是re-weight后的原始数据，是可以独立出结果的树，是一个臭皮匠</li>
+<li>而对于GBDT，这是一个梯度下降树，最关键的点在于损失函数的数值优化可以看成是在函数空间而不是参数空间，是继先人之志出的结果</li>
+<li>简单说，GBDT出发点并非hard mining，而是用输入空间模拟梯度</li>
+<li>以下 摘自 李航 机器学习方法<ul>
+<li><img src="/images/ml/gbdt1.png" alt="gbdt1.png"></li>
+<li><img src="/images/ml/gbdt2.png" alt="gbdt2.png"></li>
+<li><img src="/images/ml/gbdt3.png" alt="gbdt3.png"></li>
+<li><img src="/images/ml/gbdt4.png" alt="gbdt4.png"></li>
+<li><img src="/images/ml/gbdt5.png" alt="gbdt5.png"></li>
+<li><img src="/images/ml/gbdt6.png" alt="gbdt6.png"></li>
+</ul>
+</li>
+<li>其中， <img src="/images/ml/gbdt7.png" alt="gbdt7.png"> 为回归树更新方式，对于 最小二乘的MSEloss，rmi = -((y-f(x))^2)’ | f(x) = -(-2y<em>f(x) + f(x)*</em>2)’ = 2y - 2f(x)</li>
+<li>其中对Cmj（叶节点区域拟合值）的求解，在很多的地方都没有详细的说明，在GBDT的说明中也只有 <img src="/images/ml/gbdt8.png" alt="gbdt8.png"> 这样一句，意思是说，对于每一个叶节点划分区域，计算其使Loss最小的Cmj值最为拟合值，以MSE为例，求解过程如下<ul>
+<li><img src="/images/ml/gbdt9.jpg" alt="gbdt9.png"></li>
+</ul>
+</li>
+<li>那么对于二分类问题如何构建 GBDT 呢</li>
+<li>我们知道，对于分类问题，一般使用 熵 来表示，即</li>
+<li><img src="/images/ml/gbdt10.png" alt="gbdt10.png"></li>
+<li>我们知道对于 LR 而言</li>
+<li><img src="/images/ml/gbdt11.png" alt="gbdt11.png"></li>
+<li>故 <img src="/images/ml/gbdt12.png" alt="gbdt12.png"> 可改写为 <img src="/images/ml/gbdt13.png" alt="gbdt13.png"></li>
+<li><img src="/images/ml/gbdt14.png" alt="gbdt14.png"></li>
+<li><img src="/images/ml/gbdt15.png" alt="gbdt15.png"></li>
+<li><img src="/images/ml/gbdt16.png" alt="gbdt16.png"></li>
+<li>其中 newton-raphson 指的是牛顿迭代</li>
+<li><img src="/images/ml/gbdt17.png" alt="gbdt17.png"></li>
+</ul>
+<h2 id="XGBoost"><a href="#XGBoost" class="headerlink" title="XGBoost"></a>XGBoost</h2><ul>
+<li>paper <a href="https://arxiv.org/pdf/1603.02754.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1603.02754.pdf</a></li>
+<li>git <a href="https://github.com/dmlc/xgboost" target="_blank" rel="noopener">https://github.com/dmlc/xgboost</a></li>
+<li><img src="/images/ml/xgboost1.png" alt="xgboost1.png"></li>
+<li><img src="/images/ml/xgboost2.png" alt="xgboost2.png"><ul>
+<li>我们设计和构建高度可扩展的端到端提升树系统。 </li>
+<li>我们提出了一个理论上合理的加权分位数略图。 这个东西就是推荐分割点的时候用，能不用遍历所有的点，只用部分点就行，近似地表示，省时间。</li>
+<li>我们引入了一种新颖的稀疏感知算法用于并行树学习。 令缺失值有默认方向。</li>
+<li>我们提出了一个有效的用于核外树形学习的缓存感知块结构。 用缓存加速寻找排序后被打乱的索引的列数据的过程。</li>
+</ul>
+</li>
+<li><img src="/images/ml/xgboost3.png" alt="xgboost3.png"></li>
+<li><img src="/images/ml/xgboost4.png" alt="xgboost4.png"></li>
+<li>修改了祖传L函数，新增了Ω项用于估计模型复杂度。作者表示这个Ω也是这个 Regularized greedy forest 首先提出的，这里简化了来使用</li>
+<li>喜闻乐见的推导环节，祖传展开</li>
+<li><img src="/images/ml/xgboost5.png" alt="xgboost5.png"></li>
+<li>用gi表示一阶导，用hi表示二阶导，Taylor展开近似，O(f(x)**3)丢掉算了</li>
+<li><img src="/images/ml/xgboost6.png" alt="xgboost6.png"></li>
+<li>丢掉常数项 L(t-1)</li>
+<li><img src="/images/ml/xgboost7.png" alt="xgboost7.png"></li>
+<li>代入Ω项展开，合并</li>
+<li><img src="/images/ml/xgboost8.png" alt="xgboost8.png"></li>
+<li>其中，wj为t时刻新tree上的权值（拟合值）。对  ~L(t) ，对其对 wj 求导 等于0，得到 如下最优解，带入得</li>
+<li><img src="/images/ml/xgboost9.png" alt="xgboost9.png"></li>
+<li>分裂依据就等于 (分裂后Loss - 分裂前Loss) / 2  - gamma 主要是依据分裂为二叉树所以除2 分裂后复杂度+1 所以-gamma</li>
+<li><img src="/images/ml/xgboost10.png" alt="xgboost10.png"></li>
+<li>上图简单表示下</li>
+<li><img src="/images/ml/xgboost11.png" alt="xgboost11.png"></li>
+<li>其中T的深度为3, 总结起来就是如下所示</li>
+<li><img src="/images/ml/xgboost12.png" alt="xgboost12.png"></li>
+<li>Shrinkage and Column Subsampling<ul>
+<li>第一种技术是Friedman引入的收缩。在每一次提升树训练迭代后，在前面乘一个因子η来收缩其权重（也就是我们说的学习率，或者叫步长）。与随机优化中的学习率类似，收缩减少了每棵树的影响，并为将来的树模型留出了改进模型的空间</li>
+<li>shrinkage = 0.1，传统的boosting往往没有这玩意，和我们deep learning里的lr基本一致的理解，略有不同</li>
+<li>详见99年的paper <a href="https://astro.temple.edu/~msobel/courses_files/StochasticBoosting(gradient).pdf" target="_blank" rel="noopener">https://astro.temple.edu/~msobel/courses_files/StochasticBoosting(gradient).pdf</a></li>
+<li>第二种技术上列（特征）子采样。这个技术用于随机森林中，用于梯度增强，但未在现有的开源包中实现。根据用户反馈，使用列子采样可以比传统的行子采样（也支持）更能防止过度采样。列子采样还能加速稍后描述的并行算法。</li>
+<li>在boosting中也学习RF的random feature的做法，在输入属性上也随机</li>
+</ul>
+</li>
+<li>Approximate Algorithm for  SPLIT FINDING ALGORITHMS<ul>
+<li>上原文简图</li>
+<li><img src="/images/ml/xgboost13.png" alt="xgboost13.png"></li>
+<li>Sk 是 feature k 的分位点，可以整树做一次或者每次划分都做一次(随着划分，整体划分范围会发生改变)</li>
+<li>对每一颗树的每一个叶节点进行一阶导Gi和二阶导Hi的统计</li>
+<li>对于每一个叶节点，其一阶导==所有元素一阶导的和，即下图<br><img src="/images/ml/xgboost14.png" alt="xgboost14.png"></li>
+<li>其中提到了一点，所谓的Global Split还是Local Split，作者是建议对深的树用local较好，global 和 local 所需的参数有所不同，具体如下图所示<br><img src="/images/ml/xgboost15.png" alt="xgboost15.png"></li>
+<li>其中，eps越小划分越细，exact 代表常规的gbdt的全部划分的做法，实验证明，对于Global需要更多的划分点来保证精度，对于Local则可以少一些划分点但是每次分裂后需要重新计算划分点</li>
+<li>值得一提的是，常见的GBDT往往是6层，当深度等于6时，Global和Local产生的划分点数量一致，所以用这样的比例来实验</li>
+<li>具体来看看划分公式<br><img src="/images/ml/xgboost16.png" alt="xgboost16.png"></li>
+<li>计算每一个输入值的二阶导，计算二阶导累加间距约等于eps的点，其中 式8 代表z处rk(z)的计算方式。</li>
+<li>式9 看起来复杂，其实就是说了一件事情，获取 sum(h) 的等分点，当大于eps时生成新的区间</li>
+<li>作者这里有提及说为什么使用h作为划等分点的依据，有兴趣的朋友可以看看下图</li>
+<li><img src="/images/ml/xgboost17.png" alt="xgboost17.png"></li>
+</ul>
+</li>
+<li>Sparsity-aware Split Finding<ul>
+<li>对于缺失值处理是本文的一大两点之一，上图看具体怎么做</li>
+<li><img src="/images/ml/xgboost18.png" alt="xgboost18.png"></li>
+<li>但对于tree的每个节点，xgboost会生成额外的default属性用于缺失值推论，如X1作为输入，Age缺失，Gender male，所以是左左，相应的X2就是左右</li>
+<li>那具体应该如何计算default点呢</li>
+<li><img src="/images/ml/xgboost19.png" alt="xgboost19.png"></li>
+<li>对于node的整体集合 I，提出 x ！= missing 的集合 Ik，计算节点G H</li>
+<li>对非空节点集合Ik做划分，假设所有空值节点被划分到右，则左划分的 Gl = sum(G{1 → j})，剩余右节点的Gr = G - Gl，由此得到划分对于空节点的影响</li>
+<li>反之亦然，最终得到最大score，得到空值在该node的default选择</li>
+<li><img src="/images/ml/xgboost20.png" alt="xgboost20.png"></li>
+<li>相较于传统的做法（例如填入均值等），这种sparsity aware algorithm能加速近50倍</li>
+</ul>
+</li>
+<li>SYSTEM DESIGN</li>
+<li>在系统层面，xgboost做的也改进很多<ul>
+<li>Column Block for Parallel Learning<ul>
+<li>In order to reduce the cost of sorting, we propose to store the data in in-memory units, which we called block. Data in each block is stored in the compressed column (CSC) format, with each column sorted by the corresponding feature value.</li>
+<li><img src="/images/ml/xgboost21.png" alt="xgboost21.png"></li>
+<li>简答说就是，对每个特征（空值过滤），都进行排序，计算g h，存储结果到block，一方面避免了反复计算梯度，另一方面在计算分位点的时候也可以减少很多的计算，此外这样的结构也为多线程和分布式计算提供了可能</li>
+<li>为什么先排序的方法会更有效？虽然直观上很容易理解，但是大佬是严谨的，能证明绝对不放过</li>
+<li><img src="/images/ml/xgboost22.png" alt="xgboost22.png"></li>
+<li>就一个特征为例进行分析， ||x||0log(n)代表n个样本的排序成本（常见的堆排序的时间复杂度，下图演示），K代表tree数量，d代表单树depth</li>
+<li>对于常规的xgboost，假形成的树为完全二叉树，每一颗树每一层需要先进行O(||x||0log(n))的排序再进行||x||0次划分，所以时间复杂度是O(Kd||x||0log(n))</li>
+<li>block的做法，在初始化的时候就排序O(||x||0log(n))，之后就是正常的CART的时间消耗，即O(Kd||x||0)，所有cost是O(Kd||x||0+||x||0log(n))</li>
+<li>使用分位估计点算法后，设划分次数为q，则常规的xgboost的时间消耗为 O(Kd||x||0log(q))</li>
+<li>同样的，使用分位估计点算法同时使用block，设B是每个块中的最大行数，cost是O(Kd||x||0+||x||0log(B))</li>
+<li><img src="/images/ml/xgboost23.gif" alt="xgboost23.png"></li>
+</ul>
+</li>
+<li>Cache-aware Access<ul>
+<li>这里分两部分，一部分是 continuous memory，这个我们在torch上也有continuous的操作，思路是一样的，主要是时查找对象内存在一处从而提速</li>
+<li><img src="/images/ml/xgboost24.png" alt="xgboost24.png"></li>
+<li>虽然block结构有助于优化分割点查找的时间复杂度，但是算法需要通过行索引间接提取梯度统计量，因为这些值是按特征的顺序访问的，这是一种非连续的内存访问（意思就是按值排序以后指针就乱了）。 分割点枚举的简单实现在累积和非连续内存提取之间引入了即时读/写依赖性（参见图8）。 当梯度统计信息不适合CPU缓存进而发生缓存未命中时，这会减慢分割点查找的速度。</li>
+<li>对于贪心算法，我们可以通过缓存感知预取算法来缓解这个问题。 具体来说，我们在每个线程中分配一个内部缓冲区，获取梯度统计信息并存入，然后以小批量方式执行累积。 预取的操作将直接读/写依赖关系更改为更长的依赖关系，有助于数据行数较大时减少运行开销。 图7给出了Higgs和Allstate数据集上缓存感知与非缓存感知算法的比较。 我们发现，当数据集很大时，实现缓存感知的贪婪算法的运行速度是朴素版本的两倍。</li>
+<li>对于近似算法，我们通过选择正确的block尺寸来解决问题。 我们将block尺寸定义为block中包含的最大样本数，因为这反映了梯度统计量的高速缓存存储成本。 选择过小的block会导致每个线程的工作量很小，并行计算的效率很低。 另一方面，过大的block会导致高速缓存未命中现象，因为梯度统计信息不适合CPU高速缓存。良好的block尺寸平衡了这两个因素。 我们在两个数据集上比较了block大小的各种选择，结果如图9所示。该结果验证了我们的讨论，并表明每个块选择2**16个样本可以平衡缓存资源利用和并行化效率。</li>
+<li>我觉得这个人翻译的不错，虽然翻译了我仍然不是很理解，主要是缓存和计算效率之间的优化，主要是计算在CPU上的优化，具体效果如下</li>
+<li>原文链接：<a href="https://blog.csdn.net/zhaojc1995/article/details/89238051" target="_blank" rel="noopener">https://blog.csdn.net/zhaojc1995/article/details/89238051</a></li>
+<li><img src="/images/ml/xgboost25.png" alt="xgboost25.png"></li>
+<li>在 10M 起的数据集上效果显著，1M的就影响不大</li>
+<li><img src="/images/ml/xgboost26.png" alt="xgboost26.png"></li>
+<li>对于分块算法，在块大小尽可能大且接近2**16时，计算效率最高</li>
+</ul>
+</li>
+<li>Blocks for Out-of-core Computation<ul>
+<li>我们系统的一个目标是充分利用机器的资源来实现可扩展的学习。 除处理器和内存外，利用磁盘空间处理不适合主内存的数据也很重要。为了实现核外计算，我们将数据分成多个块并将每个块存储在磁盘上。在计算过程中，使用独立的线程将块预取到主存储器缓冲区是非常重要的，因为计算可以因此在磁盘读取的情况下进行。但是，这并不能完全解决问题，因为磁盘读取会占用了大量计算时间。减少开销并增加磁盘IO的吞吐量非常重要。 我们主要使用两种技术来改进核外计算。</li>
+<li>Block Compression 我们使用的第一种技术是块压缩。该块从列方向压缩，并在加载到主存储器时通过独立的线程进行解压。这可以利用解压过程中的一些计算与磁盘读取成本进行交换。我们使用通用的压缩算法来压缩特征值。对于行索引，我们通过块的起始索引开始减去行索引，并使用16位整型来存储每个偏移量。这要求每个块有2^16个样本，这也被证实是一个好的设置（好的设置指的是2^16这个数字的设置）。在我们测试的大多数数据集中，我们实现了大约26％到29％的压缩率。</li>
+<li>Block Sharding第二种技术是以另一种方式将数据分成多个磁盘。为每个磁盘分配一个实现预取的线程，并将数据提取到内存缓冲区中。然后，训练线程交替地从每个缓冲区读取数据。当有多个磁盘可用时，这有助于提高磁盘读取的吞吐量。</li>
+<li>此处优化是分布式并行优化，不具体讨论</li>
+<li>原文链接：<a href="https://blog.csdn.net/zhaojc1995/article/details/89238051" target="_blank" rel="noopener">https://blog.csdn.net/zhaojc1995/article/details/89238051</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>与主流boosting系统对比<ul>
+<li><img src="/images/ml/xgboost27.png" alt="xgboost27.png"></li>
+</ul>
+</li>
+<li>experiment<ul>
+<li><img src="/images/ml/xgboost28.png" alt="xgboost28.png"></li>
+</ul>
+</li>
+<li>简单说就是，相较于其他，xgboost速度快效果好，一时无两</li>
+</ul>
+<h2 id="LightGBM"><a href="#LightGBM" class="headerlink" title="LightGBM"></a>LightGBM</h2><ul>
+<li>paper <a href="https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf" target="_blank" rel="noopener">LightGBM: A Highly Efficient Gradient Boosting Decision Tree</a></li>
+<li>git <a href="https://github.com/Microsoft/LightGBM" target="_blank" rel="noopener">https://github.com/Microsoft/LightGBM</a></li>
+<li>参考 <ul>
+<li><a href="https://zhuanlan.zhihu.com/p/91167170" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/91167170</a></li>
+<li><a href="https://blog.csdn.net/zhaojc1995/article/details/88382424" target="_blank" rel="noopener">https://blog.csdn.net/zhaojc1995/article/details/88382424</a></li>
+</ul>
+</li>
+<li>论文导读<br>-摘要<ul>
+<li>梯度提升树（Gradient Boosting Decision Tree，GBDT）是一种非常流行的机器学习算法，并且有很多有效的实现，如XGBoost和pGBT。尽管在这些实现中已经采用了很多工程优化的手段，但是当特征维度高、数据量大时，其效率和可扩展性仍然不能令人满意。主要的原因是，对于每个特征，需要扫描所有数据点，计算所有可能的分割节点的信息增益，这非常耗时。为了解决这个问题，我们提出了两种新技术：基于梯度的单侧采样（Gradient-based One-Side Sampling ，GOSS）和互斥特征捆绑（Exclusive Feature Bundling ，EFB）。在GOSS方法中，我们显著减少了梯度小的数据点的比例，仅使用剩下的数据来计算信息增益。我们证明，具有较大梯度的数据在信息增益的计算中起着更重要的作用，因此利用GOSS方法计算得到的信息增益即使只用了较少数据，精度也非常高 。在EFB方法中，我们捆绑互斥的特征（即，它们很少同时取非零值）去减少特征数量。我们证明找到最理想的特征捆绑的解法是NP难的，但是贪心算法可以达到近似效果（这样可以有效地减少特征的数量又不会大大降低分割节点最终的准确性）。利用GOSS和EFB方法对GBDT的新的优化实现，我们叫它lightGBM。我们针对多个公开数据集做了实验，实验表明LightGBM可以使传统GBDT的训练过程加速20倍以上，同时实现几乎相同的精度。<ul>
+<li>main contribution就是 GOSS 和 EFB 方法</li>
+</ul>
+</li>
+<li>基于梯度的单侧采样（GOSS）。 虽然GBDT中的数据样本没有初始权重，但我们注意到不同梯度的数据样本在信息增益的计算中起着不同的作用。根据信息增益的定义，具有较大梯度的那些数据（即训练不足的实例）将对信息增益做出更多贡献。 因此，当对数据样本进行降采样时，为了保持信息增益计算的准确性，我们应该更好地保持那些具有大梯度（例如，大于预定阈值，或者在最高百分位数之间）的样本，仅随机删除那些梯度小的样本。 我们证明，在相同的采样率下，这种处理方法最终计算出的信息增益比均匀随机采样要准确，特别是当信息增益的值具有大范围时。</li>
+<li>互斥特征捆绑（EFB）。 在实际应用中，通常是特征维度大但特征空间非常稀疏，这给我们提供了设计出一种几乎无损失的减少有效特征数量的方法的可能性。具体地说，在稀疏特征空间中，许多特征（几乎）是互斥的，即它们很少同时取非零值。 示例包括单热特征（例如，文本挖掘中的独热编码）。 我们可以放心地捆绑这些互斥特征。 为此，我们通过将最佳捆绑问题减少到图着色问题来设计一种有效的算法（通过将特征作为顶点并为每两个特征添加边缘，如果它们不相互排斥），并通过贪婪算法解决它。 恒定近似比。</li>
+</ul>
+</li>
+<li>Histogram-based Algorithm<ul>
+<li>在介绍GOSS之前，作者先介绍了 Histogram-based Algorithm 用于减少内存和计算量，原文如下</li>
+<li>GBDT的主要成本在于学习决策树，而决策树的学习中最耗时的部分是寻找最佳分割点。最常用的寻找分割点的算法是预排序算法(XGBOOST)，它将特征取值预先排序并枚举出所有可能的分割点。该算法简单易行，能找到最优分割点，但在训练速度和内存消耗方面都是低效的。另一种流行的算法是基于直方图的算法，如Alg.1所示。基于直方图的算法在训练中将连续的特征分箱处理成离散值，利用这些离散的箱子构建特征直方图。由于基于直方图的算法在内存消耗和训练速度上都更有效，因此我们将在其基础上开展我们的工作。</li>
+<li>如下图，直方图算法基于特征的直方图找最佳分割点。构建直方图的复杂度为O(#data × #feature)，O(#bin × #feature)。通常箱子长度比数据量小得多，所以直方图的构建导致主要的复杂度。如果我们可以减少数据量或特征维度，我们将能够大大加快GBDT的训练过程。</li>
+<li><img src="/images/ml/lightgbm1.png" alt="lightgbm1.png"></li>
+<li><img src="/images/ml/lightgbm2.png" alt="lightgbm2.png"></li>
+<li><img src="/images/ml/lightgbm3.png" alt="lightgbm3.png"></li>
+<li>相较于xgboost的分位数预排序方法，直方图算法分割点总是255个，合并子节点，从而减少运算</li>
+<li><img src="/images/ml/lightgbm4.png" alt="lightgbm4.png"><ul>
+<li>这里就一颗树对 基于直方图的分割算法进行了说明</li>
+<li>I 是train data ； d 是该tree的max depth ； m 是feature 维数</li>
+<li>设nodeSet表示某tree level的node集 ； rowSet 是 node上的data划分集</li>
+<li>遍历 level i 于 depth 1 → d<ul>
+<li>遍历 i 上 node 于 nodeSet[i]<ul>
+<li>选取当前 data 集 于 rowSet[node]        </li>
+<li>遍历 k 于 所有特征m<ul>
+<li>依据data划分出新的Histogram，合并bin，计算每个bin的N G H</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>GOSS<ul>
+<li>基于histogram-base algorithm，作者再近一步，对梯度贡献小的data进行有选择的采样。假设 threshold 为 gi &lt; 0.1，采样概率为 1/3，则计算方式如下</li>
+<li><img src="/images/ml/lightgbm5.png" alt="lightgbm5.png"></li>
+<li>对于大于阈值的条目全部保留，对于小于阈值的条目进行抽样选取； 对于非抽样条目，在统计bin时按原始值加 ； 对于抽样条目，在统计bin时按 原始值 / 抽样概率 累加，包括 N G H</li>
+<li>原文中的Algorithm描述，是上述流程的推广</li>
+<li><img src="/images/ml/lightgbm6.png" alt="lightgbm6.png"></li>
+<li>I 是train data ； d 是该tree的max depth ； a是大梯度数据集的采样比例 ； b是小梯度数据集的采样比例 ； loss 是 loss function ； L 是当前tree，即弱学习器</li>
+<li>设 model = {} ； fact = (1-a)/b 用于更新小梯度数据集权重； topN = a <em> len(I) 用于确定大梯度数据集数量 ； randN = b </em> len(I) 用于确定小梯度数据集数量 ； 可以得到 topN + fact <em> randN = a </em> len(I) + b <em> len(I) = (a + b</em>((1-a)/b)) * len(I) = len(I)，通过fact的设置保证len(I)在迭代中不发生改变<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">遍历 level i 于 depth 1 → d</span><br><span class="line">preds &#x3D; modes.predict(I) #上一轮预测结果</span><br><span class="line">g &#x3D; loss(I, pred) ; w &#x3D; [1] * len(I)</span><br><span class="line">sorted &#x3D; sorted(abs(g))</span><br><span class="line">topSet &#x3D; sorted[:TopN]</span><br><span class="line">randSet &#x3D; random.sample(sorted[TopN:], randN)</span><br><span class="line">useSet &#x3D; topSet + randSet</span><br><span class="line">w[randSet] *&#x3D; fact </span><br><span class="line">newModel &#x3D; L(I[usedSet], -g[usedSet], w[usedSet])</span><br><span class="line">model.append(newModel)</span><br></pre></td></tr></table></figure>
+通过减少小梯度的的采样从而减少计算量<br>在接下来的该节内容 in paper，作者从理论上讨论了 GOSS 采样的 eps 和 界，论证了GOSS是稳定可靠的优于随机采样的算法。有兴趣的朋友可以查看原文</li>
+</ul>
+</li>
+<li>Exclusive Feature Bundling<ul>
+<li>互斥特征绑定，说起来很拗口，上图看看</li>
+<li><img src="/images/ml/lightgbm7.png" alt="lightgbm7.png"></li>
+<li>从图上我们可以知道，绝大多数feature1在0，绝大多数feature2在0，我们是不是可以认为绝大多数 data 在 feature1== 0 and feature2 == 0</li>
+<li>假设我们对feature进行合并，则数量不发生改变，我们将feature2中的1,2向右偏移2，总数仍为100(0项代表同时为0)，就得到了新的变量</li>
+<li>这个做法有些玄乎，看作者原生的说法</li>
+<li>高维数据通常是稀疏的。特征的稀疏性给我们设计一种近乎无损的降低特征维数的方法提供了可能性。具体来说，在稀疏特征空间中，许多特征是互斥的，即它们从不同时取非零值。我们可以放心的把互斥的特征捆绑成一个特征（这种方法我们叫做互斥特征捆绑）。通过精心设计的特征扫描算法，我们可以从捆绑特征构建出相同的直方图。用这种方法，当$ #bundle &lt;&lt; #feature，直方图构建的复杂度就从，直方图构建的复杂度就从，直方图构建的复杂度就从O(#data × #f eature)变成了变成了变成了O(#data × #bundle)$（这里作者的意思是当远小于的时候效果才能凸显出来）。这样我们可以在不损伤精度的情况下大大加速GBDT的训练速度，下面我们将详细说明如何实现这一点。</li>
+<li>这里有两个问题需要解决。第一个问题是如何决定哪些特征需要捆绑在一起。第二个问题是如何构建捆绑后的特征。</li>
+<li><img src="/images/ml/lightgbm8.png" alt="lightgbm8.png"></li>
+<li>Based on the above discussions, we design an algorithm for exclusive feature bundling as shown in Alg. 3. First, we construct a graph with weighted edges, whose weights correspond to the total conflicts between features. Second, we sort the features by their degrees in the graph in the descending order. Finally, we check each feature in the ordered list, and either assign it to an existing bundle with a small conflict (controlled by γ), or create a new bundle. The time complexity of Alg. 3 is O(#feature2 ) and it is processed only once before training. This complexity is acceptable when the number of features is not very large, but may still suffer if there are millions of features. To further improve the efficiency, we propose a more efficient ordering strategy without building the graph: ordering by the count of nonzero values, which is similar to ordering by degrees since more nonzero values usually leads to higher probability of conflicts. Since we only alter the ordering strategies in Alg. 3, the details of the new algorithm are omitted to avoid duplication.</li>
+<li>F是特征们 ； K是最大冲突值，阈值 ； 构建图G(G是一个无向权重图，权重代表冲突率，冲突率 = 同时非0的概率) ；searchOrder 表示 依据G中的边大小进行递减排序图</li>
+<li>设 bundles = {} 用于表示合并后的新对象bundle的集合 ； bundlesConflict = {} 用于表示 bundle 对应的conflict值，对于每一个bundle，都规定其conflict值超过K时不再合并，作者在这里是表示F中元素的bundle<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">从有序图 searchOrder 中依次取节点i(F中一个feature) 进行遍历</span><br><span class="line">    needNew &#x3D; True (默认需要重新生成bundle)</span><br><span class="line">    在已有的bundles中取 bundle j 遍历</span><br><span class="line">        cnt &#x3D; 计算在bundle j中加入当前节点i后的的conflict值 （需要bundle j对应数据和i对应数据F[i]）</span><br><span class="line">        如果 cnt + bundleConflict[i] &lt;&#x3D; K</span><br><span class="line">            bundles[j].append(F[i]); needNew &#x3D; False</span><br><span class="line">            break</span><br><span class="line">    if needNew </span><br><span class="line">        bundles.append([F[i])</span><br><span class="line">输出bundles</span><br></pre></td></tr></table></figure>
+整体思路就是将conflict大的节点先拎出来自成一派，然后conflict小的节点往上凑，能凑上就不独立成一派</li>
+<li><img src="/images/ml/lightgbm9.png" alt="lightgbm9.png"><br>得到bundles后需要对bin进行更新<br>numData: data number ； F: 一个 bundle 包含的features ； binRanges bin的范围，对应每一个包含元素 ； totalBin bin的总数<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">遍历 f 于 F</span><br><span class="line">    total +&#x3D; f所包含的bin数量(通常是255？)</span><br><span class="line">    binRanges.append(totalBin)  # 最终就变成了诸如[10, 20, 30]之类的每个f对应的起始点</span><br><span class="line">newBin &#x3D; Bin(numdata) # 声明初始化</span><br><span class="line">遍历 i 于 numdata</span><br><span class="line">    newbin[i] &#x3D; 0 #数值初始化</span><br><span class="line">    遍历 j 于 len(F)</span><br><span class="line">        若 F[j].bin[i] !&#x3D; 0 （某个bin的某个特征不为0）则 按照是哪个特征进行数值转化 newBin[i] &#x3D; F[j].bin[i] + binRanges[j] # 加上对应的起始点</span><br></pre></td></tr></table></figure>
+得到了新的bin和binrange</li>
+</ul>
+</li>
+<li>Experiments<ul>
+<li>主要是验证 GOSS 和 EFB 的有效性，可忽略</li>
+</ul>
+</li>
+<li>Extra<ul>
+<li><img src="/images/ml/lightgbm10.png" alt="lightgbm10.png"></li>
+<li>生成树的方式，LightGBM和XGboost也有所不同，原文中仅提到了一句，引用了 Haijian Shi. Best-first decision tree learning. PhD thesis, The University of Waikato, 2007. 的方法，这也是非常大的不同</li>
+</ul>
+</li>
+<li>XGboost可否一战</li>
+</ul>
+<h2 id="CatBoost"><a href="#CatBoost" class="headerlink" title="CatBoost"></a>CatBoost</h2><ul>
+<li>paper<ul>
+<li><a href="http://learningsys.org/nips17/assets/papers/paper_11.pdf" target="_blank" rel="noopener">http://learningsys.org/nips17/assets/papers/paper_11.pdf</a></li>
+<li><a href="https://arxiv.org/pdf/1706.09516.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1706.09516.pdf</a></li>
+</ul>
+</li>
+<li>git <a href="https://github.com/catboost/catboost" target="_blank" rel="noopener">https://github.com/catboost/catboost</a>     </li>
+<li>参考 <a href="http://datacruiser.io/2019/08/19/DataWhale-Workout-No-8-CatBoost-Summary/" target="_blank" rel="noopener">http://datacruiser.io/2019/08/19/DataWhale-Workout-No-8-CatBoost-Summary/</a></li>
+</ul>
+<ol>
+<li>abstract<br> -In this paper we present CatBoost, a new open-sourced gradient boosting library that successfully handles categorical features and outperforms existing publicly available implementations of gradient boosting in terms of quality on a set of popular publicly available datasets. The library has a GPU implementation of learning algorithm and a CPU implementation of scoring algorithm, which are significantly faster than other gradient boosting libraries on ensembles of similar sizes.<br> -在本文中，我们介绍了CatBoost，这是一个新的开源梯度增强库，该库成功处理了分类功能，并且在一组流行的公共可用数据集上，在质量上均胜过了现有的梯度增强现有实现。该库具有学习算法的GPU实现和评分算法的CPU实现，这比相似大小的集成算法上的其他梯度增强库(gbdts)快得多。</li>
+<li>Introduction<ul>
+<li>Gradient boosting is a powerful machine-learning technique that achieves state-of-the-art results in a variety of practical tasks. For a number of years, it has remained the primary method for learning problems with heterogeneous features, noisy data, and complex dependencies: web search, recommendation systems, weather forecasting, and many others [2, 15, 17, 18]. It is backed by strong theoretical results that explain how strong predictors can be built by iterative combining weaker models (base predictors) via a greedy procedure that corresponds to gradient descent in a function space. Most popular implementations of gradient boosting use decision trees as base predictors. It is convenient to use decision trees for numerical features, but, in practice, many datasets include categorical features, which are also important for prediction. Categorical feature is a feature having a discrete set of values that are not necessary comparable with each other (e.g., user ID or name of a city). The most commonly used practice for dealing with categorical features in gradient boosting is converting them to numbers before training. In this paper we present a new gradient boosting algorithm that successfully handles categorical features and takes advantage of dealing with them during training as opposed to preprocessing time. Another advantage of the algorithm is that it uses a new schema for calculating leaf values when selecting the tree structure, which helps to reduce overfitting. As a result, the new algorithm outperforms the existing state-of-the-art implementations of gradient boosted decision trees (GBDTs) XGBoost [4], LightGBM1 and H2O2 , on a diverse set of popular tasks (Sec. 6). The algorithm is called CatBoost (for “categorical boosting”) and is released in open source.3 CatBoost has both CPU and GPU implementations. The GPU implementation allows for much faster training and is faster than both state-of-the-art open-source GBDT GPU implementations, XGBoost and LightGBM, on ensembles of similar sizes. The library also has a fast CPU scoring implementation, which outperforms XGBoost and LightGBM implementations on ensembles of similar sizes.</li>
+<li>梯度提升是一种功能强大的机器学习技术，可在各种实际任务中达到最新的结果。多年来，它一直是学习异类特征，嘈杂数据和复杂依赖性的问题的主要方法：网络搜索，推荐系统，天气预报等[2、15、17、18]。它以强大的理论结果为后盾，这些理论解释了如何通过对应于函数空间中梯度下降的贪婪过程，通过迭代组合较弱的模型（基本预测变量）来构建强大的预测变量。梯度提升的最流行实现将决策树用作基础预测变量。将决策树用于数字特征很方便，但实际上，许多数据集都包含分类特征，这对于预测也很重要。分类特征是具有一组离散值的特征，这些值不需要彼此可比较（例如，用户ID或城市名称）。处理梯度增强中的分类特征最常用的做法是在训练之前将其转换为数字。在本文中，我们提出了一种新的梯度提升算法，该算法可成功处理分类特征，并在训练过程中利用与预处理相对的优势。该算法的另一个优点是，在选择树结构时，它使用新的模式来计算叶值，这有助于减少过度拟合。结果，新算法在一系列流行任务上胜过了现有的最新技术（梯度提升决策树（GBDT）XGBoost [4]，LightGBM1和H2O2）（第6节）。该算法称为CatBoost（用于“分类提升”），并在开源中发布。3CatBoost同时具有CPU和GPU实现。 GPU的实现允许更快的训练，并且比类似大小的集合中的最新的开源GBDT GPU的实现XGBoost和LightGBM都要快。该库还具有快速的CPU计分实现，在类似大小的集成体上，其性能优于XGBoost和LightGBM。</li>
+</ul>
+</li>
+<li>Categorical features<ul>
+<li>Categorical features have a discrete set of values called categories which are not necessary comparable with each other; thus, such features cannot be used in binary decision trees directly. A common practice for dealing with categorical features is converting them to numbers at the preprocessing time, i.e., each category for each example is substituted with one or several numerical values.The most widely used technique which is usually applied to low-cardinality categorical features is one-hot encoding: the original feature is removed and a new binary variable is added for each category [14]. One-hot encoding can be done during the preprocessing phase or during training, the latter can be implemented more efficiently in terms of training time and is implemented in CatBoost.</li>
+<li>分类特征具有一组离散的值，称为类别，它们不必相互比较；因此，此类特征无法直接在二进制决策树中使用。处理分类特征的一种常见做法是在预处理时将它们转换为数字，即，每个示例的每个类别都被一个或多个数值替代。通常用于低基数分类特征的最广泛使用的技术是一键编码：删除原始特征，并为每个类别添加新的二进制变量[14]。一键编码可以在预处理阶段或训练期间完成，后来可以在训练时间方面更有效地实现，CatBoost中实现了它。</li>
+<li>文章的重头戏，如何变化离散值到数值。所谓分类特征就是类似于gender这样非数值型特征，离散型特征。这里说的是one-hot方法将分类特征转化为数值</li>
+<li><img src="/images/ml/catboost1.png" alt="catboost1.png"></li>
+<li>处理分类特征的另一种方法是使用示例的标签值来计算一些统计信息。假定有一个D = {(Xi, Yi)}，其中Xi是包含m个features的一个向量，Yi是对应的label值。最简单的方法是用整个训练数据集上的平均标签值替换类别。故Xi,k = <img src="/images/ml/catboost2.png" alt="catboost2.png"> 其中k是分类类别，[ ]表示 Iverson Brackets，就是python中的 == 操作，等于为1 else 0。这样的做法显然会带来过拟合，例如，如果在整个数据集中只有一个类别xi,k的示例，则新的数字特征值将等于此示例上的标签值（期望）。解决该问题的一种直接方法是将数据集分为两部分，仅一部分用于计算统计数据，另一部分仅用于执行训练。这减少了过度拟合，但同时也减少了用于训练模型和计算统计数据的数据量。</li>
+<li>有人认为，这是用期望来直接encode输入，使分类特征在进行数值化后有理有据</li>
+<li>CatBoost uses a more efficient strategy which reduces overfitting and allows to use the whole dataset for training. Namely, we perform a random permutation of the dataset and for each example we compute average label value for the example with the same category value placed before the given one in the permutation. Let σ = (σ1, . . . , σn) be the permutation, then xσp,k is substituted with</li>
+<li><img src="/images/ml/catboost3.png" alt="catboost3.png"></li>
+<li>where we also add a prior value P and a parameter a &gt; 0, which is the weight of the prior. Adding prior is a common practice and it helps to reduce the noise obtained from low-frequency categories [3]. For regression tasks standard technique for calculating prior is to take the average label value in the dataset. For binary classification task a prior is usually an a priori probability of encountering a positive class [14]. It is also efficient to use several permutations. However, one can see that a straightforward usage of statistics computed for several permutations would lead to overfitting. As we discuss in the next section, CatBoost uses a novel schema for calculating leaf values which allows to use several permutations without this problem.</li>
+<li>CatBoost使用更有效的策略来减少过度拟合，并允许将整个数据集用于训练。即，我们对数据集执行随机排列，对于每个示例，我们计算该示例的平均标签值，该示例的平均标签值在排列中位于给定值之前。设σ=（σ1，…，σn）为置换，则xσp，k替换为</li>
+<li>这里我们还添加了一个先验值P和一个参数a&gt; 0，这是先验的权重。先验增加是一种常见的做法，它有助于减少从低频类别获得的噪声[3]。对于回归任务，用于计算先验的标准技术是获取数据集中的平均标签值。对于二元分类任务，先验通常是遇到肯定类别的先验概率[14]。使用多个排列也是有效的。但是，可以看到直接使用为多个排列计算的统计量会导致过度拟合。正如我们在下一节中讨论的那样，CatBoost使用一种新颖的模式来计算叶子值，该模式允许使用多个排列而不会出现此问题。</li>
+<li>为了减少过拟合，使用了局部统计量来估计当前数值，在这里是p点以前的统计量代表p点，每次迭代都执行随机排序，从而产生噪声。为了使噪声可控，使用全局期望P来作为基数，并分配权重a。</li>
+<li>Feature combinations Note that any combination of several categorical features could be considered as a new one. For example, assume that the task is music recommendation and we have two categorical features: user ID and musical genre. Some user prefers, say, rock music. When we convert user ID and musical genre to numerical features according to (1), we loose this information. A combination of two features solves this problem and gives a new powerful feature. However, the number of combinations grows exponentially with the number of categorical features in dataset and it is not possible to consider all of them in the algorithm. When constructing a new split for the current tree, CatBoost considers combinations in a greedy way. No combinations are considered for the first split in the tree. For the next splits CatBoost combines all combinations and categorical features present in current tree with all categorical features in dataset. Combination values are converted to numbers on the fly. CatBoost also generates combinations of numerical and categorical features in the following way: all the splits selected in the tree are considered as categorical with two values and used in combinations in the same way as categorical ones.</li>
+<li>特征组合请注意，几个分类特征的任何组合都可以视为新特征。例如，假设任务是音乐推荐，并且我们具有两个分类功能：用户ID和音乐流派。某些用户喜欢摇滚音乐。当根据（1）将用户ID和音乐流派转换为数字特征时，我们会丢失此信息。两种功能的组合解决了此问题，并提供了一个新的强大功能。但是，组合的数量随数据集中分类特征的数量呈指数增长，并且不可能在算法中考虑所有组合。为当前树构造新的拆分时，CatBoost会以贪婪的方式考虑组合。树中的第一个划分不考虑任何组合。对于下一个拆分，CatBoost将当前树中存在的所有组合和分类特征与数据集中的所有分类特征进行组合。组合值会即时转换为数字。 CatBoost还通过以下方式生成数字和分类特征的组合：在树中选择的所有划分均被视为具有两个值的分类，并以与分类值相同的方式组合使用。</li>
+<li>这个做法其实是顺水推舟的，如果是onehot，特征组合将会是相对复杂的事情，而catboost是将feature型抓化为数值型，组合就加起来就行，在树的第一次分裂时不考虑变量的合并，从第二次分裂开始，将所有分类变量及其合并后的特征进入合并变量待选进行分裂点的寻找，从而达到多特征组合的目的。相应的，如果cat_features的数目很多的时候，计算量也会增大许多</li>
+<li>Important implementation details Another way of substituting category with a number is calculating number of appearances of this category in the dataset. This is a simple but powerful technique and it is implemented in CatBoost. This type of statistic is also calculated for feature combinations. In order to fit the optimal prior at each step of CatBoost algorithm, we consider several priors and construct a feature for each of them, which is more efficient in terms of quality than standard techniques mentioned above.</li>
+<li>重要的实现细节用数字替换类别的另一种方法是计算该类别在数据集中的出现次数。这是一种简单但功能强大的技术，已在CatBoost中实现。还针对要素组合计算此类统计信息。为了使CatBoost算法的每个步骤都适合最优先验，我们考虑了几个先验并为每个先验构造一个特征，就质量而言，它比上述标准技术更有效。</li>
+<li>直接用频率来embedding category feature，catboost也做了实现</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>Fighting Gradient Bias<ul>
+<li>CatBoost, as well as all standard gradient boosting implementations, builds each new tree to approximate the gradients of the current model. However, all classical boosting algorithms suffer from overfitting caused by the problem of biased pointwise gradient estimates. Gradients used at each step are estimated using the same data points the current model was built on. This leads to a shift of the distribution of estimated gradients in any domain of feature space in comparison with the true distribution of gradients in this domain, which leads to overfitting. The idea of biased gradients was discussed in previous literature [1] [9]. We have provided a formal analysis of this problem in the paper [5]. The paper also contains modifications of classical gradient boosting algorithm that try to solve this problem. CatBoost implements one of those modifications, briefly described below.</li>
+<li>CatBoost以及所有标准的梯度增强实现，都将构建每棵新树以近似当前模型的梯度。然而，所有经典的boosting算法都因有有偏差的逐点梯度估计问题而导致过拟合。使用当前模型所基于的相同数据点来估算在每个步骤中使用的渐变。与该区域中梯度的真实分布相比，这导致在特征空间的任何域中估计梯度的分布发生偏移，从而导致过度拟合。以前的文献[1] [9]中讨论了偏斜的想法。我们在论文[5]中提供了对此问题的正式分析。本文还包含尝试解决此问题的经典梯度提升算法的修改。 CatBoost实现了其中一种修改，下面将对其进行简要介绍。</li>
+<li>这里需要介绍为什么boosting问题是有偏差的估计，catboost具体改进了什么为什么能改进</li>
+<li>在paper <a href="https://arxiv.org/pdf/1706.09516.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1706.09516.pdf</a> 的第4章节有详细描述，有兴趣的朋友可以一试</li>
+<li>In many GBDTs (e.g., XGBoost, LightGBM) building next tree comprises two steps: choosing the tree structure and setting values in leafs after the tree structure is fixed. To choose the best tree structure, the algorithm enumerates through different splits, builds trees with these splits, sets values in the obtained leafs, scores the trees and selects the best split. Leaf values in both phases are calculated as approximations for gradients [8] or for Newton steps. In CatBoost the second phase is performed using traditional GBDT scheme and for the first phase we use the modified version.</li>
+<li>在许多GBDT（例如XGBoost，LightGBM）中，构建下一棵树包括两个步骤：选择树结构，并在树结构固定后在叶子中设置值。为了选择最佳的树结构，该算法将枚举不同的分割，用这些分割构建树，在获得的叶子中设置值，对树评分并选择最佳的分割。两个阶段的叶值均以梯度[8]或牛顿阶跃的近似值计算。在CatBoost中，第二阶段使用传统的GBDT方案执行，而第一阶段则使用修改后的版本。</li>
+<li>According to intuition obtained from our empirical results and our theoretical analysis in [5], it is highly desirable to use unbiased estimates of the gradient step. Let F i be the model constructed after building first i trees, g i (Xk, Yk) be the gradient value on k-th training sample after building i trees. To make the gradient g i (Xk, Yk) unbiased w.r.t. the model F i , we need to have F i trained without the observation Xk. Since we need unbiased gradients for all training examples, no observations may be used for training F i , which at first glance makes the training process impossible. We consider the following trick to deal with this problem: for each example Xk, we train a separate model Mk that is never updated using a gradient estimate for this example. With Mk, we estimate the gradient on Xk and use this estimate to score the resulting tree. Let us present the pseudo-code that explains how this trick can be performed. Let Loss(y, a) be the optimizing loss function, where y is the label value and a is the formula value.</li>
+<li>根据从我们的经验结果和我们在[5]中的理论分析获得的直觉，非常希望使用梯度步的无偏估计。设Fi是构建第i棵树后构建的模型，gi(Xk，Yk)是构建第i棵树后第k个训练样本上的梯度值。为了使梯度gi(Xk，Yk)无偏w.r.t.在模型Fi上，我们需要在没有观测值Xk的情况下对Fi进行训练。由于我们需要所有训练示例的无偏梯度，因此不可将任何观测值用于训练Fi，乍一看这使得训练过程成为不可能。我们考虑以下技巧来解决此问题：对于每个示例Xk，我们训练一个单独的模型Mk，对于该示例，该模型永远不会使用梯度估计进行更新。使用Mk，我们估计Xk上的梯度，并使用此估计值对结果树进行评分。让我们给出解释该技巧如何执行的伪代码。设Loss(y，a)为优化损失函数，其中y为标签值，a为公式值。</li>
+<li><img src="/images/ml/catboost4.png" alt="catboost4.png"></li>
+<li>Note that Mi is trained without using the example Xi . CatBoost implementation uses the following relaxation of this idea: all Mi share the same tree structures.</li>
+<li>请注意，对Mi进行了训练但不使用示例Xi。 CatBoost实现使用了以下这种想法的拓展: 所有Mi共享相同的树结构。</li>
+<li>对每一次iter，都会依据random.randn(1,s)进行n次训练，并将相应序列与上一次的结果相加</li>
+<li>这里使用另一篇paper的描述会更清晰</li>
+<li><img src="/images/ml/catboost5.png" alt="catboost5.png"></li>
+<li>对于总数为n的数据集D，catboost会生成n颗gbdt，对于任意的Mi i∈ [0,n]，训练时仅使用部分D[0 : i]，也对应这上面所说的无偏估计</li>
+<li>对于具体位置j，在t时刻，residualj = yj - Mj-1t-1 (xj)，其中category_feature也会被对应的使用2中描述的方法 Ordered TS 执行，相辅相成。作者称该方法为 Ordered boosting，具体如下，和上面的Algorithm 1是同一个意思。此处将gradient简化为residual，更简单明晰</li>
+<li><img src="/images/ml/catboost6.png" alt="catboost6.png"></li>
+<li><img src="/images/ml/catboost7.png" alt="catboost7.png"></li>
+<li>在CatBoost中，我们生成训练数据集的s个随机排列。我们使用几种置换来增强算法的鲁棒性：我们对随机置换进行采样并在其基础上获得梯度。这些排列与用于计算分类特征统计量的排列相同。我们使用不同的排列来训练不同的模型，因此使用多个排列不会导致过度拟合。对于每个排列σ，我们训练n个不同的模型Mi，如上所示。这意味着，要构建一棵树，我们需要针对每个排列σ存储并重新计算O（n 2）近似值：对于每个模型Mi，我们必须更新Mi（X1），。 。 。 ，Mi（Xi）。因此，该操作的结果复杂度为O（s n2）。在我们的实际实现中，我们使用了一个重要的技巧来将一棵树的构造的复杂度降低为O（sn）：对于每个排列，我们不保存和更新O（n 2）值Mi（Xj），而是保持值M0 i（ Xj），i = 1，，。 。 。 ，[log2（n）]，j &lt;2 i + 1，其中M0 i（Xj）是基于前两个i样本的样本j的近似值。然后，预测数M0 i（Xj）不大于P0≤i≤log2（n）2 i + 1 &lt;4n。根据近似值M0 i（Xk）估算用于选择树形结构的示例Xk的梯度，其中i = [log2（k）]。</li>
+<li>简单来说就是通过近似采样来代替全部计算</li>
+</ul>
+</li>
+<li>Fast scorer<ul>
+<li>CatBoost uses oblivious trees as base predictors. In such trees the same splitting criterion is used across an entire level of the tree [12, 13]. Such trees are balanced and less prone to overfitting. Gradient boosted oblivious trees were successfully used in various learning tasks [7, 10]. In oblivious trees each leaf index can be encoded as a binary vector with length equal to the depth of the tree. This fact is widely used in CatBoost model evaluator: we first binarize all used float features, statistics and one-hot encoded features and then use binary features to calculate model predictions. All binary feature values for all examples are stored in a continuous vector B. Leaf values are stored in a float vectors of size 2 d , where d is the tree depth. To calculate the leaf index for the t-th tree and for an example x we build a binary vector Pd−1 i=0 2 i · B(x, f(t, i)), where B(x, f) is the value of the binary feature f on the example x that we read from the vector B and f(t, i) is the number of the binary feature from t-th tree on depth i. That vectors can be built in a data parallel manner which gives up to 3x speedup. This results in a much faster scorer than all existing ones as shown in our experiments.</li>
+<li>CatBoost使用完全对称树作为基础预测变量。在这样的树中，在树的整个级别上使用相同的分割标准[12、13]。这样的树木很平衡，不太容易过拟合。梯度增强的遗忘树已成功用于各种学习任务中[7，10]。在遗忘树中，每个叶子索引都可以被编码为二进制矢量，其长度等于树的深度。这个事实在CatBoost模型评估器中得到了广泛使用：我们首先对所有使用的浮点特征，统计信息和一次性编码特征进行二值化，然后使用二进制特征来计算模型预测。所有示例的所有二进制特征值都存储在连续向量B中。叶值存储在大小为2 d的浮点向量中，其中d是树的深度。为了计算第t棵树的叶子索引，对于x示例，我们建立了二进制矢量Pd-1 i = 0 2 i·B（x，f（t，i）），其中B（x，f）为从向量B读取的示例x上的二值特征f的值，f（t，i）是深度t上来自第t树的二值特征的数目。可以以并行数据的方式构建矢量，从而使速度提高3倍。如我们的实验所示，这会导致打分器比所有现有打分器快得多。</li>
+<li>使用了完全对称树，就是快</li>
+<li>那么这个完全对称树是个啥玩意呢？</li>
+<li>参考 <a href="https://www.zhihu.com/question/311641149/answer/593286799" target="_blank" rel="noopener">https://www.zhihu.com/question/311641149/answer/593286799</a></li>
+<li>我们常见的普通决策树都是如下所示的树，每一个node都会有独立的最大gain割</li>
+<li><img src="/images/ml/catboost8.png" alt="catboost8.png"></li>
+<li>但是完全对称树不同，在同一level，完全对称树的split的条件是一致的，如下所示（颜色一致表示同一割条件）</li>
+<li><img src="/images/ml/catboost9.png" alt="catboost9.png"></li>
+<li>对称树中，每一层的每一个节点判断条件都是一样的。假如如果我们只训练一棵树，那么显然对称树的overfit能力会比普通的决策树弱；但是在GBM中，我们通常训练很多的树，所以overfit的能力不必担心。那么对称树在GBM中有什么优势呢？下面列出三点：</li>
+<li>拟合模式相对简单，因为每一层都是一个判断条件</li>
+<li>可以提高预测速度</li>
+<li>对称树的结构本身比普通决策树自由度小，可以看作是加入了penalty，或者看作regularization</li>
+<li>为什么会更快呢？</li>
+<li>上面这棵树最底层有四个节点，我们可以把这四个节点从0到3编号（index），每一个节点有一个对应值（value）。比如一个样本最终进入了第一个节点，那么这棵树对这个样本的预测值就是1.6。我们可以把value存放在一个数组里面，这样给定index就可以立刻得到value。那么对一个样本用一棵树进行预测时，我们只需要找到这个样本对应的index，因为在对称树中每一层的判断条件都是一样的，所以每一层都可以用0或者1来表示，比如是学生，用1表示，不是用0；有关注机器会学习用1表示，没有用0，那么每一个样本进入这棵树，都可以用两个bits来表示，也就是四种可能结果：00，01，10，和11。这两个bits代表的数字就是index。这意味着什么呢？我们在做预测的时候，只要对每一层的条件进行判断，然后就可以找到index。因为每一个树的结构（判断条件）是已知的，我们甚至可以对这个过程进行并行计算。</li>
+<li>举个栗子</li>
+<li>以常见的单棵树为例，depth=6</li>
+<li>那么对于二叉树而言最少有 5个判断节点，最多有 2**5+1 个判断节点</li>
+<li>对于完全对称二叉树而言，总是5个判断节点，故在infer时速度是明显有提升的</li>
+<li>训练时，每个level的node不再各自查找各自的最大gain割，而是直接查找整个level的最大gain割</li>
+<li>以常见的单棵树为例，depth=6，feature都是数值型，dataset.<strong>len</strong>() = N</li>
+<li>对于完全树而言，对于每一个level每一个data in dataset都需要对每一个feature的候选split点进行计算，所以无论是否是对称，计算量是相差无几的</li>
+<li>而常规的cart往往会设置停止分裂条件，不会总是完全树，所以在训练上，完全树是要慢于普通树的</li>
+</ul>
+</li>
+<li>后面的基本不用看了，GPU支持和实验</li>
+<li>总体来说，文章主要两个内容</li>
+<li>Ordered TS</li>
+<li>Ordered Boosting</li>
+</ul>
+<h2 id="Install-Guide"><a href="#Install-Guide" class="headerlink" title="Install Guide"></a>Install Guide</h2><ul>
+<li>xgboost cpu&amp;gpu<ul>
+<li>pip install xgboost</li>
+</ul>
+</li>
+<li>catboost cpu&amp;gpu<ul>
+<li>pip install catboost</li>
+<li>extra 可视化<ul>
+<li>pip install ipywidgets ; jupyter nbextension enable —py widgetsnbextension</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>lightgbm cpu<ul>
+<li>pip install lightgbm</li>
+<li>mac 安装需要 先 brew install lightgbm or build</li>
+</ul>
+</li>
+<li>lightgbm-gpu<ul>
+<li>在Linux上安装需要先安装依赖<ul>
+<li>sudo apt install cmake ocl-icd-libopencl1 ocl-icd-opencl-dev libboost-dev libboost-system-dev libboost-filesystem-dev</li>
+</ul>
+</li>
+<li>pip install lightgbm —install-option=–gpu<ul>
+<li>cuda得这样<ul>
+<li>pip install lightgbm —install-option=—gpu —install-option=”—opencl-include-dir=/usr/local/cuda/include/“ —install-option=”—opencl-library=/usr/local/cuda/lib64/libOpenCL.so”</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tree/" rel="tag"># tree</a>
+              <a href="/tags/boosting/" rel="tag"># boosting</a>
+              <a href="/tags/ml/" rel="tag"># ml</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Decision_Tree/" rel="prev" title="Decision Tree">
+      <i class="fa fa-chevron-left"></i> Decision Tree
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Adaboost"><span class="nav-number">1.</span> <span class="nav-text">Adaboost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GBDT"><span class="nav-number">2.</span> <span class="nav-text">GBDT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XGBoost"><span class="nav-number">3.</span> <span class="nav-text">XGBoost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LightGBM"><span class="nav-number">4.</span> <span class="nav-text">LightGBM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CatBoost"><span class="nav-number">5.</span> <span class="nav-text">CatBoost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-Guide"><span class="nav-number">6.</span> <span class="nav-text">Install Guide</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

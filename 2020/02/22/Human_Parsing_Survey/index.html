@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 4.2.0">
@@ -102,12 +102,12 @@
   .use-motion .logo-line-before i { left: initial; }
   .use-motion .logo-line-after i { right: initial; }
   </style>
-</noscript>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -265,10 +265,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法</p>
-<a id="more"></a>
-<!-- toc -->
-
+        <p>梳理 Human Parsing(人体解析) 相关介绍，数据集，算法<br><a id="more"></a><br><!-- toc --></p>
 <hr>
 <h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
 <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
@@ -338,24 +335,15 @@
 <hr>
 <h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
 <h2 id="JPPNet"><a href="#JPPNet" class="headerlink" title="JPPNet"></a>JPPNet</h2><ul>
-<li><p>paper <a href="https://arxiv.org/pdf/1804.01984.pdf" target="_blank" rel="noopener">Look into Person: Joint Body Parsing &amp; Pose Estimation Network and A New Benchmark</a></p>
-</li>
-<li><p>github <a href="https://github.com/Engineering-Course/LIP_JPPNet" target="_blank" rel="noopener">https://github.com/Engineering-Course/LIP_JPPNet</a> </p>
-</li>
-<li><p><img src="/images/human_parsing/JPPNET1.png" alt="JPPNET1.png"></p>
-</li>
-<li><p><img src="/images/human_parsing/JPPNET2.png" alt="JPPNET2.png"></p>
-</li>
-<li><p>本文提出了 重量级的 human parsing benchmark – LIP</p>
-</li>
-<li><p>从数据集内容丰富度上看，之前的数据集中，MPII 和 LSP 就只有线，ATR就站着的，Pascaljiu 6种标，而LIP啥都有</p>
-</li>
-<li><p>从数据集本身数量上看， LIP也领先其他数据集许多</p>
-</li>
-<li><p>文章中提出了两种结构 JPPNet 以及 没有pose帮助的 SS-JPPNet，来看主结构</p>
-</li>
-<li><p><img src="/images/human_parsing/JPPNET3.png" alt="JPPNET3.png"></p>
-</li>
+<li>paper <a href="https://arxiv.org/pdf/1804.01984.pdf" target="_blank" rel="noopener">Look into Person: Joint Body Parsing &amp; Pose Estimation Network and A New Benchmark</a></li>
+<li>github <a href="https://github.com/Engineering-Course/LIP_JPPNet" target="_blank" rel="noopener">https://github.com/Engineering-Course/LIP_JPPNet</a> </li>
+<li><img src="/images/human_parsing/JPPNET1.png" alt="JPPNET1.png"></li>
+<li><img src="/images/human_parsing/JPPNET2.png" alt="JPPNET2.png"></li>
+<li>本文提出了 重量级的 human parsing benchmark — LIP</li>
+<li>从数据集内容丰富度上看，之前的数据集中，MPII 和 LSP 就只有线，ATR就站着的，Pascaljiu 6种标，而LIP啥都有</li>
+<li>从数据集本身数量上看， LIP也领先其他数据集许多</li>
+<li>文章中提出了两种结构 JPPNet 以及 没有pose帮助的 SS-JPPNet，来看主结构</li>
+<li><img src="/images/human_parsing/JPPNET3.png" alt="JPPNET3.png"></li>
 <li><p>主要思想就是，共享backbone，fuse结果进行refine，具体是如何做的呢</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#backbone中提取对应特征 </span></span><br><span class="line">resnet_fea_100 = net_100.layers[<span class="string">'res4b22_relu'</span>]</span><br><span class="line">parsing_fea1_100 = net_100.layers[<span class="string">'res5d_branch2b_parsing'</span>]</span><br><span class="line">parsing_out1_100 = net_100.layers[<span class="string">'fc1_human'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#backbone中提取对应特征 </span></span><br><span class="line">resnet_fea_100 = net_100.layers[<span class="string">'res4b22_relu'</span>]</span><br><span class="line">parsing_fea1_100 = net_100.layers[<span class="string">'res5d_branch2b_parsing'</span>]</span><br><span class="line">parsing_out1_100 = net_100.layers[<span class="string">'fc1_human'</span>]</span><br><span class="line">    </span><br><span class="line"><span class="comment">#fc1_human是ASPP的output，出未refine的parsing结果。下面是源代码，是tf1.*的写法</span></span><br><span class="line">(self.feed(<span class="string">'res5b_relu'</span>,<span class="string">'bn5c_branch2c'</span>)</span><br><span class="line">.add(name=<span class="string">'res5c'</span>)</span><br><span class="line">.relu(name=<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">6</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c0'</span>))</span><br><span class="line">    </span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">12</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c1'</span>))</span><br><span class="line"></span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">18</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c2'</span>))</span><br><span class="line"></span><br><span class="line">(self.feed(<span class="string">'res5c_relu'</span>)</span><br><span class="line">.atrous_conv(<span class="number">3</span>, <span class="number">3</span>, n_classes, <span class="number">24</span>, padding=<span class="string">'SAME'</span>, relu=<span class="literal">False</span>, name=<span class="string">'fc1_human_c3'</span>))</span><br><span class="line"> </span><br><span class="line">(self.feed(<span class="string">'fc1_human_c0'</span>,</span><br><span class="line"><span class="string">'fc1_human_c1'</span>,</span><br><span class="line"><span class="string">'fc1_human_c2'</span>,</span><br><span class="line"><span class="string">'fc1_human_c3'</span>)</span><br><span class="line">.add(name=<span class="string">'fc1_human'</span>))</span><br><span class="line"> </span><br><span class="line"><span class="comment">#再结合posenet进行refine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pose_net</span><span class="params">(image, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        pose_conv1 = conv2d(image, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv1'</span>)</span><br><span class="line">        pose_conv2 = conv2d(pose_conv1, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv2'</span>)</span><br><span class="line">        pose_conv3 = conv2d(pose_conv2, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv3'</span>)</span><br><span class="line">        pose_conv4 = conv2d(pose_conv3, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv4'</span>)</span><br><span class="line">        pose_conv5 = conv2d(pose_conv4, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv5'</span>)</span><br><span class="line">        pose_conv6 = conv2d(pose_conv5, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv6'</span>)</span><br><span class="line">    </span><br><span class="line">        pose_conv7 = conv2d(pose_conv6, <span class="number">512</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_conv7'</span>)</span><br><span class="line">        pose_conv8 = conv2d(pose_conv7, <span class="number">16</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>, bn=is_BN, name=<span class="string">'pose_conv8'</span>)</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">return</span> pose_conv8, pose_conv6   <span class="comment">#FCN结果，context</span></span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pose_refine</span><span class="params">(pose, parsing, pose_fea, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        <span class="comment"># 1*1 convolution remaps the heatmaps to match the number of channels of the intermediate features.</span></span><br><span class="line">        pose = conv2d(pose, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_remap'</span>)</span><br><span class="line">        parsing = conv2d(parsing, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_remap'</span>)</span><br><span class="line">        <span class="comment"># concat </span></span><br><span class="line">        pos_par = tf.concat([pose, parsing, pose_fea], <span class="number">3</span>)</span><br><span class="line">        conv1 = conv2d(pos_par, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv1'</span>)</span><br><span class="line">        conv2 = conv2d(conv1, <span class="number">256</span>, <span class="number">5</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv2'</span>)</span><br><span class="line">        conv3 = conv2d(conv2, <span class="number">256</span>, <span class="number">7</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv3'</span>)</span><br><span class="line">        conv4 = conv2d(conv3, <span class="number">256</span>, <span class="number">9</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv4'</span>)</span><br><span class="line">        conv5 = conv2d(conv4, <span class="number">256</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'conv5'</span>)</span><br><span class="line">        conv6 = conv2d(conv5, <span class="number">16</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>, bn=is_BN, name=<span class="string">'conv6'</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> conv6, conv4 <span class="comment">#FCN结果，context</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parsing_refine</span><span class="params">(parsing, pose, parsing_fea, name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(name) <span class="keyword">as</span> scope:</span><br><span class="line">        is_BN = <span class="literal">False</span></span><br><span class="line">        pose = conv2d(pose, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'pose_remap'</span>)</span><br><span class="line">        parsing = conv2d(parsing, <span class="number">128</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_remap'</span>)</span><br><span class="line">      </span><br><span class="line">        par_pos = tf.concat([parsing, pose, parsing_fea], <span class="number">3</span>)</span><br><span class="line">        parsing_conv1 = conv2d(par_pos, <span class="number">512</span>, <span class="number">3</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv1'</span>)</span><br><span class="line">        parsing_conv2 = conv2d(parsing_conv1, <span class="number">256</span>, <span class="number">5</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv2'</span>)</span><br><span class="line">        parsing_conv3 = conv2d(parsing_conv2, <span class="number">256</span>, <span class="number">7</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv3'</span>)</span><br><span class="line">        parsing_conv4 = conv2d(parsing_conv3, <span class="number">256</span>, <span class="number">9</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv4'</span>)</span><br><span class="line">      </span><br><span class="line">        parsing_conv5 = conv2d(parsing_conv4, <span class="number">256</span>, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">True</span>, bn=is_BN, name=<span class="string">'parsing_conv5'</span>)</span><br><span class="line">        parsing_human1 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">6</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human1'</span>)</span><br><span class="line">        parsing_human2 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">12</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human2'</span>)</span><br><span class="line">        parsing_human3 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">18</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human3'</span>)</span><br><span class="line">        parsing_human4 = atrous_conv2d(parsing_conv5, <span class="number">20</span>, <span class="number">3</span>, rate=<span class="number">24</span>, relu=<span class="literal">False</span>, name=<span class="string">'parsing_human4'</span>)</span><br><span class="line">        parsing_human = tf.add_n([parsing_human1, parsing_human2, parsing_human3, parsing_human4], name=<span class="string">'parsing_human'</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> parsing_human, parsing_conv4 <span class="comment">#FCN结果，context</span></span><br></pre></td></tr></table></figure>
 </li>
@@ -368,21 +356,17 @@
 <li>pose_out3_100, pose_fea3_100 = pose_refine(pose_out2_100, parsing_out2_100, pose_fea2_100, name=’fc3_pose’) # 结合第二次parsing结果出第三次pose结果</li>
 </ol>
 </li>
-<li><p>从代码上看，和论文里的图略有不同</p>
-</li>
-<li><p>loss</p>
-<ul>
+<li>从代码上看，和论文里的图略有不同</li>
+<li>loss<ul>
 <li><img src="/images/human_parsing/JPPNET4.png" alt="JPPNET4.png"></li>
 </ul>
 </li>
-<li><p>experiment</p>
-<ul>
+<li>experiment<ul>
 <li><img src="/images/human_parsing/JPPNET5.png" alt="JPPNET5.png"></li>
 <li>从实验结果上看效果提升很明显，值得一赞</li>
 </ul>
 </li>
-<li><p>more</p>
-<ul>
+<li>more<ul>
 <li>值得一提的是，SS-JPPNet 咋就和DeepLab差不多呢？上图</li>
 <li><img src="/images/human_parsing/JPPNET6.png" alt="JPPNET6.png"></li>
 <li>通过human parsing的9个部位，取其中心作为关键点进行训练，结果也是意料之中的没什么卵用。猜测是关键点结果还是来自于human parsing的结果，监督信息耦合。结果也是和deeplab相近</li>
@@ -492,7 +476,7 @@
 <li><img src="/images/human_parsing/ACE2P6.png" alt="ACE2P6.png"></li>
 <li>展示了schp的策略，先训练了100个epoch作为Cycle 0 base，然后使用 anneal cosine decay lr策略restart4次，将权重结合，模型效果就会像是ensemble了一样，越来越好</li>
 <li><img src="/images/human_parsing/ACE2P7.png" alt="ACE2P7.png"></li>
-<li>这个weight aggregation也是很直白的，w0是init的，m=1 w1 = m/(m+1) * w0 + 1/(m+1)w = 1/2<em>w0 + 1/2</em>w，就是一个移动平均</li>
+<li>这个weight aggregation也是很直白的，w0是init的，m=1 w1 = m/(m+1) <em> w0 + 1/(m+1)w = 1/2</em>w0 + 1/2*w，就是一个移动平均</li>
 <li>After updating the current model weight with the former optimal one from the last cycle, we forward all the training data for one epoch to re-estimate the statistics of the parameters (i.e. moving average and standard deviation) in all batch normalization [14] layers. During these successive cycles of model aggregation, the network leads to wider model optima as well as improved model’s generalization ability.</li>
 <li>作者也提到说模型融合的时候需要一个epoch来使BN层适应</li>
 <li><img src="/images/human_parsing/ACE2P8.png" alt="ACE2P8.png"></li>
@@ -701,20 +685,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -803,7 +787,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 

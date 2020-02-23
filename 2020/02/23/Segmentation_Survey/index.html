@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 4.2.0">
@@ -31,14 +31,14 @@
 <meta property="og:image" content="http://yoursite.com/images/segmentation/UNET1.png">
 <meta property="og:image" content="http://yoursite.com/images/segmentation/UNET2.png">
 <meta property="og:image" content="http://yoursite.com/images/segmentation/segnet1.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_1.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_2.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_3.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_4.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_5.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_6.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_7.png">
-<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_8.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_7.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&amp;2_8.png">
 <meta property="og:image" content="http://yoursite.com/images/segmentation/FCN1.png">
 <meta property="og:image" content="http://yoursite.com/images/segmentation/FCN2.png">
 <meta property="og:image" content="http://yoursite.com/images/segmentation/FCN3.png">
@@ -188,12 +188,12 @@
   .use-motion .logo-line-before i { left: initial; }
   .use-motion .logo-line-after i { right: initial; }
   </style>
-</noscript>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -351,10 +351,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>梳理 Segmentation(分割) 相关介绍，数据集，算法</p>
-<a id="more"></a>
-<!-- toc -->
-
+        <p>梳理 Segmentation(分割) 相关介绍，数据集，算法<br><a id="more"></a><br><!-- toc --></p>
 <hr>
 <h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
 <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
@@ -399,24 +396,24 @@
 <h3 id="Deeplab-v1-amp-v2"><a href="#Deeplab-v1-amp-v2" class="headerlink" title="Deeplab v1 &amp; v2"></a>Deeplab v1 &amp; v2</h3><ul>
 <li>paper <a href="https://arxiv.org/pdf/1606.00915.pdf" target="_blank" rel="noopener">DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs</a></li>
 <li>home <a href="http://liangchiehchen.com/projects/DeepLab.html" target="_blank" rel="noopener">http://liangchiehchen.com/projects/DeepLab.html</a></li>
-<li><img src="/images/segmentation/deeplabv1&2_1.png" alt="deeplabv1&amp;2_1.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_1.png" alt="deeplabv1&amp;2_1.png"></li>
 <li>在那个年代多阶段还被普遍认为优于end2end，DCNN extract Feature， upsample， FC CRF得到结果。这是deeplab v1的主体思想<ul>
 <li>CRFs have been broadly used in semantic segmentation to combine class scores computed by multi-way classifiers with the lowlevel information captured by the local interactions of pixels and edges [23], [24] or superpixels [25]. Even though works of increased sophistication have been proposed to model the hierarchical dependency [26], [27], [28] and/or highorder dependencies of segments [29], [30], [31], [32], [33], we use the fully connected pairwise CRF proposed by [22] for its efficient computation, and ability to capture fine edge details while also catering for long range dependencies.</li>
 </ul>
 </li>
-<li><img src="/images/segmentation/deeplabv1&2_2.png" alt="deeplabv1&amp;2_2.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_2.png" alt="deeplabv1&amp;2_2.png"></li>
 <li>本文最大的贡献之一是带动了Astro conv在seg任务上的发展</li>
-<li><img src="/images/segmentation/deeplabv1&2_3.png" alt="deeplabv1&amp;2_3.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_3.png" alt="deeplabv1&amp;2_3.png"></li>
 <li>有ASPP的版本成为deeplab v2也是同样的出色，多rate的astro conv拼凑而成</li>
-<li><img src="/images/segmentation/deeplabv1&2_4.png" alt="deeplabv1&amp;2_4.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_4.png" alt="deeplabv1&amp;2_4.png"></li>
 <li>通过CRF的持续迭代，边缘信息变得充分，分割结果更加完美</li>
-<li><img src="/images/segmentation/deeplabv1&2_5.png" alt="deeplabv1&amp;2_5.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_5.png" alt="deeplabv1&amp;2_5.png"></li>
 <li>FOV相当于是单通道的ASPP，实验证明，large rate的aspp效果有显著提高</li>
-<li><img src="/images/segmentation/deeplabv1&2_6.png" alt="deeplabv1&amp;2_6.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_6.png" alt="deeplabv1&amp;2_6.png"></li>
 <li>说什么也要sota一下</li>
-<li><img src="/images/segmentation/deeplabv1&2_7.png" alt="deeplabv1&amp;2_7.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_7.png" alt="deeplabv1&amp;2_7.png"></li>
 <li>有趣的是，ASPP在 PASCAL-Person-Part 上表现不佳，不如不用</li>
-<li><img src="/images/segmentation/deeplabv1&2_8.png" alt="deeplabv1&amp;2_8.png"></li>
+<li><img src="/images/segmentation/deeplabv1&amp;2_8.png" alt="deeplabv1&amp;2_8.png"></li>
 <li>Cityscapes 上ASPP管用</li>
 </ul>
 <h3 id="FCN"><a href="#FCN" class="headerlink" title="FCN"></a>FCN</h3><ul>
@@ -806,7 +803,10 @@
     <a href="/2020/02/22/Pedestrian_Detection_Survey/" rel="prev" title="Pedestrian Detection Survey">
       <i class="fa fa-chevron-left"></i> Pedestrian Detection Survey
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/23/Anchor_Free_Development_History/" rel="next" title="Anchor Free Development History">
+      Anchor Free Development History <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -882,20 +882,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -984,7 +984,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+<script src="/js/local-search.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 
