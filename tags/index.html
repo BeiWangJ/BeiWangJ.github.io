@@ -199,10 +199,10 @@
       <div class="post-body">
           <div class="tag-cloud">
             <div class="tag-cloud-title">
-              目前共计 10 个标签
+              目前共计 13 个标签
             </div>
             <div class="tag-cloud-tags">
-              <a href="/tags/PAR/" style="font-size: 12px; color: #ccc">PAR</a> <a href="/tags/blog/" style="font-size: 12px; color: #ccc">blog</a> <a href="/tags/crowd-counting/" style="font-size: 12px; color: #ccc">crowd_counting</a> <a href="/tags/cv/" style="font-size: 30px; color: #111">cv</a> <a href="/tags/github/" style="font-size: 12px; color: #ccc">github</a> <a href="/tags/help/" style="font-size: 21px; color: #6f6f6f">help</a> <a href="/tags/hexo/" style="font-size: 21px; color: #6f6f6f">hexo</a> <a href="/tags/human-parsing/" style="font-size: 12px; color: #ccc">human_parsing</a> <a href="/tags/next/" style="font-size: 12px; color: #ccc">next</a> <a href="/tags/pedestrian-detection/" style="font-size: 12px; color: #ccc">pedestrian_detection</a>
+              <a href="/tags/PAR/" style="font-size: 12px; color: #ccc">PAR</a> <a href="/tags/blog/" style="font-size: 12px; color: #ccc">blog</a> <a href="/tags/crowd-counting/" style="font-size: 12px; color: #ccc">crowd_counting</a> <a href="/tags/cv/" style="font-size: 30px; color: #111">cv</a> <a href="/tags/github/" style="font-size: 12px; color: #ccc">github</a> <a href="/tags/help/" style="font-size: 21px; color: #6f6f6f">help</a> <a href="/tags/hexo/" style="font-size: 21px; color: #6f6f6f">hexo</a> <a href="/tags/human-parsing/" style="font-size: 12px; color: #ccc">human_parsing</a> <a href="/tags/instance-seg/" style="font-size: 12px; color: #ccc">instance_seg</a> <a href="/tags/next/" style="font-size: 12px; color: #ccc">next</a> <a href="/tags/pedestrian-detection/" style="font-size: 12px; color: #ccc">pedestrian_detection</a> <a href="/tags/seg/" style="font-size: 12px; color: #ccc">seg</a> <a href="/tags/semantic-seg/" style="font-size: 12px; color: #ccc">semantic_seg</a>
             </div>
           </div>
         
@@ -221,7 +221,6 @@
 
           </div>
           
-    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -283,7 +282,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -296,7 +295,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -402,35 +401,6 @@
   
 
   
-
-
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'xC50sUSnkQydieUi4mhaQ7uJ-gzGzoHsz',
-      appKey     : 'NyyVwnNADR25H22d2d6xszR1',
-      placeholder: "Just go go",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : 'zh-CN' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script>
 
 </body>
 </html>

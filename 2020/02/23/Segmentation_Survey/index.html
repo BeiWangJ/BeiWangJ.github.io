@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="梳理 Segmentation(分割) 相关介绍，数据集，算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Segmentation Survey">
+<meta property="og:url" content="http://yoursite.com/2020/02/23/Segmentation_Survey/index.html">
+<meta property="og:site_name" content="Bei&#39;s Blog">
+<meta property="og:description" content="梳理 Segmentation(分割) 相关介绍，数据集，算法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/Intro1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/UNET1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/UNET2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/segnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_7.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv1&2_8.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/FCN1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/FCN2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/FCN3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/FCN4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/enet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/enet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/enet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/enet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/psp6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/icnet6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/denseaspp1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/denseaspp2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3_1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3_2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3_3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3+_1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3+_2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3+_3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/deeplabv3+_4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/encnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/encnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/bisenet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/bisenet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/bisenet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/danet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/danet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/danet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/danet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/cgnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/cgnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/cgnet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/cgnet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocnet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocnet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dunet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dunet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dunet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dunet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/fastfcn1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/fastfcn2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/fastfcn3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/fastfcn4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/lednet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/fastscnn1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/hrnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/hrnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/hrnet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/hrnet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dfanet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dfanet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/dfanet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocrnet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocrnet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/ocrnet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/maskrcnn1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/maskrcnn2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/maskrcnn3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/maskrcnn4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/maskrcnn5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet7.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/panet8.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/msrcnn1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/msrcnn2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/msrcnn3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/yolact1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/yolact2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/yolact3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/polarmask6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask1.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask2.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask3.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask4.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask5.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask6.png">
+<meta property="og:image" content="http://yoursite.com/images/segmentation/centermask7.png">
+<meta property="article:published_time" content="2020-02-23T06:01:57.969Z">
+<meta property="article:modified_time" content="2020-02-23T08:41:42.647Z">
+<meta property="article:author" content="Bei">
+<meta property="article:tag" content="cv">
+<meta property="article:tag" content="seg">
+<meta property="article:tag" content="semantic_seg">
+<meta property="article:tag" content="instance_seg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/segmentation/Intro1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/23/Segmentation_Survey/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Segmentation Survey | Bei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bei's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/23/Segmentation_Survey/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Bei">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Segmentation Survey
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-23 14:01:57 / 修改时间：16:41:42" itemprop="dateCreated datePublished" datetime="2020-02-23T14:01:57+08:00">2020-02-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cv/" itemprop="url" rel="index">
+                    <span itemprop="name">cv</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>梳理 Segmentation(分割) 相关介绍，数据集，算法</p>
+<a id="more"></a>
+<!-- toc -->
+
+<hr>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><hr>
+<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>相信时至今日，分割作为三大基础任务，是被广为熟知的</li>
+<li>值得一提的是，分割任务往往被认为有两类<ul>
+<li>语义分割 semantic segmentation<ul>
+<li>语义分割只区分类别不区分个体</li>
+<li>代表作的有 FCN Deeplab 系列</li>
+</ul>
+</li>
+<li>实例分割 instance segmentation<ul>
+<li>实例分割不仅区分类别，对同类别的不同个体也需要区分</li>
+<li>代表作有 Mask-RCNN </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>（借用 gluoncv的一张图来说明）</li>
+<li><img src="/images/segmentation/Intro1.png" alt="Intro1.png"></li>
+</ul>
+<hr>
+<h1 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h1><hr>
+<h2 id="Semantic-Segmentation"><a href="#Semantic-Segmentation" class="headerlink" title="Semantic Segmentation"></a>Semantic Segmentation</h2><h3 id="Unet"><a href="#Unet" class="headerlink" title="Unet"></a>Unet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1505.04597.pdf" target="_blank" rel="noopener">U-Net: Convolutional Networks for Biomedical Image Segmentation</a></li>
+<li>git <a href="https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/" target="_blank" rel="noopener">https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/</a><ul>
+<li>当然 git 上非官方的也是一抓一大把</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/UNET1.png" alt="UNET1.png"></li>
+<li>非常经典的encode-decode结构，其特点是在decode时高级特征会不断与低级特征融合，对图像本身的结构和语义保护地很好，有效地使局部特征得到充分表现</li>
+<li><img src="/images/segmentation/UNET2.png" alt="UNET2.png"></li>
+</ul>
+<h3 id="Segnet"><a href="#Segnet" class="headerlink" title="Segnet"></a>Segnet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1511.00561.pdf" target="_blank" rel="noopener">SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation</a></li>
+<li>code <a href="http://mi.eng.cam.ac.uk/projects/segnet/" target="_blank" rel="noopener">http://mi.eng.cam.ac.uk/projects/segnet/</a></li>
+<li><img src="/images/segmentation/segnet1.png" alt="segnet1.png"></li>
+<li>和Unet很相似，文章里提到的不同点也是有点牵强。。<ul>
+<li>As compared to SegNet, U-Net [16] (proposed for the medical imaging community) does not reuse pooling indices but instead transfers the entire feature map (at the cost of more memory) to the corresponding decoders and concatenates them to upsampled (via deconvolution) decoder feature maps. There is no conv5 and max-pool 5 block in U-Net as in the VGG net architecture. SegNet, on the other hand, uses all of the pre-trained convolutional layer weights from VGG net as pre-trained weights.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Deeplab-v1-amp-v2"><a href="#Deeplab-v1-amp-v2" class="headerlink" title="Deeplab v1 &amp; v2"></a>Deeplab v1 &amp; v2</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1606.00915.pdf" target="_blank" rel="noopener">DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs</a></li>
+<li>home <a href="http://liangchiehchen.com/projects/DeepLab.html" target="_blank" rel="noopener">http://liangchiehchen.com/projects/DeepLab.html</a></li>
+<li><img src="/images/segmentation/deeplabv1&2_1.png" alt="deeplabv1&amp;2_1.png"></li>
+<li>在那个年代多阶段还被普遍认为优于end2end，DCNN extract Feature， upsample， FC CRF得到结果。这是deeplab v1的主体思想<ul>
+<li>CRFs have been broadly used in semantic segmentation to combine class scores computed by multi-way classifiers with the lowlevel information captured by the local interactions of pixels and edges [23], [24] or superpixels [25]. Even though works of increased sophistication have been proposed to model the hierarchical dependency [26], [27], [28] and/or highorder dependencies of segments [29], [30], [31], [32], [33], we use the fully connected pairwise CRF proposed by [22] for its efficient computation, and ability to capture fine edge details while also catering for long range dependencies.</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/deeplabv1&2_2.png" alt="deeplabv1&amp;2_2.png"></li>
+<li>本文最大的贡献之一是带动了Astro conv在seg任务上的发展</li>
+<li><img src="/images/segmentation/deeplabv1&2_3.png" alt="deeplabv1&amp;2_3.png"></li>
+<li>有ASPP的版本成为deeplab v2也是同样的出色，多rate的astro conv拼凑而成</li>
+<li><img src="/images/segmentation/deeplabv1&2_4.png" alt="deeplabv1&amp;2_4.png"></li>
+<li>通过CRF的持续迭代，边缘信息变得充分，分割结果更加完美</li>
+<li><img src="/images/segmentation/deeplabv1&2_5.png" alt="deeplabv1&amp;2_5.png"></li>
+<li>FOV相当于是单通道的ASPP，实验证明，large rate的aspp效果有显著提高</li>
+<li><img src="/images/segmentation/deeplabv1&2_6.png" alt="deeplabv1&amp;2_6.png"></li>
+<li>说什么也要sota一下</li>
+<li><img src="/images/segmentation/deeplabv1&2_7.png" alt="deeplabv1&amp;2_7.png"></li>
+<li>有趣的是，ASPP在 PASCAL-Person-Part 上表现不佳，不如不用</li>
+<li><img src="/images/segmentation/deeplabv1&2_8.png" alt="deeplabv1&amp;2_8.png"></li>
+<li>Cityscapes 上ASPP管用</li>
+</ul>
+<h3 id="FCN"><a href="#FCN" class="headerlink" title="FCN"></a>FCN</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1605.06211.pdf" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a></li>
+<li>git <a href="https://github.com/shelhamer/fcn.berkeleyvision.org" target="_blank" rel="noopener">https://github.com/shelhamer/fcn.berkeleyvision.org</a></li>
+<li><img src="/images/segmentation/FCN1.png" alt="FCN1.png"></li>
+<li>非常简洁直接，打开seg新世界大门</li>
+<li><img src="/images/segmentation/FCN2.png" alt="FCN2.png"></li>
+<li>同时，FCN也开启了多level特征融合的大门</li>
+<li><img src="/images/segmentation/FCN3.png" alt="FCN3.png"></li>
+<li>32s 16s 8s 表示 downsample 2**（5 4 3） 的结果，肉眼可见的更好了</li>
+<li><img src="/images/segmentation/FCN4.png" alt="FCN4.png"></li>
+<li>结构简洁 结果不错 速度快 还要啥自行车</li>
+</ul>
+<h3 id="Enet"><a href="#Enet" class="headerlink" title="Enet"></a>Enet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1606.02147.pdf" target="_blank" rel="noopener">ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation</a></li>
+<li><img src="/images/segmentation/enet1.png" alt="enet1.png"></li>
+<li>开始意识到maxpooling在初级阶段对input的伤害，使用一个3x3 stride2缓解信息丢失；bottleneck 的设计估计是参考了 res，略有一些不同，使用了prelu</li>
+<li><img src="/images/segmentation/enet2.png" alt="enet2.png"></li>
+<li>主体结构，在stage2 stage3 都有递增的dilated conv<ul>
+<li>asymmetric <ul>
+<li>Sometimes we replace it with asymmetric convolution i.e. a sequence of 5 × 1 and 1 × 5 convolutions isntead of 5 x 5. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/enet3.png" alt="enet3.png"></li>
+<li>展示了相对segnet的速度优势</li>
+<li><img src="/images/segmentation/enet4.png" alt="enet4.png"></li>
+<li>cityscapes 略逊 segnet</li>
+</ul>
+<h3 id="PSP"><a href="#PSP" class="headerlink" title="PSP"></a>PSP</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1612.01105.pdf,https://hszhao.github.io/projects/pspnet/" target="_blank" rel="noopener">Pyramid Scene Parsing Network</a></li>
+<li>semantic seg 扛把子</li>
+<li><img src="/images/segmentation/psp1.png" alt="psp1.png"></li>
+<li>直接上代码，非常容易理解<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_PSP1x1Conv</span><span class="params">(in_channels, out_channels, norm_layer, norm_kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> nn.Sequential(</span><br><span class="line">        nn.Conv2d(in_channels, out_channels, <span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">        norm_layer(out_channels, **(&#123;&#125; <span class="keyword">if</span> norm_kwargs <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> norm_kwargs)),</span><br><span class="line">        nn.ReLU(<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_PyramidPooling</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, **kwargs)</span>:</span></span><br><span class="line">        super(_PyramidPooling, self).__init__()</span><br><span class="line">        out_channels = int(in_channels / <span class="number">4</span>)</span><br><span class="line">        self.avgpool1 = nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        self.avgpool2 = nn.AdaptiveAvgPool2d(<span class="number">2</span>)</span><br><span class="line">        self.avgpool3 = nn.AdaptiveAvgPool2d(<span class="number">3</span>)</span><br><span class="line">        self.avgpool4 = nn.AdaptiveAvgPool2d(<span class="number">6</span>)</span><br><span class="line">        self.conv1 = _PSP1x1Conv(in_channels, out_channels, **kwargs)</span><br><span class="line">        self.conv2 = _PSP1x1Conv(in_channels, out_channels, **kwargs)</span><br><span class="line">        self.conv3 = _PSP1x1Conv(in_channels, out_channels, **kwargs)</span><br><span class="line">        self.conv4 = _PSP1x1Conv(in_channels, out_channels, **kwargs)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        size = x.size()[<span class="number">2</span>:]</span><br><span class="line">        feat1 = F.interpolate(self.conv1(self.avgpool1(x)), size, mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">        feat2 = F.interpolate(self.conv2(self.avgpool2(x)), size, mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">        feat3 = F.interpolate(self.conv3(self.avgpool3(x)), size, mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">        feat4 = F.interpolate(self.conv4(self.avgpool4(x)), size, mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> torch.cat([x, feat1, feat2, feat3, feat4], dim=<span class="number">1</span>)</span><br></pre></td></tr></table></figure></li>
+<li>就是avgpooling到不同的尺度获取不同粒度的特征信息</li>
+<li><img src="/images/segmentation/psp2.png" alt="psp2.png"></li>
+<li>aux loss 是一个由stage4出来的辅助loss，接的haed是FCN的head（没有psp模块）</li>
+<li><img src="/images/segmentation/psp3.png" alt="psp3.png"></li>
+<li>作者在Ablation Study中对这个aux loss进行了分析，这玩意就是好使啊怎么都加点</li>
+<li><img src="/images/segmentation/psp4.png" alt="psp4.png"></li>
+<li>展示了PSP的渐进加点方法在ImageNet scene parsing challenge 2016上</li>
+<li><img src="/images/segmentation/psp5.png" alt="psp5.png"></li>
+<li>PSP效果堪称惊艳</li>
+<li><img src="/images/segmentation/psp6.png" alt="psp6.png"></li>
+<li>Cityscapes 当然也不会放过</li>
+</ul>
+<h3 id="ICNet"><a href="#ICNet" class="headerlink" title="ICNet"></a>ICNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1704.08545.pdf" target="_blank" rel="noopener">ICNet for Real-Time Semantic Segmentation on High-Resolution Images</a></li>
+<li>git <a href="https://github.com/hszhao/ICNet" target="_blank" rel="noopener">https://github.com/hszhao/ICNet</a></li>
+<li><img src="/images/segmentation/icnet1.png" alt="icnet1.png"></li>
+<li>虽然PSP很不错，但是不够快，ICNET致力于 acc 和 speed的均衡</li>
+<li><img src="/images/segmentation/icnet2.png" alt="icnet2.png"></li>
+<li>通过三个不同大小的input三个不同的子网络的特征进行融合，得到最终结果</li>
+<li><img src="/images/segmentation/icnet3.png" alt="icnet3.png"></li>
+<li>CFF的细节</li>
+<li><img src="/images/segmentation/icnet4.png" alt="icnet4.png"></li>
+<li>列出了几种 semantic segmentation 的常见的structure。我对他说的 ours(d) 是有疑义的，他其实每一个子网络都有output</li>
+<li><img src="/images/segmentation/icnet5.png" alt="icnet5.png"></li>
+<li>CityScapes 结果，yolo策略，快的没我好，好的没我快</li>
+<li><img src="/images/segmentation/icnet6.png" alt="icnet6.png"></li>
+<li>在CamVid和CoCoStuff上也是一样的不错</li>
+</ul>
+<h3 id="DenseASPP"><a href="#DenseASPP" class="headerlink" title="DenseASPP"></a>DenseASPP</h3><ul>
+<li>paper <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_DenseASPP_for_Semantic_CVPR_2018_paper.pdf" target="_blank" rel="noopener">DenseASPP for Semantic Segmentation in Street Scenes</a></li>
+<li><img src="/images/segmentation/denseaspp1.png" alt="denseaspp1.png"></li>
+<li>受启发于 densenet，给aspp也dense上</li>
+<li><img src="/images/segmentation/denseaspp2.png" alt="denseaspp2.png"></li>
+</ul>
+<h3 id="Deeplab-v3"><a href="#Deeplab-v3" class="headerlink" title="Deeplab v3"></a>Deeplab v3</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1706.05587.pdf" target="_blank" rel="noopener">Rethinking Atrous Convolution for Semantic Image Segmentation</a></li>
+<li>主要就是改进了ASPP</li>
+<li><img src="/images/segmentation/deeplabv3_1.png" alt="deeplabv3_1.png"></li>
+<li>在ASPP上加了一个image pooling，并在block4上使用了rate=2的dilate conv</li>
+<li><img src="/images/segmentation/deeplabv3_2.png" alt="deeplabv3_2.png"></li>
+<li>相较PSP有少量提升，JFT指pretrained on JFT dataset</li>
+<li><img src="/images/segmentation/deeplabv3_3.png" alt="deeplabv3_3.png"></li>
+<li>CityScapes上也是如此</li>
+</ul>
+<h3 id="Deeplab-v3-1"><a href="#Deeplab-v3-1" class="headerlink" title="Deeplab v3+"></a>Deeplab v3+</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1802.02611.pdf" target="_blank" rel="noopener">Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation</a></li>
+<li>git <a href="https://github.com/tensorflow/models/tree/master/research/deeplab" target="_blank" rel="noopener">https://github.com/tensorflow/models/tree/master/research/deeplab</a></li>
+<li><img src="/images/segmentation/deeplabv3+_1.png" alt="deeplabv3+_1.png"></li>
+<li>a是deeplab v3的结构，b是常见的encode-decode结构，相结合成c成为Deeplab v3</li>
+<li><img src="/images/segmentation/deeplabv3+_2.png" alt="deeplabv3+_2.png"></li>
+<li>结构简单清晰</li>
+<li><img src="/images/segmentation/deeplabv3+_3.png" alt="deeplabv3+_3.png"></li>
+<li>顺路玄学设计一把 Xception</li>
+<li><img src="/images/segmentation/deeplabv3+_4.png" alt="deeplabv3+_4.png"></li>
+<li>得益于backbone和高低阶特征融合，进步很大</li>
+</ul>
+<h3 id="EncNet"><a href="#EncNet" class="headerlink" title="EncNet"></a>EncNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1803.08904v1.pdf" target="_blank" rel="noopener">Context Encoding for Semantic Segmentation</a></li>
+<li><img src="/images/segmentation/encnet1.png" alt="encnet1.png"></li>
+<li>对最后的结果重新分配权重，并使用一个新的se loss用来监督监督在这张图中某一个类存在的概率</li>
+<li><img src="/images/segmentation/encnet2.png" alt="encnet2.png"></li>
+<li>相较于早它一个月发布的 deeplab v3+，这个结果实在不够看了</li>
+</ul>
+<h3 id="BiSeNet"><a href="#BiSeNet" class="headerlink" title="BiSeNet"></a>BiSeNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1808.00897.pdf" target="_blank" rel="noopener">BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation</a></li>
+<li>Megvii出品</li>
+<li><img src="/images/segmentation/bisenet1.png" alt="bisenet1.png"></li>
+<li>这个arm就是去除了缩放channel俩conv的se，ffm是一个经典的attention结构，这里成为是特征融合模块</li>
+<li><img src="/images/segmentation/bisenet2.png" alt="bisenet2.png"></li>
+<li>对比之前的性价比之王 ICNet，同精度下速度提升3倍；大幅提升精度下速度也翻倍</li>
+<li><img src="/images/segmentation/bisenet3.png" alt="bisenet3.png"></li>
+<li>上大模型精度也是顶尖的</li>
+</ul>
+<h3 id="DANet"><a href="#DANet" class="headerlink" title="DANet"></a>DANet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1809.02983.pdf" target="_blank" rel="noopener">Dual Attention Network for Scene Segmentation</a></li>
+<li>git <a href="https://github.com/junfu1115/DANet/" target="_blank" rel="noopener">https://github.com/junfu1115/DANet/</a></li>
+<li><img src="/images/segmentation/danet1.png" alt="danet1.png"></li>
+<li>空间的attention 和 channel的attention 融合</li>
+<li><img src="/images/segmentation/danet2.png" alt="danet2.png"></li>
+<li>具体attention的做法，spatial的做法还算正常，channel的做法略有些诡异。。</li>
+<li>直接上代码<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_PositionAttentionModule</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">""" Position attention module"""</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, **kwargs)</span>:</span></span><br><span class="line">        super(_PositionAttentionModule, self).__init__()</span><br><span class="line">        self.conv_b = nn.Conv2d(in_channels, in_channels // <span class="number">8</span>, <span class="number">1</span>)</span><br><span class="line">        self.conv_c = nn.Conv2d(in_channels, in_channels // <span class="number">8</span>, <span class="number">1</span>)</span><br><span class="line">        self.conv_d = nn.Conv2d(in_channels, in_channels, <span class="number">1</span>)</span><br><span class="line">        self.alpha = nn.Parameter(torch.zeros(<span class="number">1</span>))</span><br><span class="line">        self.softmax = nn.Softmax(dim=<span class="number">-1</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        batch_size, _, height, width = x.size()</span><br><span class="line">        feat_b = self.conv_b(x).view(batch_size, <span class="number">-1</span>, height * width).permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        feat_c = self.conv_c(x).view(batch_size, <span class="number">-1</span>, height * width)</span><br><span class="line">        attention_s = self.softmax(torch.bmm(feat_b, feat_c))  <span class="comment"># conv transpose .* conv</span></span><br><span class="line">        feat_d = self.conv_d(x).view(batch_size, <span class="number">-1</span>, height * width)</span><br><span class="line">        feat_e = torch.bmm(feat_d, attention_s.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)).view(batch_size, <span class="number">-1</span>, height, width)  <span class="comment"># conv .* conv transpose )reshape</span></span><br><span class="line">        out = self.alpha * feat_e + x</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_ChannelAttentionModule</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">"""Channel attention module"""</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        super(_ChannelAttentionModule, self).__init__()</span><br><span class="line">        self.beta = nn.Parameter(torch.zeros(<span class="number">1</span>))</span><br><span class="line">        self.softmax = nn.Softmax(dim=<span class="number">-1</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        batch_size, _, height, width = x.size()</span><br><span class="line">        feat_a = x.view(batch_size, <span class="number">-1</span>, height * width)</span><br><span class="line">        feat_a_transpose = x.view(batch_size, <span class="number">-1</span>, height * width).permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        attention = torch.bmm(feat_a, feat_a_transpose) <span class="comment"># x = x * x transpose</span></span><br><span class="line">        attention_new = torch.max(attention, dim=<span class="number">-1</span>, keepdim=<span class="literal">True</span>)[<span class="number">0</span>].expand_as(attention) - attention <span class="comment"># x.max - x</span></span><br><span class="line">        attention = self.softmax(attention_new)</span><br><span class="line"> </span><br><span class="line">        feat_e = torch.bmm(attention, feat_a).view(batch_size, <span class="number">-1</span>, height, width)</span><br><span class="line">        out = self.beta * feat_e + x</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure></li>
+<li><img src="/images/segmentation/danet3.png" alt="danet3.png"></li>
+<li>cityscapes略强于deeplab v3的水平</li>
+<li><img src="/images/segmentation/danet4.png" alt="danet4.png"></li>
+<li>VOC也是PSP差不多水平</li>
+</ul>
+<h3 id="CGNet"><a href="#CGNet" class="headerlink" title="CGNet"></a>CGNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1811.08201.pdf" target="_blank" rel="noopener">CGNet: A Light-weight Context Guided Network for Semantic Segmentation</a></li>
+<li>git <a href="https://github.com/wutianyiRosun/CGNet" target="_blank" rel="noopener">https://github.com/wutianyiRosun/CGNet</a></li>
+<li><img src="/images/segmentation/cgnet1.png" alt="cgnet1.png"></li>
+<li>展示了文章的主思路。a是FCN，b是FC+context module，例如psp aspp，咱这个每个阶段都给上context Feature</li>
+<li><img src="/images/segmentation/cgnet2.png" alt="cgnet2.png"></li>
+<li>名字花里胡哨取一堆，就是3x3 conv和3x3 dilate=3 conv concat，然后se</li>
+<li><img src="/images/segmentation/cgnet3.png" alt="cgnet3.png"></li>
+<li>对module中的residual的位置也做了区分</li>
+<li><img src="/images/segmentation/cgnet4.png" alt="cgnet4.png"></li>
+<li>对标对象是 ENet ESPNet，同样参数下实现了精度 5% - 10%的进步</li>
+</ul>
+<h3 id="OCNet"><a href="#OCNet" class="headerlink" title="OCNet"></a>OCNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1809.00916.pdf" target="_blank" rel="noopener">OCNet: Object Context Network for Scene Parsing</a></li>
+<li>git <a href="https://github.com/PkuRainBow/OCNet.pytorch" target="_blank" rel="noopener">https://github.com/PkuRainBow/OCNet.pytorch</a></li>
+<li>微软出品</li>
+<li><img src="/images/segmentation/ocnet1.png" alt="ocnet1.png"></li>
+<li>展示了几种OC架构，paper中并没有画出OC的基本结构，直接上代码 </li>
+<li>OCM → BaseOC_Module             OCP → BaseOC_Context_Module<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_SelfAttentionBlock</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    The basic implementation for self-attention block/non-local block</span></span><br><span class="line"><span class="string">    Input:</span></span><br><span class="line"><span class="string">        N X C X H X W</span></span><br><span class="line"><span class="string">    Parameters:</span></span><br><span class="line"><span class="string">        in_channels       : the dimension of the input feature map</span></span><br><span class="line"><span class="string">        key_channels      : the dimension after the key/query transform</span></span><br><span class="line"><span class="string">        value_channels    : the dimension after the value transform</span></span><br><span class="line"><span class="string">        scale             : choose the scale to downsample the input feature maps (save memory cost)</span></span><br><span class="line"><span class="string">    Return:</span></span><br><span class="line"><span class="string">        N X C X H X W</span></span><br><span class="line"><span class="string">        position-aware context features.(w/o concate or add with the input)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, key_channels, value_channels, out_channels=None, scale=<span class="number">1</span>)</span>:</span></span><br><span class="line">        super(_SelfAttentionBlock, self).__init__()</span><br><span class="line">        self.scale = scale</span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.out_channels = out_channels</span><br><span class="line">        self.key_channels = key_channels</span><br><span class="line">        self.value_channels = value_channels</span><br><span class="line">        <span class="keyword">if</span> out_channels == <span class="literal">None</span>:</span><br><span class="line">            self.out_channels = in_channels</span><br><span class="line">        self.pool = nn.MaxPool2d(kernel_size=(scale, scale))</span><br><span class="line">        self.f_key = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels=self.in_channels, out_channels=self.key_channels,</span><br><span class="line">                kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>),</span><br><span class="line">            InPlaceABNSync(self.key_channels),</span><br><span class="line">        )</span><br><span class="line">        self.f_query = self.f_key</span><br><span class="line">        self.f_value = nn.Conv2d(in_channels=self.in_channels, out_channels=self.value_channels,</span><br><span class="line">            kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line">        self.W = nn.Conv2d(in_channels=self.value_channels, out_channels=self.out_channels,</span><br><span class="line">            kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line">        nn.init.constant(self.W.weight, <span class="number">0</span>)</span><br><span class="line">        nn.init.constant(self.W.bias, <span class="number">0</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        batch_size, h, w = x.size(<span class="number">0</span>), x.size(<span class="number">2</span>), x.size(<span class="number">3</span>)</span><br><span class="line">        <span class="keyword">if</span> self.scale &gt; <span class="number">1</span>:</span><br><span class="line">            x = self.pool(x)</span><br><span class="line"> </span><br><span class="line">        value = self.f_value(x).view(batch_size, self.value_channels, <span class="number">-1</span>)</span><br><span class="line">        value = value.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        query = self.f_query(x).view(batch_size, self.key_channels, <span class="number">-1</span>)</span><br><span class="line">        query = query.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        key = self.f_key(x).view(batch_size, self.key_channels, <span class="number">-1</span>)</span><br><span class="line"> </span><br><span class="line">        sim_map = torch.matmul(query, key)</span><br><span class="line">        sim_map = (self.key_channels**<span class="number">-.5</span>) * sim_map</span><br><span class="line">        sim_map = F.softmax(sim_map, dim=<span class="number">-1</span>)</span><br><span class="line"> </span><br><span class="line">        context = torch.matmul(sim_map, value)</span><br><span class="line">        context = context.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>).contiguous()</span><br><span class="line">        context = context.view(batch_size, self.value_channels, *x.size()[<span class="number">2</span>:])</span><br><span class="line">        context = self.W(context)</span><br><span class="line">        <span class="keyword">if</span> self.scale &gt; <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> torch_ver == <span class="string">'0.4'</span>:</span><br><span class="line">                context = F.upsample(input=context, size=(h, w), mode=<span class="string">'bilinear'</span>, align_corners=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">elif</span> torch_ver == <span class="string">'0.3'</span>:</span><br><span class="line">                context = F.upsample(input=context, size=(h, w), mode=<span class="string">'bilinear'</span>)</span><br><span class="line">        <span class="keyword">return</span> context</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SelfAttentionBlock2D</span><span class="params">(_SelfAttentionBlock)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, key_channels, value_channels, out_channels=None, scale=<span class="number">1</span>)</span>:</span></span><br><span class="line">        super(SelfAttentionBlock2D, self).__init__(in_channels,</span><br><span class="line">                                                    key_channels,</span><br><span class="line">                                                    value_channels,</span><br><span class="line">                                                    out_channels,</span><br><span class="line">                                                    scale)</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseOC_Module</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Implementation of the BaseOC module</span></span><br><span class="line"><span class="string">    Parameters:</span></span><br><span class="line"><span class="string">        in_features / out_features: the channels of the input / output feature maps.</span></span><br><span class="line"><span class="string">        dropout: we choose 0.05 as the default value.</span></span><br><span class="line"><span class="string">        size: you can apply multiple sizes. Here we only use one size.</span></span><br><span class="line"><span class="string">    Return:</span></span><br><span class="line"><span class="string">        features fused with Object context information.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, out_channels, key_channels, value_channels, dropout, sizes=<span class="params">([<span class="number">1</span>])</span>)</span>:</span></span><br><span class="line">        super(BaseOC_Module, self).__init__()</span><br><span class="line">        self.stages = []</span><br><span class="line">        self.stages = nn.ModuleList([self._make_stage(in_channels, out_channels, key_channels, value_channels, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])       </span><br><span class="line">        self.conv_bn_dropout = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">2</span>*in_channels, out_channels, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>),</span><br><span class="line">            InPlaceABNSync(out_channels),</span><br><span class="line">            nn.Dropout2d(dropout)</span><br><span class="line">            )</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_stage</span><span class="params">(self, in_channels, output_channels, key_channels, value_channels, size)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> SelfAttentionBlock2D(in_channels,</span><br><span class="line">                                    key_channels,</span><br><span class="line">                                    value_channels,</span><br><span class="line">                                    output_channels,</span><br><span class="line">                                    size)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span></span><br><span class="line">        priors = [stage(feats) <span class="keyword">for</span> stage <span class="keyword">in</span> self.stages]</span><br><span class="line">        context = priors[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(priors)):</span><br><span class="line">            context += priors[i]</span><br><span class="line">        output = self.conv_bn_dropout(torch.cat([context, feats], <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseOC_Context_Module</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Output only the context features.</span></span><br><span class="line"><span class="string">    Parameters:</span></span><br><span class="line"><span class="string">        in_features / out_features: the channels of the input / output feature maps.</span></span><br><span class="line"><span class="string">        dropout: specify the dropout ratio</span></span><br><span class="line"><span class="string">        fusion: We provide two different fusion method, "concat" or "add"</span></span><br><span class="line"><span class="string">        size: we find that directly learn the attention weights on even 1/8 feature maps is hard.</span></span><br><span class="line"><span class="string">    Return:</span></span><br><span class="line"><span class="string">        features after "concat" or "add"</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, out_channels, key_channels, value_channels, dropout, sizes=<span class="params">([<span class="number">1</span>])</span>)</span>:</span></span><br><span class="line">        super(BaseOC_Context_Module, self).__init__()</span><br><span class="line">        self.stages = []</span><br><span class="line">        self.stages = nn.ModuleList([self._make_stage(in_channels, out_channels, key_channels, value_channels, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes])</span><br><span class="line">        self.conv_bn_dropout = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels, out_channels, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>),</span><br><span class="line">            InPlaceABNSync(out_channels),</span><br><span class="line">            )</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_stage</span><span class="params">(self, in_channels, output_channels, key_channels, value_channels, size)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> SelfAttentionBlock2D(in_channels,</span><br><span class="line">                                    key_channels,</span><br><span class="line">                                    value_channels,</span><br><span class="line">                                    output_channels,</span><br><span class="line">                                    size)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, feats)</span>:</span></span><br><span class="line">        priors = [stage(feats) <span class="keyword">for</span> stage <span class="keyword">in</span> self.stages]</span><br><span class="line">        context = priors[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(priors)):</span><br><span class="line">            context += priors[i]</span><br><span class="line">        output = self.conv_bn_dropout(context)</span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure></li>
+<li>可以得出结论，所谓OC module就是常见的spatial attention的改装</li>
+<li><img src="/images/segmentation/ocnet2.png" alt="ocnet2.png"></li>
+<li>可以看出ASPP的结构加上OC还是有不少提升的</li>
+<li><img src="/images/segmentation/ocnet3.png" alt="ocnet3.png"></li>
+<li>尽管改动简单，但是效果拔群</li>
+<li><img src="/images/segmentation/ocnet4.png" alt="ocnet4.png"></li>
+<li>在LIP上也做了实验，效果也很好</li>
+</ul>
+<h3 id="DUNet"><a href="#DUNet" class="headerlink" title="DUNet"></a>DUNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.02120.pdf" target="_blank" rel="noopener">Decoders Matter for Semantic Segmentation: Data-Dependent Decoding Enables Flexible Feature Aggregation</a></li>
+<li><img src="/images/segmentation/dunet1.png" alt="dunet1.png"></li>
+<li>整体架构是个常规操作，看看DUpsample怎么玩</li>
+<li><img src="/images/segmentation/dunet2.png" alt="dunet2.png"></li>
+<li>我觉得这个图不是很直白，直接上代码</li>
+<li>整体就是 conv  c → c<em>factor</em>factor，然后reshape reshape<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DUpsampling</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">"""DUsampling module"""</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_channels, out_channels, scale_factor=<span class="number">2</span>, **kwargs)</span>:</span></span><br><span class="line">        super(DUpsampling, self).__init__()</span><br><span class="line">        self.scale_factor = scale_factor</span><br><span class="line">        self.conv_w = nn.Conv2d(in_channels, out_channels * scale_factor * scale_factor, <span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x = self.conv_w(x)</span><br><span class="line">        n, c, h, w = x.size()</span><br><span class="line"> </span><br><span class="line">        <span class="comment"># N, C, H, W --&gt; N, W, H, C</span></span><br><span class="line">        x = x.permute(<span class="number">0</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>).contiguous()</span><br><span class="line"> </span><br><span class="line">        <span class="comment"># N, W, H, C --&gt; N, W, H * scale, C // scale</span></span><br><span class="line">        x = x.view(n, w, h * self.scale_factor, c // self.scale_factor)</span><br><span class="line"> </span><br><span class="line">        <span class="comment"># N, W, H * scale, C // scale --&gt; N, H * scale, W, C // scale</span></span><br><span class="line">        x = x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>).contiguous()</span><br><span class="line"> </span><br><span class="line">        <span class="comment"># N, H * scale, W, C // scale --&gt; N, H * scale, W * scale, C // (scale ** 2)</span></span><br><span class="line">        x = x.view(n, h * self.scale_factor, w * self.scale_factor, c // (self.scale_factor * self.scale_factor))</span><br><span class="line"> </span><br><span class="line">        <span class="comment"># N, H * scale, W * scale, C // (scale ** 2) -- &gt; N, C // (scale ** 2), H * scale, W * scale</span></span><br><span class="line">        x = x.permute(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure></li>
+<li><img src="/images/segmentation/dunet3.png" alt="dunet3.png"></li>
+<li>在voc 上进行对比，dusample相对bilinear upsample确有其优势</li>
+<li><img src="/images/segmentation/dunet4.png" alt="dunet4.png"></li>
+<li>这个方法在deeplab v3+上一样有效，提升了0.3%</li>
+</ul>
+<h3 id="fastFCN"><a href="#fastFCN" class="headerlink" title="fastFCN"></a>fastFCN</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.11816.pdf" target="_blank" rel="noopener">FastFCN: Rethinking Dilated Convolution in the Backbone for Semantic Segmentation</a></li>
+<li>git <a href="https://github.come/wuhuikai/FastFCN" target="_blank" rel="noopener">https://github.come/wuhuikai/FastFCN</a></li>
+<li><img src="/images/segmentation/fastfcn1.png" alt="fastfcn1.png"></li>
+<li>标准的结构，主要在JPU</li>
+<li><img src="/images/segmentation/fastfcn2.png" alt="fastfcn2.png"></li>
+<li>上采样到8X，使用多dilate进行conv，cat conv 得到结果。。。岂不是要在8x上aspp？？？那fast在哪呢</li>
+<li><img src="/images/segmentation/fastfcn3.png" alt="fastfcn3.png"></li>
+<li>效果略有提升</li>
+<li><img src="/images/segmentation/fastfcn4.png" alt="fastfcn4.png"></li>
+<li>配合EncNet效果不错</li>
+</ul>
+<h3 id="LEDNET"><a href="#LEDNET" class="headerlink" title="LEDNET"></a>LEDNET</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1905.02423.pdf" target="_blank" rel="noopener">LEDNET: A LIGHTWEIGHT ENCODER-DECODER NETWORK FOR REAL-TIME SEMANTIC SEGMENTATION</a></li>
+<li><img src="/images/segmentation/lednet1.png" alt="lednet1.png"></li>
+<li>主要的骚操作在decode部分</li>
+</ul>
+<h3 id="Fast-SCNN"><a href="#Fast-SCNN" class="headerlink" title="Fast-SCNN"></a>Fast-SCNN</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1902.04502.pdf" target="_blank" rel="noopener">Fast-SCNN: Fast Semantic Segmentation Network</a></li>
+<li><img src="/images/segmentation/fastscnn1.png" alt="fastscnn1.png"></li>
+<li>感觉就是deeplab v3+去掉aspp</li>
+</ul>
+<h3 id="HRNet"><a href="#HRNet" class="headerlink" title="HRNet"></a>HRNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1904.04514.pdf" target="_blank" rel="noopener">High-Resolution Representations for Labeling Pixels and Regions</a></li>
+<li>git <a href="https://github.com/HRNet" target="_blank" rel="noopener">https://github.com/HRNet</a></li>
+<li><img src="/images/segmentation/hrnet1.png" alt="hrnet1.png"></li>
+<li><img src="/images/segmentation/hrnet2.png" alt="hrnet2.png"></li>
+<li>HRNet在seg上确实是unstoppable，结构大家也都是很了解了</li>
+<li><img src="/images/segmentation/hrnet3.png" alt="hrnet3.png"></li>
+<li><img src="/images/segmentation/hrnet4.png" alt="hrnet4.png"></li>
+<li>在LIP上，没有extra监督信息的情况下达到了55.9，相当高</li>
+</ul>
+<h3 id="DFANet"><a href="#DFANet" class="headerlink" title="DFANet"></a>DFANet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1904.02216.pdf" target="_blank" rel="noopener">DFANet: Deep Feature Aggregation for Real-Time Semantic Segmentation</a></li>
+<li><img src="/images/segmentation/dfanet1.png" alt="dfanet1.png"></li>
+<li>列举了不同的structure</li>
+<li><img src="/images/segmentation/dfanet2.png" alt="dfanet2.png"></li>
+<li>看起来就像是三个重复的网络在concat，和HRNet神似</li>
+<li><img src="/images/segmentation/dfanet3.png" alt="dfanet3.png"></li>
+<li>优势在于网络架整体深度的降低带来的计算的快速，在100fps的场景是最好的选择</li>
+</ul>
+<h3 id="OCRNet"><a href="#OCRNet" class="headerlink" title="OCRNet"></a>OCRNet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1909.11065.pdf" target="_blank" rel="noopener">Object-Contextual Representations for Semantic Segmentation</a></li>
+<li><img src="/images/segmentation/ocrnet1.png" alt="ocrnet1.png"></li>
+<li>目前没有源代码，对其中的具体操作还有待商榷</li>
+<li><img src="/images/segmentation/ocrnet2.png" alt="ocrnet2.png"></li>
+<li><img src="/images/segmentation/ocrnet3.png" alt="ocrnet3.png"></li>
+<li>效果令人震惊，就坐等爸爸开源了</li>
+<li>It can be seen that our approach (HRNetV2 + OCR) achieves very competitive performance w/o using the video information or depth information. We then combine our OCR with ASPP [4] by replacing the global average pooling with our OCR, which (HRNetV2 + OCR (w/ ASP)) achieves 1st on 1 metric and 2nd on 3 of the 4 metrics with only a single model.</li>
+<li>还说到了，如果和ASPP一起使用，将GAP换成OCR即可效果拔群</li>
+</ul>
+<h2 id="Instance-Segmentation"><a href="#Instance-Segmentation" class="headerlink" title="Instance Segmentation"></a>Instance Segmentation</h2><p>相信说，instance seg 的deep风潮是从mask-rcnn开始的</p>
+<h3 id="Mask-RCNN"><a href="#Mask-RCNN" class="headerlink" title="Mask-RCNN"></a>Mask-RCNN</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1703.06870.pdf" target="_blank" rel="noopener">Mask R-CNN</a></li>
+<li>git <ul>
+<li><a href="https://github.com/facebookresearch/Detectron" target="_blank" rel="noopener">https://github.com/facebookresearch/Detectron</a></li>
+<li><a href="https://github.com/facebookresearch/maskrcnn-benchmark" target="_blank" rel="noopener">https://github.com/facebookresearch/maskrcnn-benchmark</a></li>
+<li><a href="https://github.com/facebookresearch/Detectron2" target="_blank" rel="noopener">https://github.com/facebookresearch/Detectron2</a></li>
+<li>facebook出了3个repo主打都是maskrcnn，真-大哥</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/maskrcnn1.png" alt="maskrcnn1.png"></li>
+<li>主体架构图</li>
+<li><img src="/images/segmentation/maskrcnn2.png" alt="maskrcnn2.png"></li>
+<li>将RoiPooling改进为RoiAlign，从单纯的max到bilinear interpolation</li>
+<li><img src="/images/segmentation/maskrcnn3.png" alt="maskrcnn3.png"></li>
+<li>展示了面对FRRCNN和FRRCNN w/FPN时略有不同的head设计</li>
+<li><img src="/images/segmentation/maskrcnn4.png" alt="maskrcnn4.png"></li>
+<li>相较之前的结果进步巨大</li>
+<li><img src="/images/segmentation/maskrcnn5.png" alt="maskrcnn5.png"></li>
+<li>与此同时，就单纯拿检测效果对比，mask-RCNN的效果也明显的好过FRRCNN在使用同一个backbone的情况下</li>
+</ul>
+<h3 id="PANet"><a href="#PANet" class="headerlink" title="PANet"></a>PANet</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1803.01534.pdf" target="_blank" rel="noopener">Path Aggregation Network for Instance Segmentation</a></li>
+<li>git <a href="https://github.com/ShuLiu1993/PANet" target="_blank" rel="noopener">https://github.com/ShuLiu1993/PANet</a></li>
+<li>panet 也是重量级的，荣誉很多<ul>
+<li>CVPR 2018 Spotlight paper</li>
+<li>1st place of <a href="http://cocodataset.org/#detections-leaderboard" target="_blank" rel="noopener">COCO Instance Segmentation Challenge 2017</a> </li>
+<li>2nd place of <a href="http://cocodataset.org/#detections-leaderboard" target="_blank" rel="noopener">COCO Detection Challenge 2017</a> </li>
+<li>1st place of 2018 <a href="http://cvit.iiit.ac.in/scene-understanding-challenge-2018/benchmarks.php#instance" target="_blank" rel="noopener">Scene Understanding Challenge for Autonomous Navigation in Unstructured Environments</a></li>
+<li>相信只需要有其中一个荣誉就是重量级的了</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/panet1.png" alt="panet1.png"></li>
+<li>a阶段是FPN加上一条红线，代表底层特征与高层特征的pw add；b阶段将特征再次组装，绿线作用和a阶段红线相似；c阶段进行roi pooling，将结果fuse得到结果</li>
+<li><img src="/images/segmentation/panet2.png" alt="panet2.png"></li>
+<li>分拆来看，这是b阶段的细节，基本就是FPN中的upsample改为stride 2 kernel 3x3的conv</li>
+<li>Note that N2 is simply P2, without any processing.</li>
+<li><img src="/images/segmentation/panet3.png" alt="panet3.png"></li>
+<li>值得一提的是，对于多阶段的检测算法而言，各自level的roi pooling是独立进行的，但是这个图上ROI proposal都是对齐的，其实中间还有一步对齐的op，对齐后将对应的特征融合</li>
+<li><a href="https://github.com/ShuLiu1993/PANet/blob/master/lib/modeling/collect_and_distribute_fpn_rpn_proposals.py" target="_blank" rel="noopener">https://github.com/ShuLiu1993/PANet/blob/master/lib/modeling/collect_and_distribute_fpn_rpn_proposals.py</a></li>
+<li>“””Merge RPN proposals generated at multiple FPN levels and then distribute those proposals to their appropriate FPN levels. An anchor at one FPN level may predict an RoI that will map to another level, hence the need to redistribute the proposals.“”“</li>
+<li>源代码中有这样一段专门用来做这个事情，简单说就是将所有的proposal给其他level都复制一份，来达到对齐</li>
+<li><img src="/images/segmentation/panet4.png" alt="panet4.png"></li>
+<li>在mask分支作者也是使用了 conv 与 fc 结合的策略提高seg的精度</li>
+<li><img src="/images/segmentation/panet5.png" alt="panet5.png"></li>
+<li>吊打了Mask-RCNN w/FPN，但其实也伴随着肉眼可见的计算量增加</li>
+<li><img src="/images/segmentation/panet6.png" alt="panet6.png"></li>
+<li>在detection上也不遑多让，也是吊打</li>
+<li><img src="/images/segmentation/panet7.png" alt="panet7.png"></li>
+<li>同时，作者在 Ablation Studies 中也复现了mask rcnn，并使用训练技巧使其涨点4.4</li>
+<li><img src="/images/segmentation/panet8.png" alt="panet8.png"></li>
+<li>分享了COCO第一的方法，看得出来，这几个方法都涨点很猛</li>
+<li>总结：这是一篇干货满满的文章，值得一看</li>
+</ul>
+<h3 id="MS-R-CNN"><a href="#MS-R-CNN" class="headerlink" title="MS R-CNN"></a>MS R-CNN</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1903.00241.pdf" target="_blank" rel="noopener">Mask Scoring R-CNN</a></li>
+<li>git <a href="https://github.com/zjhuang22/maskscoring_rcnn" target="_blank" rel="noopener">https://github.com/zjhuang22/maskscoring_rcnn</a></li>
+<li><img src="/images/segmentation/msrcnn1.png" alt="msrcnn1.png"></li>
+<li>The RCNN head and Mask head are standard components of Mask R-CNN. 新的mask iou分支用于预测各个类别的iou分值</li>
+<li><img src="/images/segmentation/msrcnn2.png" alt="msrcnn2.png"></li>
+<li><img src="/images/segmentation/msrcnn3.png" alt="msrcnn3.png"></li>
+<li>这样简单的操作就开始快乐涨点了，在几乎所有情况下都有效，还要啥自行车</li>
+</ul>
+<h3 id="yolact"><a href="#yolact" class="headerlink" title="yolact"></a>yolact</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1904.02689.pdf" target="_blank" rel="noopener">YOLACT Real-time Instance Segmentation</a></li>
+<li>git <a href="https://github.com/dbolya/yolact" target="_blank" rel="noopener">https://github.com/dbolya/yolact</a></li>
+<li><img src="/images/segmentation/yolact1.png" alt="yolact1.png"></li>
+<li>based on retinanet. predict出bbox cls mask，经过nms，然后和protonet的结果结合得到instance的mask</li>
+<li><img src="/images/segmentation/yolact2.png" alt="yolact2.png"></li>
+<li>haed略有不同，share了tower减少计算和参数，多计算了一份mask分支，mask分支的dim k是由config设置的<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> cfg.mask_type == mask_type.direct:</span><br><span class="line">    cfg.mask_dim = cfg.mask_size（<span class="number">16</span>）**<span class="number">2</span></span><br><span class="line"><span class="keyword">elif</span> cfg.mask_type == mask_type.lincomb:</span><br><span class="line">    cfg.mask_dim = num_grids + num_features</span><br></pre></td></tr></table></figure></li>
+<li>loss: Since each pixel can be assigned to more than one class, we use sigmoid and c channels instead of softmax and c + 1. This loss is given a weight of 1 and results in a +0.4 mAP boost.</li>
+<li><img src="/images/segmentation/yolact3.png" alt="yolact3.png"></li>
+<li>整体上看，精度相同的情况下速度上完全吊打了FCIS，是个realtime 不错的选择</li>
+</ul>
+<h3 id="PolarMask"><a href="#PolarMask" class="headerlink" title="PolarMask"></a>PolarMask</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1909.13226.pdf" target="_blank" rel="noopener">PolarMask: Single Shot Instance Segmentation with Polar Representation</a></li>
+<li>git <a href="https://github.com/xieenze/PolarMask" target="_blank" rel="noopener">https://github.com/xieenze/PolarMask</a></li>
+<li><img src="/images/segmentation/polarmask1.png" alt="polarmask1.png"></li>
+<li>展示了笛卡尔系建模和极坐标系建模的detail</li>
+<li><img src="/images/segmentation/polarmask2.png" alt="polarmask2.png"></li>
+<li>文章将FCOS进行了拓展，将bbox视为polar系下的4等分角度多边形，将mask视为polar系下的无线等分的多边形</li>
+<li><img src="/images/segmentation/polarmask3.png" alt="polarmask3.png"></li>
+<li>换个方式算centerness，后面有实验证明这个centerness的优势</li>
+<li><img src="/images/segmentation/polarmask4.png" alt="polarmask4.png"></li>
+<li>既然采用了polar系，iou的计算方式也要有所改变，虽然这个式是积分式，其实现实里是离散化成n等分的</li>
+<li><img src="/images/segmentation/polarmask5.png" alt="polarmask5.png"></li>
+<li>(左 → 右 上 → 下)<ul>
+<li>rays 代表切割的份数，实验证明切36份就差不多了</li>
+<li>对比了smooth-l1 和 polar iou loss，不用iou loss真滴不行</li>
+<li>使用polar centerness比卡迪尔中心更好</li>
+<li>box branch 有没有无所谓</li>
+<li>backbone还是越牛逼越好</li>
+<li>scale 当然也是越大越好</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/polarmask6.png" alt="polarmask6.png"></li>
+<li>在仅训练12epochs w/o aug的情况下达到了30+的coco mask map</li>
+</ul>
+<h3 id="CenterMask"><a href="#CenterMask" class="headerlink" title="CenterMask"></a>CenterMask</h3><ul>
+<li>paper <a href="https://arxiv.org/pdf/1911.06667.pdf" target="_blank" rel="noopener">CenterMask:Real-Time Anchor-Free Instance Segmentation</a></li>
+<li><img src="/images/segmentation/centermask1.png" alt="centermask1.png"></li>
+<li>amazing！在速度和精度上均超过了mask rcnn，而且在实时模型的pk中也大幅胜过yolact，来看看他是怎么做的</li>
+<li><img src="/images/segmentation/centermask2.png" alt="centermask2.png"></li>
+<li>整体架构：使用FCOS作为类似RPN网络用于出bbox和cls，然后对每一个Bbox经过sag mask来抑制pixel层面的noise来完成mask<ul>
+<li>图上没有，但是作者提到了 Adaptive RoI Assignment Function 用于自适应多level， 将不同大小的box标准化到一个大小</li>
+<li>sam是一个 pooling + sig + elewise-mul 的 spatial attention guided mask（就是个空间attention）</li>
+</ul>
+</li>
+<li><img src="/images/segmentation/centermask3.png" alt="centermask3.png"></li>
+<li>文中一大亮点是，提出了 VoVNet v2，提高了vovnet的性能，主要的改动在 OSA module 上</li>
+<li>Residual connection： 上图b</li>
+<li>eSE： 上图c 主要就是gap然后fc，elewise-mul （ECANet也是如此，叫法不同）</li>
+<li><img src="/images/segmentation/centermask4.png" alt="centermask4.png"></li>
+<li>作者以FCOS0-R50为例，展示了将其改造为centermask的过程和时间消耗增加其中 mask scoring就是前面提到亮点ms rcnn的miou loss分支，时间消耗每图多15ms，是可接受范围</li>
+<li><img src="/images/segmentation/centermask5.png" alt="centermask5.png"></li>
+<li>展示了VoVNetV2中改进的两点的效果，在时间消耗小幅增加的的前提下，精度得到了很不错的trade off</li>
+<li><img src="/images/segmentation/centermask6.png" alt="centermask6.png"></li>
+<li>与现在主流的backbone: resnet resnext hrnet 做了对比，在同等精度下（或相对高一些的精度），VoVNet在CenterMask上都能在GPU上跑得更快</li>
+<li><img src="/images/segmentation/centermask7.png" alt="centermask7.png"></li>
+<li>对比现在realtime的instance mask架构，CenterMask在同等速度下精度都能有较大提升</li>
+<li>非常值得推荐的方法</li>
+</ul>
+<hr>
+<h1 id="dataset"><a href="#dataset" class="headerlink" title="dataset"></a>dataset</h1><hr>
+<h2 id="Semantic-Segmentation-1"><a href="#Semantic-Segmentation-1" class="headerlink" title="Semantic Segmentation"></a>Semantic Segmentation</h2><h3 id="Pascal-VOC-2012"><a href="#Pascal-VOC-2012" class="headerlink" title="Pascal VOC 2012"></a>Pascal VOC 2012</h3><ul>
+<li>home <a href="http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/index.html" target="_blank" rel="noopener">http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/index.html</a></li>
+<li>download <a href="http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar" target="_blank" rel="noopener">http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar</a></li>
+<li>20 classes. The 2012 dataset contains images from 2008-2011 for which additional segmentations have been prepared. As in previous years the assignment to training/test sets has been maintained. The total number of images with segmentation has been increased from 7,062 to 9,993.</li>
+<li>VOCAug <ul>
+<li>VOCAug 也是非常常用的数据集，由VOC变种而来</li>
+<li>11355 train 2857 val</li>
+</ul>
+</li>
+</ul>
+<h3 id="Cityscapes"><a href="#Cityscapes" class="headerlink" title="Cityscapes"></a>Cityscapes</h3><ul>
+<li>home <a href="https://www.cityscapes-dataset.com/" target="_blank" rel="noopener">https://www.cityscapes-dataset.com/</a></li>
+<li>download home上可以找到，需要注册账号下载</li>
+<li>baiduyun <a href="https://pan.baidu.com/s/1w3W_dQBUiHcwkLOtbSJ1Tg" target="_blank" rel="noopener">https://pan.baidu.com/s/1w3W_dQBUiHcwkLOtbSJ1Tg</a>   1bln</li>
+<li>30 classes. We present a new large-scale dataset that contains a diverse set of stereo video sequences recorded in street scenes from 50 different cities, with high quality pixel-level annotations of 5 000 frames in addition to a larger set of 20 000 weakly annotated frames. The dataset is thus an order of magnitude larger than similar previous attempts. Details on annotated classes and examples of our annotations are available at this webpage.</li>
+</ul>
+<h3 id="ADE20K"><a href="#ADE20K" class="headerlink" title="ADE20K"></a>ADE20K</h3><ul>
+<li>home <a href="http://groups.csail.mit.edu/vision/datasets/ADE20K/" target="_blank" rel="noopener">http://groups.csail.mit.edu/vision/datasets/ADE20K/</a></li>
+<li>download <a href="http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip" target="_blank" rel="noopener">http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip</a></li>
+<li>train 20210 val 2000 test. 类别是开放的，目前至少有250个类</li>
+</ul>
+<h2 id="Instance-Segmentation-1"><a href="#Instance-Segmentation-1" class="headerlink" title="Instance Segmentation"></a>Instance Segmentation</h2><h3 id="COCO-17"><a href="#COCO-17" class="headerlink" title="COCO 17"></a>COCO 17</h3><ul>
+<li>home <a href="http://cocodataset.org/#download" target="_blank" rel="noopener">http://cocodataset.org/#download</a> | <a href="http://cocodataset.org/#stuff-2017" target="_blank" rel="noopener">http://cocodataset.org/#stuff-2017</a></li>
+<li>download <a href="http://cocodataset.org/#download" target="_blank" rel="noopener">http://cocodataset.org/#download</a><ul>
+<li>需要下载的文件较多，看到的都下载就行</li>
+</ul>
+</li>
+<li>The task includes 55K COCO images (train 40K, val 5K, test-dev 5K, test-challenge 5K) with annotations for 91 stuff classes and 1 ‘other’ class. The stuff annotations cover 38M superpixels (10B pixels) with 296K stuff regions (5.4 stuff labels per image). Annotations for train and val are now available for download, while test set annotations will remain private.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/seg/" rel="tag"># seg</a>
+              <a href="/tags/semantic-seg/" rel="tag"># semantic_seg</a>
+              <a href="/tags/instance-seg/" rel="tag"># instance_seg</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/22/Pedestrian_Detection_Survey/" rel="prev" title="Pedestrian Detection Survey">
+      <i class="fa fa-chevron-left"></i> Pedestrian Detection Survey
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Foreword"><span class="nav-number">1.1.</span> <span class="nav-text">Foreword</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Semantic-Segmentation"><span class="nav-number">2.1.</span> <span class="nav-text">Semantic Segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unet"><span class="nav-number">2.1.1.</span> <span class="nav-text">Unet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Segnet"><span class="nav-number">2.1.2.</span> <span class="nav-text">Segnet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deeplab-v1-amp-v2"><span class="nav-number">2.1.3.</span> <span class="nav-text">Deeplab v1 &amp; v2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FCN"><span class="nav-number">2.1.4.</span> <span class="nav-text">FCN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enet"><span class="nav-number">2.1.5.</span> <span class="nav-text">Enet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PSP"><span class="nav-number">2.1.6.</span> <span class="nav-text">PSP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ICNet"><span class="nav-number">2.1.7.</span> <span class="nav-text">ICNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DenseASPP"><span class="nav-number">2.1.8.</span> <span class="nav-text">DenseASPP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deeplab-v3"><span class="nav-number">2.1.9.</span> <span class="nav-text">Deeplab v3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deeplab-v3-1"><span class="nav-number">2.1.10.</span> <span class="nav-text">Deeplab v3+</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EncNet"><span class="nav-number">2.1.11.</span> <span class="nav-text">EncNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiSeNet"><span class="nav-number">2.1.12.</span> <span class="nav-text">BiSeNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DANet"><span class="nav-number">2.1.13.</span> <span class="nav-text">DANet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CGNet"><span class="nav-number">2.1.14.</span> <span class="nav-text">CGNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OCNet"><span class="nav-number">2.1.15.</span> <span class="nav-text">OCNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DUNet"><span class="nav-number">2.1.16.</span> <span class="nav-text">DUNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fastFCN"><span class="nav-number">2.1.17.</span> <span class="nav-text">fastFCN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LEDNET"><span class="nav-number">2.1.18.</span> <span class="nav-text">LEDNET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fast-SCNN"><span class="nav-number">2.1.19.</span> <span class="nav-text">Fast-SCNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HRNet"><span class="nav-number">2.1.20.</span> <span class="nav-text">HRNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DFANet"><span class="nav-number">2.1.21.</span> <span class="nav-text">DFANet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OCRNet"><span class="nav-number">2.1.22.</span> <span class="nav-text">OCRNet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Instance-Segmentation"><span class="nav-number">2.2.</span> <span class="nav-text">Instance Segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mask-RCNN"><span class="nav-number">2.2.1.</span> <span class="nav-text">Mask-RCNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PANet"><span class="nav-number">2.2.2.</span> <span class="nav-text">PANet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MS-R-CNN"><span class="nav-number">2.2.3.</span> <span class="nav-text">MS R-CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yolact"><span class="nav-number">2.2.4.</span> <span class="nav-text">yolact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PolarMask"><span class="nav-number">2.2.5.</span> <span class="nav-text">PolarMask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CenterMask"><span class="nav-number">2.2.6.</span> <span class="nav-text">CenterMask</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dataset"><span class="nav-number">3.</span> <span class="nav-text">dataset</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Semantic-Segmentation-1"><span class="nav-number">3.1.</span> <span class="nav-text">Semantic Segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pascal-VOC-2012"><span class="nav-number">3.1.1.</span> <span class="nav-text">Pascal VOC 2012</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cityscapes"><span class="nav-number">3.1.2.</span> <span class="nav-text">Cityscapes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ADE20K"><span class="nav-number">3.1.3.</span> <span class="nav-text">ADE20K</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Instance-Segmentation-1"><span class="nav-number">3.2.</span> <span class="nav-text">Instance Segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#COCO-17"><span class="nav-number">3.2.1.</span> <span class="nav-text">COCO 17</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bei"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Bei</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bei</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
